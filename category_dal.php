@@ -19,7 +19,7 @@ class CategoryDal
     public function GetCategoryById(int $id)
     {
         global $sql, $con;
-        $newQuery = $sql . " categories WHERE id=" . $id;
+        $newQuery = "SELECT * FROM categories WHERE id=" . $id;
 
         $result = mysqli_query($con, $newQuery);
 

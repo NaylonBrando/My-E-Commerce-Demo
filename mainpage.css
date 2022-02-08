@@ -1,0 +1,23 @@
+.navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+}
+
+.card-img-top {
+    height: 20vw;
+}
+
+body {
+    background-color: #edf1f5;
+}
+
+.card-title {
+    font-size: 18px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+
