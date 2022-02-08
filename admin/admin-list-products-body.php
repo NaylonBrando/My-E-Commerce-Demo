@@ -34,7 +34,7 @@ function components()
 {
 
     $productsDal = new ProductDal();
-    $result = $productsDal->GetAllProducts();
+    $result = $productsDal->getAllProducts();
     if ($result == "" || $result == null) {
         echo "<h3>Listelenecek Bir Ürün Yok!</h3>";
     } else {
@@ -47,7 +47,7 @@ function components()
 
 if (isset($_POST["delete_product"])) {
     $productDal = new ProductDal();
-    $result = $productDal->DeleteProductById($_POST["delete_product"]);
+    $result = $productDal->deleteProductById($_POST["delete_product"]);
 
 }
 

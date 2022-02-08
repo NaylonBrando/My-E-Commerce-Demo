@@ -46,11 +46,11 @@ if (isset($_POST['add-product'])) {
             if (move_uploaded_file($_FILES["product_image"]["tmp_name"], $targetFilePath)) {
 
                 $newTargetPath = substr($targetFilePath, 1);
-                $productUpdateQuery = mysqli_query($con, "INSERT INTO products (
+                $updateQueryResult = mysqli_query($con, "INSERT INTO products (
                    product_name, product_description, product_quantity, product_price, product_image) 
                    VALUES('$productName','$description','$quantity','$price','$newTargetPath')");
 
-                if ($productUpdateQuery) {
+                if ($updateQueryResult) {
 
                     $productId = mysqli_insert_id($con);
                     $p_to_c_add_query = mysqli_query($con, "INSERT INTO product_to_categories (
@@ -71,11 +71,11 @@ if (isset($_POST['add-product'])) {
 
             }
         } elseif ($_FILES['product_image']['size'] == 0) {
-            $productUpdateQuery = mysqli_query($con, "INSERT INTO products (
+            $updateQueryResult = mysqli_query($con, "INSERT INTO products (
                    product_name, product_description, product_quantity, product_price) 
                    VALUES('$productName','$description','$quantity','$price')");
 
-            if ($productUpdateQuery) {
+            if ($updateQueryResult) {
                 $productId = mysqli_insert_id($con);
                 $p_to_c_add_query = mysqli_query($con, "INSERT INTO product_to_categories (
                    product_id, category_id) 
@@ -124,8 +124,8 @@ if (isset($_POST['update-product'])) {
     if ($_FILES['image']['size'] == 0) {
         $updateQuery = "UPDATE products SET product_name='$productName', product_description='$description',
             product_quantity='$quantity', product_price='$price' WHERE id=$productId";
-        $productUpdateQuery = mysqli_query($con, $updateQuery);
-        if ($productUpdateQuery) {
+        $updateQueryResult = mysqli_query($con, $updateQuery);
+        if ($updateQueryResult) {
 
             $updateProductCategory = "UPDATE product_to_categories SET category_id='$categoryId' WHERE product_id=$productId";
             mysqli_query($con, $updateProductCategory);
@@ -134,12 +134,10 @@ if (isset($_POST['update-product'])) {
             echo "Ürün Güncellendi";
             header("refresh:1;url=admin-update-product.php?productId=$productId");
         }
-    }
-    elseif ($_FILES['image']['size'] > 5 * MB || !in_array($fileType, $allowTypes)) {
+    } elseif ($_FILES['image']['size'] > 5 * MB || !in_array($fileType, $allowTypes)) {
         echo "Resim boyutu 5 megabyteden fazla olamaz veya türü jpg, png, jpeg değil.";
         header("refresh:1;url=admin-update-product.php?productId=$productId");
-    }
-    else {
+    } else {
         $newTargetPath = substr($targetFilePath, 1);
 
         $oldImageDirectory = "." . $oldImage;
@@ -150,8 +148,8 @@ if (isset($_POST['update-product'])) {
             $newTargetPath = substr($targetFilePath, 1);
             $updateQuery = "UPDATE products SET product_name='$productName', product_description='$description',
             product_quantity='$quantity', product_price='$price', product_image='$newTargetPath' WHERE id=$productId";
-            $productUpdateQuery = mysqli_query($con, $updateQuery);
-            if ($productUpdateQuery) {
+            $updateQueryResult = mysqli_query($con, $updateQuery);
+            if ($updateQueryResult) {
 
                 echo "Ürün Güncellendi";
                 header("refresh:1;url=admin-update-product.php?productId=$productId");
@@ -163,11 +161,11 @@ if (isset($_POST['update-product'])) {
 
 if (isset($_POST["delete_product"])) {
     $productDal = new ProductDal();
-    $resultDeleteProduct = $productDal->DeleteProductById($_POST["delete_product"]);
-    if($resultDeleteProduct){
+    $resultDeleteProduct = $productDal->deleteProductById($_POST["delete_product"]);
+    if ($resultDeleteProduct) {
         $productToCategoryDal = new ProductToCategory();
         $productToCategoryDal->DeleteByProductId($_POST["delete_product"]);
-        if($productToCategoryDal)
+        if ($productToCategoryDal)
             echo "<h2> Ürün Silindi! <h2>";
         header("refresh:0.5;url=admin-list-products.php");
 

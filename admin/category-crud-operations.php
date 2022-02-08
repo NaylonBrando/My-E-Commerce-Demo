@@ -10,9 +10,6 @@ if (isset($_POST['add-category'])) {
     $categoryName = mysqli_real_escape_string($con, $_POST['category_name']);
     $parentId = mysqli_real_escape_string($con, $_POST['parent_id']);
 
-    //business katmanı gibi burası
-    //dataaccess katmanım service olacak
-    //sql injectionlar icin inputlara koruma bir şey yap
     $categoryCheckQuery = mysqli_query($con, "SELECT * FROM categories WHERE category_name='$categoryName'");
     $num_row = mysqli_num_rows($categoryCheckQuery);
     if ($num_row > 0) {
@@ -44,11 +41,38 @@ if (isset($_POST['add-category'])) {
 
 if (isset($_POST['delete-category'])) {
     $result = deleteCategory($_POST['delete-category-id']);
-    if($result)
+    if ($result)
         echo "Kategori Silindi";
-        header("refresh:1;url=admin-list-categories.php");
+    header("refresh:1;url=admin-list-categories.php");
 
 }
+
+if (isset($_POST['update-category'])) {
+   global $con;
+    $id = mysqli_real_escape_string($con,$_POST['id']);
+    $categoryName = mysqli_real_escape_string($con, $_POST['category_name']);
+    $parentId = mysqli_real_escape_string($con, $_POST['parent_id']);
+
+    $updateQuery= "UPDATE categories SET category_name='$categoryName', parent_id='$parentId' WHERE id=$id";
+
+    $result = mysqli_query($con,$updateQuery);
+
+    if($result){
+        mysqli_close($con);
+        echo "Kategori Güncellendi";
+        header("refresh:1;url=admin-list-categories.php");
+    }
+    else{
+        mysqli_close($con);
+        echo "Kategori Güncellenemedi!!";
+        header("refresh:1;url=admin-list-categories.php");
+    }
+
+
+
+}
+
+
 
 function deleteCategory($id)
 {

@@ -12,7 +12,7 @@ include("../category_dal.php");
 if (isset($_GET['productId'])) {
 
     $productDal = new ProductDal();
-    $resultProduct = $productDal->GetProductById($_GET['productId']);
+    $resultProduct = $productDal->getProductById($_GET['productId']);
     $row = mysqli_fetch_assoc($resultProduct);
     $product_id = $row["id"];
     $product_name = $row["product_name"];
@@ -22,17 +22,17 @@ if (isset($_GET['productId'])) {
     $product_description = $row["product_description"];
 
 
-    function productAvaibleCategories(){
+    function productAvaibleCategories()
+    {
         global $con, $product_id;
-        $productAndCategoyJoinQuery="SELECT ca.category_name, ptc.product_id FROM categories AS ca 
+        $productAndCategoyJoinQuery = "SELECT ca.category_name, ptc.product_id FROM categories AS ca 
     INNER JOIN product_to_categories as ptc on ca.id = ptc.category_id WHERE ptc.product_id = '$product_id'";
-        $joinResult= mysqli_query($con,$productAndCategoyJoinQuery);
+        $joinResult = mysqli_query($con, $productAndCategoyJoinQuery);
 
-        while ($row = mysqli_fetch_assoc($joinResult)){
-            echo '<h6>'. $row['category_name'] . '</h6>';
+        while ($row = mysqli_fetch_assoc($joinResult)) {
+            echo '<h6>' . $row['category_name'] . '</h6>';
         }
     }
-
 
 
     function CategoryComponent($id, $categoryName)
@@ -58,8 +58,7 @@ if (isset($_GET['productId'])) {
 
     }
 
-}
-else{
+} else {
     echo "<h2>Seçili Ürün Yok </h2>";
     header("refresh:0.5;url=admin-list-products.php");
 }
@@ -78,14 +77,16 @@ else{
         <div class="panel-body">
             <form action='product-crud-operations.php' method="post" enctype="multipart/form-data">
                 <div class="col-sm-9">
-                    <input value="<?php echo $product_id ?>" type="hidden" class="form-control" name="id" id="for-product" required autofocus>
+                    <input value="<?php echo $product_id ?>" type="hidden" class="form-control" name="id"
+                           id="for-product" required autofocus>
                 </div>
                 <label for="for-product" class="col-sm-3 control-label">İsim</label>
                 <div class="col-sm-9">
-                    <input value="<?php echo $product_name ?>" type="text" class="form-control" name="product_name" id="for-product" required autofocus>
+                    <input value="<?php echo $product_name ?>" type="text" class="form-control" name="product_name"
+                           id="for-product" maxlength="80" required autofocus>
                 </div>
 
-<!--                Burasi product_to_category tablosuna bagli-->
+                <!--                Burasi product_to_category tablosuna bagli-->
                 <label for="for-category" class="col-sm-3 control-label">Kategori</label>
                 <div class="col-sm-3">
                     <select class="form-control" name="category_id">
@@ -95,21 +96,25 @@ else{
 
                 <label for="about" class="col-sm-3 control-label">Açıklama</label>
                 <div class="col-sm-9">
-                    <textarea name="product_description" class="form-control" required><?php echo $product_description ?></textarea>
+                    <textarea name="product_description" class="form-control"
+                              maxlength="250" required><?php echo $product_description ?></textarea>
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label">Stok Sayısı</label>
                 <div class="col-sm-3">
-                    <input type="text" value="<?php echo $product_quantity ?>" class="form-control" name="product_quantity" id="for-quantity" required>
+                    <input type="text" value="<?php echo $product_quantity ?>" class="form-control"
+                           name="product_quantity" id="for-quantity" required>
                 </div>
 
                 <label for="for-price" class="col-sm-3 control-label">Fiyat</label>
                 <div class="col-sm-3">
-                    <input type="text" value="<?php echo $product_price ?>" class="form-control" name="product_price" id="for-price" required>
+                    <input type="text" value="<?php echo $product_price ?>" class="form-control" name="product_price"
+                           id="for-price" required>
                 </div>
 
                 <div class="col-sm-3">
-                    <input type="hidden" value="<?php echo $product_image ?>" class="form-control" name="product_image" required>
+                    <input type="hidden" value="<?php echo $product_image ?>" class="form-control" name="product_image"
+                           required>
                 </div>
 
                 <label for="name" class="col-sm-3 control-label">Resim</label>

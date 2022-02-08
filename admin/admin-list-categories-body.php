@@ -15,7 +15,6 @@ function component($id, $categoryName)
     $element = "
     <option selected value=\"$id\">$categoryName</option>
     ";
-
     return $element;
 }
 
@@ -30,29 +29,41 @@ function components()
 
         }
     }
-
 }
 
-function listAllCategories($id = 0)
+function component2($id, $categoryName)
+{
+    $element = "
+    <option value=\"$id\">$categoryName</option>
+    ";
+    return $element;
+}
+
+function components2()
+{
+    $categoryDal = new CategoryDal();
+    $result = $categoryDal->GetAllCategories();
+
+    if ($result != null) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo component2($row["id"], $row["category_name"]);
+
+        }
+    }
+}
+
+function listAllCategories($parentId = 0)
 {
     global $con;
-    $result = mysqli_query($con, "SELECT * FROM categories WHERE parent_id = '$id'");
+    $result = mysqli_query($con, "SELECT * FROM categories WHERE parent_id = '$parentId'");
 
 
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
 
-
-            if ($id == 0) {
-                echo '<li>' . $row['category_name'] . '</li>';
-                listAllCategories($row['id']);
-            } else {
-                echo '<ul>';
-                echo '<li>' . $row['category_name'] . '</li>';
-                listAllCategories($row['id']);
-                echo '</ul>';
-            }
-
+            echo '<li>' . $row['category_name'] . '<ul> ';
+            listAllCategories($row['id']);
+            echo '</ul> </li>';
         }
 
     }
@@ -62,7 +73,7 @@ function listAllCategories($id = 0)
 ?>
 
 
-<div class="container pt-2">
+<div class="container mt-2 mb-5 ">
     <h3 class="text-center">Kategori ve Alt Kategori İşlemleri</h3>
     <div class="row">
         <div class="col-md-6">
@@ -71,20 +82,20 @@ function listAllCategories($id = 0)
             <form action="category-crud-operations.php" method="post">
                 <div class="form-group">
                     <label for="category-name">Kategori Adı</label>
-                    <input type="text" class="form-control" name="category_name" id="category-name" required>
+                    <input type="text" class="form-control" name="category_name" id="category-name" maxlength="80" required>
                 </div>
 
                 <div class="form-group">
                     <label for="parent-category-name">Varsa Üst Kategori</label>
                     <select name="parent_id" id="parent-category-name" class="form-control">
-                        <option selected value=\"0\">Yok</option>
+                        <option selected value=0>Yok</option>
                         <?php components(); ?>
                     </select>
                 </div>
 
                 <div class="form-group mt-2">
                     <button type="submit" name="add-category" class="btn btn-primary btn-sm">Ekle</button>
-                    <button type="submit" class="btn btn-danger btn-sm">İptal</button>
+                    <button type="reset" class="btn btn-danger btn-sm">İptal</button>
                 </div>
             </form>
             <br>
@@ -104,6 +115,19 @@ function listAllCategories($id = 0)
                 </div>
             </form>
 
+            <h4 class="text-center">Kategori Güncelleme</h4>
+            <hr>
+            <form  action="admin-update-category.php" method="get">
+                <div class="form-group">
+                    <label>Kategori Seç</label>
+                    <select name="catId" id="category" class="form-control">
+                        <?php components2(); ?>
+                    </select>
+                </div>
+                <div class="form-group mt-2">
+                    <button class="btn btn-warning" type="submit">Güncelleye Git</button>
+                </div>
+            </form>
         </div>
         <div class="col-md-6">
             <h4 class="text-center">Kategori Hiyerarşisi</h4>
@@ -114,5 +138,4 @@ function listAllCategories($id = 0)
 
         </div>
     </div>
-    <?php ?>
 </div>

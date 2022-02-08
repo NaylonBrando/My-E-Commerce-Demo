@@ -6,6 +6,6 @@ if (!isset($_SESSION['admin_id'])) {
 } else {
     $id = $_SESSION['admin_id'];
     $result = mysqli_query($con, "select * from admins where id='$id'") or die('Error In Session');
-    $row = mysqli_fetch_array($result);
+    $adminRow = mysqli_fetch_array($result);
 }
 ?>

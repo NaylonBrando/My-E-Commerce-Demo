@@ -40,7 +40,7 @@ function components()
             <form action="product-crud-operations.php" method="post" enctype="multipart/form-data">
                 <label for="for-product" class="col-sm-3 control-label">İsim</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="product_name" id="for-product" required autofocus>
+                    <input type="text" class="form-control" name="product_name" id="for-product" maxlength="80" required autofocus>
                 </div>
 
                 <label for="for-category" class="col-sm-3 control-label">Kategori</label>
@@ -52,7 +52,7 @@ function components()
 
                 <label for="about" class="col-sm-3 control-label">Açıklama</label>
                 <div class="col-sm-9">
-                    <textarea name="product_description" class="form-control" required></textarea>
+                    <textarea name="product_description" class="form-control" maxlength="250" required></textarea>
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label">Stok Sayısı</label>
