@@ -7,8 +7,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="register_customer.php"> Üye Ol </a>
-                <a class="nav-link" href="login-customer.php"> Giriş Yap </a>
+                <a class="nav-link" href="customer-register.php"> Üye Ol </a>
+                <a class="nav-link" href="customer-login.php"> Giriş Yap </a>
                 <a class="nav-link" href="admin/admin-list-products.php"> Yetkili Girişi </a>
                 <a class="nav-link" href="#"> Sepetim (0) </a>
             </div>
