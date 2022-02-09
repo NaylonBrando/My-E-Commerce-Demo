@@ -9,10 +9,7 @@ include('../category_dal.php');
 <?php
 function component($id, $categoryName)
 {
-    $element = "
-    <option selected name='category_id' value=\"$id\">$categoryName</option>
-    ";
-    return $element;
+    return "<option name='category_id' value=\"$id\">$categoryName</option>";
 }
 
 function components()
@@ -20,9 +17,12 @@ function components()
     $categoryDal = new CategoryDal();
     $result = $categoryDal->GetAllCategories();
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo component($row["id"], $row["category_name"]);
-
+    if ($result != null) {
+        $str = "";
+        while ($row = mysqli_fetch_assoc($result)) {
+            $str .= component($row["id"], $row["category_name"]);
+        }
+        echo $str;
     }
 }
 

@@ -37,11 +37,7 @@ if (isset($_GET['productId'])) {
 
     function CategoryComponent($id, $categoryName)
     {
-        $element = "
-    <option name='category_id' value=\"$id\">$categoryName</option>
-    ";
-
-        return $element;
+        return "<option name='category_id' value=\"$id\">$categoryName</option>";
     }
 
     function CategoryComponents()
@@ -50,10 +46,11 @@ if (isset($_GET['productId'])) {
         $result = $categoryDal->GetAllCategories();
 
         if ($result != null) {
+            $str = "";
             while ($row = mysqli_fetch_assoc($result)) {
-                echo CategoryComponent($row["id"], $row["category_name"]);
-
+                $str .= CategoryComponent($row["id"], $row["category_name"]);
             }
+            echo $str;
         }
 
     }
