@@ -7,15 +7,9 @@ include('../category_dal.php');
 ?>
 
 <?php
-
-$con = mysqli_connect("localhost", "root", "", "ecommerce");
-
 function component($id, $categoryName)
 {
-    $element = "
-    <option selected value=\"$id\">$categoryName</option>
-    ";
-    return $element;
+    return "<option value=\"$id\">$categoryName</option>";
 }
 
 function components()
@@ -24,31 +18,11 @@ function components()
     $result = $categoryDal->GetAllCategories();
 
     if ($result != null) {
+        $str = "";
         while ($row = mysqli_fetch_assoc($result)) {
-            echo component($row["id"], $row["category_name"]);
-
+            $str .= component($row["id"], $row["category_name"]);
         }
-    }
-}
-
-function component2($id, $categoryName)
-{
-    $element = "
-    <option value=\"$id\">$categoryName</option>
-    ";
-    return $element;
-}
-
-function components2()
-{
-    $categoryDal = new CategoryDal();
-    $result = $categoryDal->GetAllCategories();
-
-    if ($result != null) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo component2($row["id"], $row["category_name"]);
-
-        }
+        echo $str;
     }
 }
 
@@ -67,7 +41,6 @@ function listAllCategories($parentId = 0)
     }
 }
 ?>
-
 
 <div class="container mt-2 mb-5 ">
     <h3 class="text-center">Kategori ve Alt Kategori İşlemleri</h3>
@@ -118,7 +91,7 @@ function listAllCategories($parentId = 0)
                 <div class="form-group">
                     <label>Kategori Seç</label>
                     <select name="catId" id="category" class="form-control">
-                        <?php components2(); ?>
+                        <?php components(); ?>
                     </select>
                 </div>
                 <div class="form-group mt-2">

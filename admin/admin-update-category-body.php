@@ -19,20 +19,12 @@ if (isset($_GET['catId'])) {
 
     function CategoryComponent($id, $categoryName)
     {
-
-        $element = "
-    <option name='category_id' value=\"$id\">$categoryName</option>
-    ";
-        return $element;
+        return "<option name='category_id' value=\"$id\">$categoryName</option>";;
     }
 
     function CategoryComponentParent($id, $categoryName)
     {
-
-        $element = "
-    <option selected name='category_id' value=\"$id\">$categoryName</option>
-    ";
-        return $element;
+        return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
     }
 
 
