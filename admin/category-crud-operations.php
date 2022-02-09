@@ -14,7 +14,6 @@ if (isset($_POST['add-category'])) {
     $num_row = mysqli_num_rows($categoryCheckQuery);
     if ($num_row > 0) {
 
-        mysqli_close($con);
         echo 'Böyle bir kategori zaten var!';
         header("refresh:1;url=admin-list-categories.php");
 
@@ -24,18 +23,18 @@ if (isset($_POST['add-category'])) {
                    VALUES('$categoryName', '$parentId')");
 
         if ($categoryAddQuery) {
-            mysqli_close($con);
             echo 'Kategori Başarılıyla Eklendi';
             header("refresh:1;url=admin-list-categories.php");
 
         } else {
-            mysqli_close($con);
             echo 'Kategori Eklenemedi!';
             header("refresh:1;url=admin-list-categories.php");
 
         }
 
     }
+    mysqli_close($con);
+
 }
 
 if (isset($_POST['delete-category'])) {
@@ -57,16 +56,15 @@ if (isset($_POST['update-category'])) {
     $result = mysqli_query($con, $updateQuery);
 
     if ($result) {
-        mysqli_close($con);
+
         echo 'Kategori Güncellendi';
         header("refresh:1;url=admin-list-categories.php");
     } else {
-        mysqli_close($con);
         echo 'Kategori Güncellenemedi!!';
         header("refresh:1;url=admin-list-categories.php");
     }
 
-
+    mysqli_close($con);
 }
 
 function deleteCategory($id)
