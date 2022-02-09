@@ -85,7 +85,7 @@
                 header('location:mainpage.php');
             }
         } else
-            echo "Sifreler eşleşmedi!";
+            echo 'Sifreler eşleşmedi!';
     }
     ?>
 

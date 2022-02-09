@@ -53,12 +53,11 @@
             header('location:mainpage.php');
 
         } else {
-            echo 'Invalid Username and Password Combination';
+            echo 'Yanlış e-posta veya şifre.';
         }
     }
     ?>
 </main>
-
 
 </body>
 </html>

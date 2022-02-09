@@ -57,19 +57,15 @@ function listAllCategories($parentId = 0)
     global $con;
     $result = mysqli_query($con, "SELECT * FROM categories WHERE parent_id = '$parentId'");
 
-
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
 
-            echo '<li>' . $row['category_name'] . '<ul> ';
+            echo "<li>" . $row['category_name'] . "<ul> ";
             listAllCategories($row['id']);
-            echo '</ul> </li>';
+            echo "</ul> </li>";
         }
-
     }
-
 }
-
 ?>
 
 
@@ -82,7 +78,8 @@ function listAllCategories($parentId = 0)
             <form action="category-crud-operations.php" method="post">
                 <div class="form-group">
                     <label for="category-name">Kategori Adı</label>
-                    <input type="text" class="form-control" name="category_name" id="category-name" maxlength="80" required>
+                    <input type="text" class="form-control" name="category_name" id="category-name" maxlength="80"
+                           required>
                 </div>
 
                 <div class="form-group">
@@ -117,7 +114,7 @@ function listAllCategories($parentId = 0)
 
             <h4 class="text-center">Kategori Güncelleme</h4>
             <hr>
-            <form  action="admin-update-category.php" method="get">
+            <form action="admin-update-category.php" method="get">
                 <div class="form-group">
                     <label>Kategori Seç</label>
                     <select name="catId" id="category" class="form-control">

@@ -25,6 +25,7 @@ if (isset($_GET['catId'])) {
     ";
         return $element;
     }
+
     function CategoryComponentParent($id, $categoryName)
     {
 
@@ -43,11 +44,10 @@ if (isset($_GET['catId'])) {
 
         if ($result != null) {
             while ($row = mysqli_fetch_assoc($result)) {
-                if($categoryId != $row['id']){
-                    if($parentId==$row['id']){
+                if ($categoryId != $row['id']) {
+                    if ($parentId == $row['id']) {
                         echo CategoryComponentParent($row["id"], $row["category_name"]);
-                    }
-                    else{
+                    } else {
                         echo CategoryComponent($row["id"], $row["category_name"]);
                     }
                 }
@@ -57,7 +57,7 @@ if (isset($_GET['catId'])) {
     }
 
 } else {
-    echo "<h2>Seçili Ürün Yok </h2>";
+    echo '<h2>Seçili Ürün Yok </h2>';
     header("refresh:0.5;url=admin-list-products.php");
 }
 

@@ -10,7 +10,6 @@ include('../product_dal.php');
 <?php
 function component($productname, $productprice, $productimage, $id, $productDescription, $productQuantity)
 {
-
     $element = "
         <tr>
             <td>$id</td>

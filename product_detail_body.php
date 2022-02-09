@@ -34,8 +34,6 @@ function productDetails(int $id)
 ";
     echo $element;
 }
-
-
 ?>
 
 <div class="container">
