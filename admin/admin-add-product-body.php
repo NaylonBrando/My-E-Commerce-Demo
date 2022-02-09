@@ -28,7 +28,6 @@ function components()
 
 ?>
 
-
 <div class="container pt-3">
     <section class="panel panel-default">
         <div class="panel-heading">
@@ -40,7 +39,8 @@ function components()
             <form action="product-crud-operations.php" method="post" enctype="multipart/form-data">
                 <label for="for-product" class="col-sm-3 control-label">İsim</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="product_name" id="for-product" maxlength="80" required autofocus>
+                    <input type="text" class="form-control" name="product_name" id="for-product" maxlength="80" required
+                           autofocus>
                 </div>
 
                 <label for="for-category" class="col-sm-3 control-label">Kategori</label>

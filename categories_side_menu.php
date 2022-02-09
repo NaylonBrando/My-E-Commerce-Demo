@@ -26,7 +26,6 @@ function listAllCategories($parentId = 0)
 
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,17 +35,13 @@ function listAllCategories($parentId = 0)
 </head>
 <body>
 
-
 <div class="vertical">
     <ul>
         <li><a href="mainpage.php">Tümü</a></li>
-        <?php
-        listAllCategories();
-        ?>
+        <?php listAllCategories(); ?>
 
     </ul>
 </div>
-
 
 </body>
 </html>

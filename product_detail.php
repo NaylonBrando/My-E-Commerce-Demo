@@ -7,4 +7,3 @@
 <?php include('product_detail_body.php') ?>
 </body>
 </html>
-

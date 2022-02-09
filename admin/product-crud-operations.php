@@ -131,11 +131,11 @@ if (isset($_POST['update-product'])) {
             mysqli_query($con, $updateProductCategory);
 
             mysqli_close($con);
-            echo "Ürün Güncellendi";
+            echo 'Ürün Güncellendi';
             header("refresh:1;url=admin-update-product.php?productId=$productId");
         }
     } elseif ($_FILES['image']['size'] > 5 * MB || !in_array($fileType, $allowTypes)) {
-        echo "Resim boyutu 5 megabyteden fazla olamaz veya türü jpg, png, jpeg değil.";
+        echo 'Resim boyutu 5 megabyteden fazla olamaz veya türü jpg, png, jpeg değil.';
         header("refresh:1;url=admin-update-product.php?productId=$productId");
     } else {
         $newTargetPath = substr($targetFilePath, 1);
@@ -151,7 +151,7 @@ if (isset($_POST['update-product'])) {
             $updateQueryResult = mysqli_query($con, $updateQuery);
             if ($updateQueryResult) {
 
-                echo "Ürün Güncellendi";
+                echo 'Ürün Güncellendi';
                 header("refresh:1;url=admin-update-product.php?productId=$productId");
             }
         }
@@ -170,8 +170,6 @@ if (isset($_POST["delete_product"])) {
         header("refresh:0.5;url=admin-list-products.php");
 
     }
-
-
 }
 ?>
 

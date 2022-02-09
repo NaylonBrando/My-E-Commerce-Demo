@@ -9,9 +9,11 @@ $totalRecord = $pdDal->countProducts();
 $pageNumber = ceil($totalRecord / $limit);
 
 $catId = 0;
-if(isset($_GET['catId'])){ $catId=$_GET['catId']; }
-$totalRecordWithCategoryFilter =0;
-$pageNumberWithCategoryFilter =0;
+if (isset($_GET['catId'])) {
+    $catId = $_GET['catId'];
+}
+$totalRecordWithCategoryFilter = 0;
+$pageNumberWithCategoryFilter = 0;
 
 function productCards()
 {
@@ -57,8 +59,8 @@ function categoryFilter($id)
     $resultProduct = $productsData->getByMultipleCategoryId(getCategoryIdsByParentId($id), $startLimit, $limit);
 
     if ($resultProduct != null) {
-        $totalRecordWithCategoryFilter=$productsData->countProductWithCategoryFilter(getCategoryIdsByParentId($id));
-        $pageNumberWithCategoryFilter=ceil($totalRecordWithCategoryFilter / $limit);
+        $totalRecordWithCategoryFilter = $productsData->countProductWithCategoryFilter(getCategoryIdsByParentId($id));
+        $pageNumberWithCategoryFilter = ceil($totalRecordWithCategoryFilter / $limit);
         while ($row = mysqli_fetch_assoc($resultProduct)) {
             echo productCard($row["product_name"], $row["product_price"], $row["product_image"], $row["id"]);
         }
@@ -112,35 +114,34 @@ function getCategoryIdsByParentIdRecursive($parentId, $disaridan)
                     <ul class="pagination justify-content-end">
                         <?php
                         //Pagination with cateogires
-                        if(isset($_GET['catId'])){
+                        if (isset($_GET['catId'])) {
 
                             if ($page > 1) {
                                 $newPage = $page - 1;
-                                echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' .$catId .'&pg='.$newPage . '"'.'>Geri</a></li>';
+                                echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' . $catId . '&pg=' . $newPage . '"' . '>Geri</a></li>';
                             } else {
                                 echo '<li class="page-item disabled"><a class="page-link" href="#">Geri</a></li>';
                             }
                             $record = 2;
                             for ($i = $page - $record; $i <= $page + $record; $i++) {
                                 if ($i == $page) {
-                                    echo '<li class="page-item active"><a class="page-link" href="mainpage.php?catId=' .$catId .'&pg=' . $i . '"' . '>' . $i . '</a></li>';
+                                    echo '<li class="page-item active"><a class="page-link" href="mainpage.php?catId=' . $catId . '&pg=' . $i . '"' . '>' . $i . '</a></li>';
                                 } else {
                                     if ($i > 0 and $i <= $pageNumberWithCategoryFilter) {
-                                        echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' .$catId .'&pg=' . $i . '"' . '>' . $i . '</a></li>';
+                                        echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' . $catId . '&pg=' . $i . '"' . '>' . $i . '</a></li>';
                                     }
                                 }
                             }
 
                             if ($page < $pageNumberWithCategoryFilter) {
                                 $newPage = $page + 1;
-                                echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' .$catId .'&pg='.$newPage . '"' . '>İleri</a></li>';
+                                echo '<li class="page-item"><a class="page-link" href="mainpage.php?catId=' . $catId . '&pg=' . $newPage . '"' . '>İleri</a></li>';
                             } else {
                                 echo '<li class="page-item disabled"><a class="page-link" href="#">İleri</a></li>';
                             }
 
-                        }
-                        //Pagination without cateogires
-                        else{
+                        } //Pagination without cateogires
+                        else {
                             if ($page > 1) {
                                 $newPage = $page - 1;
                                 echo '<li class="page-item"><a class="page-link" href="mainpage.php?pg=' . $newPage . '"' . '>Geri</a></li>';

@@ -5,17 +5,16 @@ $con = mysqli_connect("localhost", "root", "", "ecommerce");
 
 class ProductDal
 {
-    public function getAllProducts($startLimit=NULL, $limit=NULL)
+    public function getAllProducts($startLimit = NULL, $limit = NULL)
     {
         global $sql, $con;
 
-        if($startLimit==null && $limit==null ){
-            $result = mysqli_query($con, $sql . " products ORDER BY İD ASC");
+        if ($startLimit == null && $limit == null) {
+            $result = mysqli_query($con, $sql . " products ORDER BY ID ASC");
             if (mysqli_num_rows($result) > 0) {
                 return $result;
             }
-        }
-        else{
+        } else {
             $result = mysqli_query($con, $sql . " products ORDER BY product_name ASC LIMIT $startLimit,$limit");
             if (mysqli_num_rows($result) > 0) {
                 return $result;
@@ -29,12 +28,13 @@ class ProductDal
         global $sql, $con;
 
         $result = mysqli_query($con, "SELECT COUNT(*) FROM products");
-        $result= mysqli_fetch_row($result);
+        $result = mysqli_fetch_row($result);
         return $result[0];
 
     }
 
-    public  function  countProductWithCategoryFilter(array $array){
+    public function countProductWithCategoryFilter(array $array)
+    {
         global $con;
         $idString = "";
         $arrayLength = count($array);
@@ -55,7 +55,7 @@ class ProductDal
         $result = mysqli_query($con, $newQuery);
 
         if (mysqli_num_rows($result) > 0) {
-            $result= mysqli_fetch_row($result);
+            $result = mysqli_fetch_row($result);
             return $result[0];
         }
     }
