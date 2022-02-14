@@ -14,10 +14,16 @@ class ProductDal
             if (mysqli_num_rows($result) > 0) {
                 return $result;
             }
+            else{
+                return null;
+            }
         } else {
             $result = mysqli_query($con, $sql . " products ORDER BY product_name ASC LIMIT $startLimit,$limit");
             if (mysqli_num_rows($result) > 0) {
                 return $result;
+            }
+            else{
+                return null;
             }
         }
 
@@ -70,6 +76,9 @@ class ProductDal
         if (mysqli_num_rows($result) > 0) {
             return $result;
         }
+        else{
+            return null;
+        }
 
     }
 
@@ -86,6 +95,9 @@ class ProductDal
 
         if (mysqli_num_rows($result) > 0) {
             return $result;
+        }
+        else{
+            return null;
         }
 
     }
@@ -113,6 +125,9 @@ class ProductDal
 
         if (mysqli_num_rows($result) > 0) {
             return $result;
+        }
+        else{
+            return null;
         }
 
     }

@@ -20,13 +20,12 @@ if (isset($_POST['add-product'])) {
     define('MB', 1048576);
 
 
-    //business katmanı gibi burası
-    //dataaccess katmanım service olacak
+
     $productCheckQuery = mysqli_query($con, "SELECT * FROM products WHERE product_name='$productName'");
     $num_row = mysqli_num_rows($productCheckQuery);
     if ($num_row > 0) {
 
-        mysqli_close($con);
+
         echo "<h2> Böyle bir ürün zaten var! <h2>";
         header("refresh:0.5;url=admin-add-product.php");
 
@@ -56,7 +55,6 @@ if (isset($_POST['add-product'])) {
                     $p_to_c_add_query = mysqli_query($con, "INSERT INTO product_to_categories (
                    product_id, category_id) 
                    VALUES('$productId','$categoryId')");
-                    mysqli_close($con);
                     echo "<h2>Ürün resmi ile eklendi!</h2>";
                     header('refresh:0.5;url=admin-update-product.php?productId=' . $productId);
 
@@ -65,7 +63,6 @@ if (isset($_POST['add-product'])) {
 
             } else {
 
-                mysqli_close($con);
                 echo "<h2>Üzgünüm, resim yüklenirken bir hata oluştu! </h2>";
                 header("refresh:1;url=admin-add-product.php");
 

@@ -25,19 +25,23 @@ function components()
         echo $str;
     }
 }
-
+$str = "";
 function listAllCategories($parentId = 0)
 {
-    global $con;
+    global $con, $str;
     $result = mysqli_query($con, "SELECT * FROM categories WHERE parent_id = '$parentId'");
 
     if (mysqli_num_rows($result) > 0) {
+
         while ($row = mysqli_fetch_assoc($result)) {
 
-            echo "<li>" . $row['category_name'] . "<ul> ";
-            listAllCategories($row['id']);
-            echo "</ul> </li>";
+            $str.= "<li>" . $row['category_name'] . "<ul> ";
+            $str.=listAllCategories($row['id']);
+            $str.= "</ul> </li>";
         }
+    }
+    if ($parentId==0){
+        echo $str;
     }
 }
 ?>

@@ -4,14 +4,15 @@ function productDetails(int $id)
 
     $productsData = new ProductDal();
     $result = $productsData->getProductById($id);
-    $row = mysqli_fetch_assoc($result);
-    $product_id = $row["id"];
-    $product_name = $row["product_name"];
-    $product_price = $row["product_price"];
-    $product_image = $row["product_image"];
-    $product_description = $row["product_description"];
+    if ($result != null) {
+        $row = mysqli_fetch_assoc($result);
+        $product_id = $row["id"];
+        $product_name = $row["product_name"];
+        $product_price = $row["product_price"];
+        $product_image = $row["product_image"];
+        $product_description = $row["product_description"];
 
-    $element = "
+        $element = "
 <div class=\"card\">
         <div class=\"card-body\">
             <h3 class=\"card-title\">$product_name</h3>
@@ -32,8 +33,13 @@ function productDetails(int $id)
         </div>
     </div>
 ";
-    echo $element;
+        echo $element;
+    }
+    else{
+        header('location:mainpage.php');
+    }
 }
+
 ?>
 
 <div class="container">

@@ -12,45 +12,53 @@ if (isset($_GET['catId'])) {
 
     $categoryDal = new CategoryDal();
     $resultCategory = $categoryDal->GetCategoryById($_GET['catId']);
-    $row = mysqli_fetch_assoc($resultCategory);
-    $categoryId = $row["id"];
-    $categoryName = $row["category_name"];
-    $parentId = $row["parent_id"];
+    if($resultCategory!=null) {
+        $row = mysqli_fetch_assoc($resultCategory);
+        $categoryId = $row["id"];
+        $categoryName = $row["category_name"];
+        $parentId = $row["parent_id"];
 
-    function CategoryComponent($id, $categoryName)
-    {
-        return "<option name='category_id' value=\"$id\">$categoryName</option>";;
-    }
-
-    function CategoryComponentParent($id, $categoryName)
-    {
-        return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
-    }
-
-
-    function CategoryComponents()
-    {
-        global $categoryId, $parentId;
-        $categoryDal = new CategoryDal();
-        $result = $categoryDal->GetAllCategories();
-
-        if ($result != null) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                if ($categoryId != $row['id']) {
-                    if ($parentId == $row['id']) {
-                        echo CategoryComponentParent($row["id"], $row["category_name"]);
-                    } else {
-                        echo CategoryComponent($row["id"], $row["category_name"]);
-                    }
-                }
-            }
+        function CategoryComponent($id, $categoryName)
+        {
+            return "<option name='category_id' value=\"$id\">$categoryName</option>";;
         }
 
+        function CategoryComponentParent($id, $categoryName)
+        {
+            return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
+        }
+
+
+        function CategoryComponents()
+        {
+            global $categoryId, $parentId;
+            $categoryDal = new CategoryDal();
+            $result = $categoryDal->GetAllCategories();
+
+            if ($result != null) {
+                $str = "";
+                while ($row = mysqli_fetch_assoc($result)) {
+                    if ($categoryId != $row['id']) {
+                        if ($parentId == $row['id']) {
+                            $str .= CategoryComponentParent($row["id"], $row["category_name"]);
+                        } else {
+                            $str .= CategoryComponent($row["id"], $row["category_name"]);
+                        }
+                    }
+                }
+                echo $str;
+            }
+
+        }
+    }
+    else{
+        echo '<h2>Bu id numaralı bir kategori yok</h2>';
+        header("refresh:0.5;url=admin-list-categories.php");
     }
 
 } else {
-    echo '<h2>Seçili Ürün Yok </h2>';
-    header("refresh:0.5;url=admin-list-products.php");
+    echo '<h2>Seçili Bir Kategori Yok</h2>';
+    header("refresh:0.5;url=admin-list-categories.php");
 }
 
 ?>

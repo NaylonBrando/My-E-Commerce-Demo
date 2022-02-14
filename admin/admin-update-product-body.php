@@ -13,46 +13,53 @@ if (isset($_GET['productId'])) {
 
     $productDal = new ProductDal();
     $resultProduct = $productDal->getProductById($_GET['productId']);
-    $row = mysqli_fetch_assoc($resultProduct);
-    $product_id = $row["id"];
-    $product_name = $row["product_name"];
-    $product_price = $row["product_price"];
-    $product_image = $row["product_image"];
-    $product_quantity = $row["product_quantity"];
-    $product_description = $row["product_description"];
+    if ($resultProduct != null) {
+        $row = mysqli_fetch_assoc($resultProduct);
+        $product_id = $row["id"];
+        $product_name = $row["product_name"];
+        $product_price = $row["product_price"];
+        $product_image = $row["product_image"];
+        $product_quantity = $row["product_quantity"];
+        $product_description = $row["product_description"];
 
 
-    function productAvaibleCategories()
-    {
-        global $con, $product_id;
-        $productAndCategoyJoinQuery = "SELECT ca.category_name, ptc.product_id FROM categories AS ca 
+        function productAvaibleCategories()
+        {
+            global $con, $product_id;
+            $productAndCategoyJoinQuery = "SELECT ca.category_name, ptc.product_id FROM categories AS ca 
     INNER JOIN product_to_categories as ptc on ca.id = ptc.category_id WHERE ptc.product_id = '$product_id'";
-        $joinResult = mysqli_query($con, $productAndCategoyJoinQuery);
+            $joinResult = mysqli_query($con, $productAndCategoyJoinQuery);
 
-        while ($row = mysqli_fetch_assoc($joinResult)) {
-            echo '<h6>' . $row['category_name'] . '</h6>';
-        }
-    }
-
-
-    function CategoryComponent($id, $categoryName)
-    {
-        return "<option name='category_id' value=\"$id\">$categoryName</option>";
-    }
-
-    function CategoryComponents()
-    {
-        $categoryDal = new CategoryDal();
-        $result = $categoryDal->GetAllCategories();
-
-        if ($result != null) {
             $str = "";
-            while ($row = mysqli_fetch_assoc($result)) {
-                $str .= CategoryComponent($row["id"], $row["category_name"]);
+            while ($row = mysqli_fetch_assoc($joinResult)) {
+                $str .= '<h6>' . $row['category_name'] . '</h6>';
             }
             echo $str;
         }
 
+
+        function CategoryComponent($id, $categoryName)
+        {
+            return "<option name='category_id' value=\"$id\">$categoryName</option>";
+        }
+
+        function CategoryComponents()
+        {
+            $categoryDal = new CategoryDal();
+            $result = $categoryDal->GetAllCategories();
+
+            if ($result != null) {
+                $str = "";
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $str .= CategoryComponent($row["id"], $row["category_name"]);
+                }
+                echo $str;
+            }
+
+        }
+    } else {
+        echo "<h2>Bu id Numaralı Bir Ürün Yok </h2>";
+        header("refresh:0.5;url=admin-list-products.php");
     }
 
 } else {

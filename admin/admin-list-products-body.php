@@ -37,10 +37,12 @@ function components()
     if ($result == "" || $result == null) {
         echo "<h3>Listelenecek Bir Ürün Yok!</h3>";
     } else {
+        $str="";
         while ($row = mysqli_fetch_assoc($result)) {
-            echo component($row["product_name"], $row["product_price"], $row["product_image"], $row["id"], $row["product_description"], $row["product_quantity"]);
+            $str.=component($row["product_name"], $row["product_price"], $row["product_image"], $row["id"], $row["product_description"], $row["product_quantity"]);
 
         }
+        echo $str;
     }
 }
 
