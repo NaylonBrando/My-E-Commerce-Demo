@@ -10,7 +10,7 @@ if (!empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'])) {
 
 $uri = 'http://';
 $uri .= $_SERVER['HTTP_HOST'];
-header('Location: ' . $uri . '/My-ECommerce-Demo/mainpage.php');
+header('Location: ' . $uri . '/mainpage.php');
 
 ?>
 </body>

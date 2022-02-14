@@ -4,22 +4,25 @@ include('category_dal.php');
 ?>
 <?php
 
-
+$str="";
 function listAllCategories($parentId = 0)
 {
-    global $con;
+    global $con, $str;
     $result = mysqli_query($con, "SELECT * FROM categories WHERE parent_id = '$parentId'");
 
 
     if (mysqli_num_rows($result) > 0) {
+
         while ($row = mysqli_fetch_assoc($result)) {
 
             $id = $row['id'];
-            echo '<li><a href="mainpage.php?catId=' .$id. '&pg=1' . '">' . $row['category_name'] . '</a> <ul>';
-            listAllCategories($row['id']);
-            echo '</ul> </li>';
+            $str.='<li><a href="mainpage.php?catId=' .$id. '&pg=1' . '">' . $row['category_name'] . '</a> <ul>';
+            $str.=listAllCategories($row['id']);
+            $str.='</ul> </li>';
         }
-
+        if ($parentId==0){
+            echo $str;
+        }
     }
 
 }
@@ -39,7 +42,6 @@ function listAllCategories($parentId = 0)
     <ul>
         <li><a href="mainpage.php">Tümü</a></li>
         <?php listAllCategories(); ?>
-
     </ul>
 </div>
 

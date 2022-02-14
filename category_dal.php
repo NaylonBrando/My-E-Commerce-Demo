@@ -14,6 +14,9 @@ class CategoryDal
         if (mysqli_num_rows($result) > 0) {
             return $result;
         }
+        else{
+            return null;
+        }
     }
 
     public function GetCategoryById(int $id)
@@ -25,6 +28,9 @@ class CategoryDal
 
         if (mysqli_num_rows($result) > 0) {
             return $result;
+        }
+        else{
+            return null;
         }
 
     }
