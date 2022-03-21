@@ -2,23 +2,15 @@
 
 namespace src\entity;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="src\repository\UserRepository")
- * @ORM\Table(name="users")
+ * @ORM\Entity(repositoryClass="src\repository\AdminRepository")
+ * @ORM\Table(name="admins")
  */
-class User
+class Admin
 {
-
-    public function __construct()
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->isActive = true;
-    }
 
     /**
      * @ORM\Id
@@ -48,15 +40,14 @@ class User
     private string $password;
 
     /**
-     * @ORM\Column(type="datetime", name="created_at")
-     * @var DateTimeInterface
+     * @ORM\Column(type="string")
      */
-    private DateTimeInterface $createdAt;
+    private string $adminType;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private bool $isActive;
+    public function __construct()
+    {
+        $this->adminType = "admin";
+    }
 
     public function getId(): int
     {
@@ -84,7 +75,6 @@ class User
         $this->lastName = $lastName;
     }
 
-
     public function getEmail(): string
     {
         return $this->email;
@@ -94,7 +84,6 @@ class User
     {
         $this->email = $email;
     }
-
 
     public function getPassword(): string
     {
@@ -106,25 +95,14 @@ class User
         $this->password = $password;
     }
 
-    public function getCreatedAt(): DateTimeImmutable|DateTimeInterface
+    public function getAdminType(): string
     {
-        return $this->createdAt;
+        return $this->adminType;
     }
 
-    public function setCreatedAt(DateTimeImmutable|DateTimeInterface $createdAt): void
+    public function setAdminType(string $adminType): void
     {
-        $this->createdAt = $createdAt;
+        $this->adminType = $adminType;
     }
-
-    public function getIsActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive($isActive): void
-    {
-        $this->isActive = $isActive;
-    }
-
 
 }
