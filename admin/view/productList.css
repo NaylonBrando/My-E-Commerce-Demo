@@ -1,0 +1,19 @@
+.miniCol {
+    width: 50px;
+}
+
+th.medCol {
+    width: 75px;
+}
+
+.lgTitleCol {
+    width: 395px;
+    height: 100%;
+
+}
+p.title{
+    width: 395px;
+    white-space: nowrap; /* alt satıra hiç inme */
+    overflow: hidden; /* taşanları gizle */
+    text-overflow: ellipsis; /* eğer uzunsa üç nokta koy */
+}
