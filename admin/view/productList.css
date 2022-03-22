@@ -11,7 +11,8 @@ th.medCol {
     height: 100%;
 
 }
-p.title{
+
+p.title {
     width: 395px;
     white-space: nowrap; /* alt satıra hiç inme */
     overflow: hidden; /* taşanları gizle */

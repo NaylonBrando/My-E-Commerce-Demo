@@ -19,8 +19,8 @@
                     </div>
                     <div class="col-9">
                         <?php
-                        if (isset($_SESSION['brand_error'])) {
-                            echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['brand_error'] . '</div>';
+                        if (isset($_SESSION['brand_add_error'])) {
+                            echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['brand_add_error'] . '</div>';
                         }
                         ?>
                     </div>

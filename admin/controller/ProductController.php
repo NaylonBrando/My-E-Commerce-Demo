@@ -40,11 +40,10 @@ class ProductController extends AdminAbstractController
             $title = "Update Product Slug: " . $product->getSlug();
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('updateProduct', 'homepage', $pageModulePath);
-            require_once($templateFilePath);
         } else {
             $templateFilePath = str_replace('updateProduct', '404', $pageModulePath);
-            require_once($templateFilePath);
         }
+        require_once($templateFilePath);
     }
 
     public function add()
@@ -161,7 +160,7 @@ class ProductController extends AdminAbstractController
     }
 
     public function productTableRow($id, $stockNumber, $isActive, $title, $createdAt,
-                                    $category, $brand, $quantity, $price)
+                                    $category, $brand, $quantity, $price): string
     {
         $status = '';
 

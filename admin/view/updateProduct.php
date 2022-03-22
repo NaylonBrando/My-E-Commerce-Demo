@@ -14,7 +14,7 @@ $categoryController = new CategoryController();
             <a href="/admin/product/image/<?php
             /** @var Product $product */
             echo $product->getId()
-            ?>" >
+            ?>">
                 <button type="button" class="btn btn-info">Images</button>
             </a>
             <hr>

@@ -230,7 +230,7 @@ class Router
 
                 }
             }
-            if($match==false){
+            if ($match == false) {
                 $pageNotFoundPath = __DIR__ . "/view/404.php";
                 require_once($pageNotFoundPath);
             }

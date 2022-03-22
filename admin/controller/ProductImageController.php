@@ -9,8 +9,6 @@ class ProductImageController extends AdminAbstractController
 
     public function show(string $pageModulePath, $id)
     {
-
-
         $em = $this->getEntityManager();
         /** @var Product $product */
         $product = $em->find(Product::class, $id[1]);
@@ -20,16 +18,12 @@ class ProductImageController extends AdminAbstractController
             $slug = 'Slug: ' . $product->getSlug();
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('productImage', 'homepage', $pageModulePath);
-            require_once($templateFilePath);
-            if (isset($_SESSION['imageUploadError'])) {
-                unset($_SESSION['imageUploadError']);
-            }
         } else {
             $templateFilePath = str_replace('productImage', '404', $pageModulePath);
-            require_once($templateFilePath);
-            if (isset($_SESSION['imageUploadError'])) {
-                unset($_SESSION['imageUploadError']);
-            }
+        }
+        require_once($templateFilePath);
+        if (isset($_SESSION['imageUploadError'])) {
+            unset($_SESSION['imageUploadError']);
         }
 
     }
@@ -38,11 +32,10 @@ class ProductImageController extends AdminAbstractController
     {
         $maxFile = 5;
         $em = $this->getEntityManager();
-        /** @var ProductImageRepository $entityReposity */
-        $entityReposity = $em->getRepository(ProductImage::class);
+        /** @var ProductImageRepository $entityRepository */
+        $entityRepository = $em->getRepository(ProductImage::class);
         /** @var ProductImage[] $entityResult */
-        $entityResult = $entityReposity->findByProductId($productId);
-        //buraya ürün resimleri var mı yok mu sorgulama gelecek. resimn varsa max filesten düsecek
+        $entityResult = $entityRepository->findByProductId($productId);
         if ($entityResult) {
             $maxFile = $maxFile - count($entityResult);
         }
@@ -51,9 +44,6 @@ class ProductImageController extends AdminAbstractController
         $withoutImage = strtolower('You did not provide any files.');
 
         if (strcmp(strtolower($uploadResult['errors'][0]), $withoutImage) == 0) {
-            if (isset($_SESSION['imageUploadError'])) {
-                unset($_SESSION['imageUploadError']);
-            }
             header('location: /admin/product');
         } elseif ($uploadResult['fileNames']) {
             foreach ($uploadResult['fileNames'] as $fileName) {
@@ -62,11 +52,7 @@ class ProductImageController extends AdminAbstractController
                 $productImage->setPath($fileName);
                 $em->persist($productImage);
             }
-            //hata var mı kontrol. varsa global degiskene ekleyip yönlendir, yoksa direkt yönlendşr
             $em->flush();
-            if (isset($_SESSION['imageUploadError'])) {
-                unset($_SESSION['imageUploadError']);
-            }
             if ($uploadResult['errors']) {
                 $_SESSION['imageUploadError'] = $uploadResult['errors'];
             }
@@ -75,7 +61,6 @@ class ProductImageController extends AdminAbstractController
             $_SESSION['imageUploadError'] = $uploadResult['errors'];
             header('location: /admin/product/image/' . $productId);
         }
-
 
 
     }
@@ -100,7 +85,11 @@ class ProductImageController extends AdminAbstractController
             }
 
 
+        } else {
+            $page404 = "../admin/view/404.php";
+            require_once($page404);
         }
+
     }
 
     public function deleteAll(int $productId): bool
@@ -120,11 +109,7 @@ class ProductImageController extends AdminAbstractController
 
     public function setThumbnail($imageId)
     {
-        //id den resmi getir
-        //getirilen resimdeki product_idden ilişkili bütün resimlerin listesini getir
-        //isthumb true var mı sorgula yoksa direkt ilgili idyi true yap
-        //varsa onu false et, ilgili idyi true et
-        //son
+
         $em = $this->getEntityManager();
         /** @var ProductImage $selectedImageForThumbnail */
         $selectedImageForThumbnail = $em->find(ProductImage::class, $imageId);
@@ -152,10 +137,10 @@ class ProductImageController extends AdminAbstractController
     public function imageCards($productId)
     {
         $em = $this->getEntityManager();
-        /** @var ProductImageRepository $entityReposity */
-        $entityReposity = $em->getRepository(ProductImage::class);
+        /** @var ProductImageRepository $entityRepository */
+        $entityRepository = $em->getRepository(ProductImage::class);
         /** @var ProductImage[] $entityResult */
-        $entityResult = $entityReposity->findByProductId($productId);
+        $entityResult = $entityRepository->findByProductId($productId);
         foreach ($entityResult as $row) {
             echo self::imageCard('/../upload/' . $row->getPath(), $row->getId(), $row->getIsThumbnail());
         }

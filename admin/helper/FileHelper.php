@@ -18,7 +18,7 @@ class FileHelper
         $allowedMimeTypes = explode(',', UPLOAD_ALLOWED_MIME_TYPES);
 
         if (!empty($_FILES)) {
-            if (isset($maxFile) && count($_FILES[$formInputName]['name']) > $maxFile) {
+            if (count($_FILES[$formInputName]['name']) > $maxFile) {
                 $lessValue = $maxFile;
                 $errors[] = 'You can add only ' . $lessValue . ' more image';
                 return array('errors' => $errors);

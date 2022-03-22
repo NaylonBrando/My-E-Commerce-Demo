@@ -19,6 +19,9 @@ class BrandController extends AdminAbstractController
         $templateFilePath = str_replace('addBrand', 'homepage', $pageModulePath);
         $title = "Add Brand";
         require_once($templateFilePath);
+        if (isset($_SESSION['brand_add_error'])) {
+            unset($_SESSION['brand_add_error']);
+        }
     }
 
     public function showUpdate($pageModulePath, $id)
@@ -30,83 +33,69 @@ class BrandController extends AdminAbstractController
         if ($brand) {
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('updateBrand', 'homepage', $pageModulePath);
-            require_once($templateFilePath);
-            if (isset($_SESSION['brand_error'])) {
-                unset($_SESSION['brand_error']);
-            }
         } else {
             $templateFilePath = str_replace('updateBrand', '404', $pageModulePath);
-            require_once($templateFilePath);
-            if (isset($_SESSION['brandUpdateError'])) {
-                unset($_SESSION['brandUpdateError']);
-            }
+        }
+        require_once($templateFilePath);
+        if (isset($_SESSION['brand_update_error'])) {
+            unset($_SESSION['brand_update_error']);
         }
     }
 
     public function add()
     {
-        $compareResult = false;
         $brandName = $_POST['brandName'];
 
-        $newBrand = new Brand();
-        $newBrand->setName($brandName);
+        $brand = new Brand();
+        $brand->setName($brandName);
 
-        $brands = $this->getAll();
         $em = $this->getEntityManager();
+        /** @var Brand $brandExitsQuery */
+        $brandExitsQuery = $em->getRepository(Brand::class)->
+        findOneBy(array('name' => $brandName));
 
-        if (!$brands) {
-
-            $em->persist($newBrand);
+        if(!$brandExitsQuery){
+            $em->persist($brand);
             $em->flush();
             header('location: /admin/brand');
-        } else {
-            foreach ($brands as $brand) {
-                if (strcmp(strtolower($brand->getName()), strtolower($newBrand->getName())) == 0) {
-                    $compareResult = true;
-                    break;
-                }
-            }
-            if ($compareResult) {
-                $_SESSION['brand_error'] = 'This brand is already exists';
-                header('location: /admin/brand/add');
-            } else {
-                $em->persist($newBrand);
-                $em->flush();
-                if (isset($_SESSION['brand_error'])) {
-                    unset($_SESSION['brand_error']);
-                }
-                header('location: /admin/brand');
-            }
         }
+        else{
+            $_SESSION['brand_add_error'] = $brandExitsQuery->getName() . ' brand is already exists';
+            header('location: /admin/brand/add');
+        }
+    }
+
+    public function getAll(): ?array
+    {
+        $em = $this->getEntityManager();
+        /** @var Brand[] $result */
+        $result = $em->getRepository(Brand::class)->findAll();
+        if ($result) {
+            return $result;
+        } else {
+            return null;
+        }
+
     }
 
     public function update()
     {
         $brandId = $_POST['brandId'];
-        $brandName=$_POST['brandName'];
+        $brandName = $_POST['brandName'];
 
         $em = $this->getEntityManager();
-        $currentBrand = $em->find(Brand::class,$brandId);
-        $brands = $this->getAll();
-        $compareResult = false;
+        /** @var Brand $brandExitsQuery */
+        $brandExitsQuery = $em->getRepository(Brand::class)->findOneBy(array('name' => $brandName));
 
-        foreach ($brands as $brand) {
-            if (strcmp(strtolower($brand->getName()), strtolower($brandName)) == 0) {
-                $compareResult = true;
-                break;
-            }
-        }
-        if ($compareResult) {
-            $_SESSION['brandUpdateError'] = 'This brand is already exists';
-            header('location: /admin/brand/update/'.$brandId);
-        } else {
-            $currentBrand->setName($brandName);
-            $em->persist($currentBrand);
+        if(!$brandExitsQuery){
+            $brandExitsQuery->setName($brandName);
+            $em->persist($brandExitsQuery);
             $em->flush();
-            if (isset($_SESSION['brandUpdateError'])) {
-                unset($_SESSION['brandUpdateError']);
-            }
             header('location: /admin/brand');
+        }
+        else{
+            $_SESSION['brand_update_error'] = $brandExitsQuery->getName() . ' brand is already exists';
+            header('location: /admin/brand/update/' . $brandId);
         }
     }
 
@@ -119,26 +108,13 @@ class BrandController extends AdminAbstractController
             $em->remove($brand);
             $em->flush();
             header('location: /admin/brand');
+        } else {
+            $page404 = "../admin/view/404.php";
+            require_once($page404);
         }
-        $page404 = __DIR__ . "/admin/viev/404.php";
-        require_once($page404);
+
 
     }
-
-
-
-    public function getAll()
-    {
-        $em = $this->getEntityManager();
-        /** @var Brand[] $result */
-        $result = $em->getRepository(Brand::class)->findAll();
-        if ($result) {
-            return $result;
-        }
-        return null;
-    }
-
-
 
     public function brandTableRowGenerator()
     {
@@ -156,7 +132,7 @@ class BrandController extends AdminAbstractController
         }
     }
 
-    public function brandTableRow($id, $brandName)
+    public function brandTableRow($id, $brandName): string
     {
         $element = "
         <tr>

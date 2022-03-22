@@ -14,6 +14,9 @@ class CategoryController extends AdminAbstractController
         $templateFilePath = str_replace('category', 'homepage', $pageModulePath);
         $title = "Category";
         require_once($templateFilePath);
+        if (isset($_SESSION['category_add_error'])) {
+            unset($_SESSION['category_add_error']);
+        }
     }
 
     public function showUpdate($pageModulePath, $id)
@@ -49,17 +52,14 @@ class CategoryController extends AdminAbstractController
             $this->getEntityManager()->flush();
 
             if ($category->getId()) {
-                if (isset($_SESSION['category_error'])) {
-                    unset($_SESSION['category_error']);
-                }
                 header('Location:/admin/category');
             } else {
-                $_SESSION['category_error'] = 'Bir şeyler ters gitti.';
-                header('location: /category');
+                $_SESSION['category_add_error'] = 'There was a problem adding the category.';
+                header('location: /admin/category');
             }
         } else {
-            $_SESSION['category_error'] = 'Böyle bir kategori mevcut var.';
-            header('location: /category');
+            $_SESSION['category_add_error'] = 'This category already exists';
+            header('location: /admin/category');
         }
 
     }
@@ -71,7 +71,7 @@ class CategoryController extends AdminAbstractController
         $em->remove($category);
 
         /** @var src\entity\Category $childCatArray */
-        $childCatArray = $em->getRepository(src\entity\Category::class)->findBy(array('parent_id' => $id));
+        $childCatArray = $em->getRepository(Category::class)->findBy(array('parent_id' => $id));
         /** @var src\entity\Category $childCat */
         foreach ($childCatArray as $childCat) {
             $this->delete($childCat->getId());
@@ -97,7 +97,7 @@ class CategoryController extends AdminAbstractController
 
     }
 
-    function categoryComponentParent($id, $categoryName)
+    function categoryComponentParent($id, $categoryName): string
     {
         return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
     }

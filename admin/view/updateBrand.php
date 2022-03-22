@@ -38,8 +38,8 @@ $brandController = new BrandController();
                 </div>
                 <div class="col-md-9">
                     <?php
-                    if (isset($_SESSION['brand_error'])) {
-                        echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['brand_error'] . '</div>';
+                    if (isset($_SESSION['brand_update_error'])) {
+                        echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['brand_update_error'] . '</div>';
                     }
                     ?>
             </form>

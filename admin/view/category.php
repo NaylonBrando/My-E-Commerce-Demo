@@ -42,7 +42,13 @@ $categoryController = new CategoryController();
                 </div>
             </form>
             <br>
-
+            <div>
+                <?php
+                if (isset($_SESSION['category_add_error'])) {
+                    echo '<div class="alert alert-warning mb-2 mt-2" role="alert">' . $_SESSION['category_add_error'] . '</div>' .'<hr>';
+                }
+                ?>
+            </div>
             <h4 class="text-center">Delete Category</h4>
             <hr>
             <form name="deleteCategoryForm" method="POST" onsubmit="SetCategoryIdToUrl('delete')">

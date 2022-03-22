@@ -22,7 +22,7 @@ class ProductToCategoryController extends AdminAbstractController
         }
     }
 
-    public function delete(int $productId)
+    public function delete(int $productId): bool
     {
         $em = $this->getEntityManager();
         $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(array('productId' => $productId));
