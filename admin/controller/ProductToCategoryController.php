@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\controller;
+
 use src\entity\ProductToCategory;
 
 class ProductToCategoryController extends AdminAbstractController

@@ -1,8 +1,11 @@
 <?php
 
+namespace admin\controller;
+
+use Connection\Connection;
 use Doctrine\ORM\EntityManager;
 
-require_once "bootstrap.php";
+require_once($_SERVER['DOCUMENT_ROOT'] . "/admin/bootstrap.php");
 
 class AdminAbstractController
 {
@@ -14,7 +17,7 @@ class AdminAbstractController
      */
     public function __construct()
     {
-        $connection = new Connection\Connection();
+        $connection = new Connection();
         $this->entityManager = $connection->entityManager;
     }
 

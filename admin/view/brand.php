@@ -1,4 +1,9 @@
-<?php $brandController = new BrandController() ?>
+<?php
+
+use admin\controller\BrandController;
+
+$brandController = new BrandController()
+?>
 
 <div class="pt-3">
     <h2>Brand</h2>

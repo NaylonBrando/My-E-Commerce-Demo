@@ -1,4 +1,9 @@
-<?php $productController = new ProductController(); ?>
+<?php
+
+use admin\controller\ProductController;
+
+$productController = new ProductController();
+?>
 
 <div class="pt-3">
     <h2>Product</h2>

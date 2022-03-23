@@ -1,4 +1,7 @@
 <?php
+
+use admin\controller\CategoryController;
+
 $categoryController = new CategoryController();
 ?>
 <script>
@@ -45,7 +48,7 @@ $categoryController = new CategoryController();
             <div>
                 <?php
                 if (isset($_SESSION['category_add_error'])) {
-                    echo '<div class="alert alert-warning mb-2 mt-2" role="alert">' . $_SESSION['category_add_error'] . '</div>' .'<hr>';
+                    echo '<div class="alert alert-warning mb-2 mt-2" role="alert">' . $_SESSION['category_add_error'] . '</div>' . '<hr>';
                 }
                 ?>
             </div>

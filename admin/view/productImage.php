@@ -1,7 +1,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-11 col-sm-6">
-            <h5><?php echo 'Id: ' . $id[1] ?></h5>
+            <h5><?php use admin\controller\ProductImageController;
+
+                echo 'Id: ' . $id[1] ?></h5>
             <h5><?php echo $slug ?></h5>
         </div>
         <div class="col-md-1 col-sm-6">

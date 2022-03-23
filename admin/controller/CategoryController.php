@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\controller;
+
 use src\entity\Category;
 use src\repository\CategoryRepository;
 
@@ -70,9 +72,9 @@ class CategoryController extends AdminAbstractController
         $category = $em->find(Category::class, $id);
         $em->remove($category);
 
-        /** @var src\entity\Category $childCatArray */
+        /** @var Category $childCatArray */
         $childCatArray = $em->getRepository(Category::class)->findBy(array('parent_id' => $id));
-        /** @var src\entity\Category $childCat */
+        /** @var Category $childCat */
         foreach ($childCatArray as $childCat) {
             $this->delete($childCat->getId());
         }
@@ -149,9 +151,9 @@ class CategoryController extends AdminAbstractController
         }
     }
 
-    function categoryComponent($id, $categoryName, $cateogryIdOfProduct = null): string
+    function categoryComponent($id, $categoryName, $categoryIdOfProduct = null): string
     {
-        if ($cateogryIdOfProduct != null) {
+        if ($categoryIdOfProduct != null) {
             return "<option selected value=\"$id\">$categoryName</option>";
         } else {
             return "<option value=\"$id\">$categoryName</option>";
@@ -163,12 +165,12 @@ class CategoryController extends AdminAbstractController
         global $str;
         $em = $this->getEntityManager();
 
-        /** @var src\entity\Category $childCatArray */
-        $childCatArray = $em->getRepository(src\entity\Category::class)->findBy(array('parent_id' => $parentId));
+        /** @var Category $childCatArray */
+        $childCatArray = $em->getRepository(Category::class)->findBy(array('parent_id' => $parentId));
         if (!$childCatArray && $parentId == 0) {
             return 'There is no existing a category ';
         } else {
-            /** @var src\entity\Category $childCat */
+            /** @var Category $childCat */
             foreach ($childCatArray as $childCat) {
                 $str .= "<li>" . $childCat->getName() . "<ul> ";
                 $str .= $this->categoryTree($childCat->getId());

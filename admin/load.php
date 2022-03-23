@@ -15,8 +15,8 @@ loader('../src/entity');
 loader('../src/repository');
 loader('../src/dto');
 loader('controller');
-loader(__DIR__.'/helper');
-require_once(__DIR__.'/Router.php');
+loader(__DIR__ . '/helper');
+require_once(__DIR__ . '/Router.php');
 
 
 

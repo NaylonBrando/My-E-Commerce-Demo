@@ -1,5 +1,8 @@
 <?php
 
+namespace admin\controller;
+
+use SlugGenerator;
 use src\dto\ProductDetailDto;
 use src\entity\Product;
 use src\entity\ProductToCategory;

@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\controller;
+
 use src\entity\Brand;
 
 class BrandController extends AdminAbstractController
@@ -54,12 +56,11 @@ class BrandController extends AdminAbstractController
         $brandExitsQuery = $em->getRepository(Brand::class)->
         findOneBy(array('name' => $brandName));
 
-        if(!$brandExitsQuery){
+        if (!$brandExitsQuery) {
             $em->persist($brand);
             $em->flush();
             header('location: /admin/brand');
-        }
-        else{
+        } else {
             $_SESSION['brand_add_error'] = $brandExitsQuery->getName() . ' brand is already exists';
             header('location: /admin/brand/add');
         }
@@ -87,13 +88,12 @@ class BrandController extends AdminAbstractController
         /** @var Brand $brandExitsQuery */
         $brandExitsQuery = $em->getRepository(Brand::class)->findOneBy(array('name' => $brandName));
 
-        if(!$brandExitsQuery){
+        if (!$brandExitsQuery) {
             $brandExitsQuery->setName($brandName);
             $em->persist($brandExitsQuery);
             $em->flush();
             header('location: /admin/brand');
-        }
-        else{
+        } else {
             $_SESSION['brand_update_error'] = $brandExitsQuery->getName() . ' brand is already exists';
             header('location: /admin/brand/update/' . $brandId);
         }

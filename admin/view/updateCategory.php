@@ -1,5 +1,6 @@
 <?php
 
+use admin\controller\CategoryController;
 use src\entity\Category;
 
 $categoryController = new CategoryController();

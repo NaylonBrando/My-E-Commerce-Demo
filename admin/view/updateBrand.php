@@ -1,5 +1,6 @@
 <?php
 
+use admin\controller\BrandController;
 use src\entity\Brand;
 
 $brandController = new BrandController();

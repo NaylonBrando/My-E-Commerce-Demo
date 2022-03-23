@@ -1,4 +1,8 @@
 <?php
+
+use admin\controller\BrandController;
+use admin\controller\CategoryController;
+
 $brandController = new BrandController();
 $categoryController = new CategoryController();
 ?>
@@ -40,13 +44,13 @@ $categoryController = new CategoryController();
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Quantity</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="[0-9]+ class=" form-control" name="quantity" id="for-quantity" required>
+                    <input type="text" pattern="[0-9]+" class="form-control" name="quantity" id="quantity" required>
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Stock Number</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="[0-9]+ class=" form-control" name="stockNumber" id="stockNumber"
-                    required>
+                    <input type="text" pattern="[0-9]+" class="form-control" name="stockNumber" id="stockNumber"
+                           required>
                 </div>
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>

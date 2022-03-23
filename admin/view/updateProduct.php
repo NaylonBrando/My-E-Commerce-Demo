@@ -1,5 +1,7 @@
 <?php
 
+use admin\controller\BrandController;
+use admin\controller\CategoryController;
 use src\entity\Product;
 use src\entity\ProductToCategory;
 
@@ -32,7 +34,7 @@ $categoryController = new CategoryController();
                     echo $product->getId()
                     ?>" type="hidden" class="form-control" name="productId">
                 </div>
-                <label for="for-product" class="col-sm-3 control-label"><h6>Title</h6></label>
+                <label for="for-product" class="col-sm-3 control-label font-weight-bold"><h6>Title</h6></label>
                 <div class="col-sm-9">
                     <input type="text" class="form-control" name="title" id="for-product" maxlength="80" required
                            autofocus

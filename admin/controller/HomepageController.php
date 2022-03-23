@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\controller;
+
 class HomepageController
 {
 

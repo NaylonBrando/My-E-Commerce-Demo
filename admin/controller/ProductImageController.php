@@ -1,5 +1,8 @@
 <?php
 
+namespace admin\controller;
+
+use FileHelper;
 use src\entity\Product;
 use src\entity\ProductImage;
 use src\repository\ProductImageRepository;
@@ -146,9 +149,9 @@ class ProductImageController extends AdminAbstractController
         }
     }
 
-    public function imageCard($imagePath, $imageId, $isTumbnail)
+    public function imageCard($imagePath, $imageId, $isThumbnail)
     {
-        if ($isTumbnail == false) {
+        if ($isThumbnail == false) {
 
             $element = "
             <div class=\"col-md-3 pb-3\">
