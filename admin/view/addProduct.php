@@ -22,32 +22,32 @@ $categoryController = new CategoryController();
                            autofocus>
                 </div>
 
-                <label for="for-category" class="col-sm-3 control-label"><h6>Category</h6></label>
+                <label for="categoryId" class="col-sm-3 control-label"><h6>Category</h6></label>
                 <div class="col-sm-3">
-                    <select class="form-control" name="categoryId" required>
+                    <select class="form-control" name="categoryId" id="categoryId" required>
                         <?php $categoryController->categoryComponents() ?>
                     </select>
                 </div>
 
-                <label for="for-category" class="col-sm-3 control-label"><h6>Brand</h6></label>
+                <label for="brandId" class="col-sm-3 control-label"><h6>Brand</h6></label>
                 <div class="col-sm-3">
-                    <select class="form-control" name="brandId" required>
+                    <select class="form-control" name="brandId" id="brandId" required>
                         <?php $brandController->brandOptionRowGenerator() ?>
                     </select>
                 </div>
 
-                <label for="about" class="col-sm-3 control-label"><h6>Description</h6></label>
+                <label for="description" class="col-sm-3 control-label"><h6>Description</h6></label>
                 <div class="col-sm-9">
-                    <textarea name="description" style="resize: none; height:100px" class="form-control" maxlength="512"
-                              required></textarea>
+                    <textarea name="description" style="resize: none; height:100px" class="form-control" maxlength="2048"
+                              required id="description"></textarea>
                 </div>
 
-                <label for="for-quantity" class="col-sm-3 control-label"><h6>Quantity</h6></label>
+                <label for="quantity" class="col-sm-3 control-label"><h6>Quantity</h6></label>
                 <div class="col-sm-3">
                     <input type="text" pattern="[0-9]+" class="form-control" name="quantity" id="quantity" required>
                 </div>
 
-                <label for="for-quantity" class="col-sm-3 control-label"><h6>Stock Number</h6></label>
+                <label for="stockNumber" class="col-sm-3 control-label"><h6>Stock Number</h6></label>
                 <div class="col-sm-3">
                     <input type="text" pattern="[0-9]+" class="form-control" name="stockNumber" id="stockNumber"
                            required>
@@ -55,7 +55,7 @@ $categoryController = new CategoryController();
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="[0-9]+" class="form-control" name="price" id="for-price" required>
+                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price" id="for-price" required>
                 </div>
 
                 <label for="name" class="col-sm-3 control-label"><h6>Images</h6></label> <br>

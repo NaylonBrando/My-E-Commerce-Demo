@@ -8,7 +8,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/admin/layout/navigation-bar.php');
 
 <body>
 
-
+<!--admin homepage-->
 <div class="container-fluid">
     <div class="row">
         <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/admin/layout/sidemenu.php');

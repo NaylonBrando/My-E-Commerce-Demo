@@ -61,7 +61,7 @@ $categoryController = new CategoryController();
                 <label for="about" class="col-sm-3 control-label"><h6>Description</h6></label>
                 <div class="col-sm-9">
                     <textarea name="description" id="description" style="resize: none; height:100px"
-                              class="form-control" maxlength="512"
+                              class="form-control" maxlength="2048"
                               required><?php /** @var Product $product */
                         echo $product->getDescription() ?></textarea>
                 </div>
@@ -82,7 +82,7 @@ $categoryController = new CategoryController();
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="[0-9]+" class="form-control" name="price" id="price" required
+                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price" id="price" required
                            value="<?php /** @var Product $product */
                            echo $product->getPrice() ?>">
                 </div>
