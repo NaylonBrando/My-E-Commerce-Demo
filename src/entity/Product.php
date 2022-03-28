@@ -15,8 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Product
 {
 
-    public function __construct(){
-        $this->isActive=true;
+    public function __construct()
+    {
+        $this->isActive = true;
         $this->createdAt = new DateTimeImmutable();
     }
 
@@ -43,7 +44,7 @@ class Product
     private int $brandId;
 
     /**
-     * @ORM\Column(type="string", length=512)
+     * @ORM\Column(type="string", length=2048)
      */
     private string $description;
 

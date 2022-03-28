@@ -4,15 +4,52 @@ namespace src\repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use src\dto\ProductDetailDto;
+use src\dto\ProductWithImageDto;
 use src\entity\Brand;
+use src\entity\Cart;
 use src\entity\Category;
 use src\entity\Product;
+use src\entity\ProductImage;
 use src\entity\ProductToCategory;
-use src\dto\ProductDetailDto;
 
 class ProductRepository extends EntityRepository
 {
-    public function findAllProductsWithDetails():array {
+
+    /**
+     * @var ProductWithImageDto[]
+     */
+    public function findProductsByCartUserId(int $cartUserId): array
+    {
+        $productWithImagesDtoArray = [];
+
+        /** @var Product[] $products */
+        $products = [];
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('p')
+            ->from('src\entity\Product', 'p')
+            ->join(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
+            ->where('c.userId = :userId')
+            ->setParameter('userId', $cartUserId);
+        $products = $qb->getQuery()->getResult();
+
+        foreach ($products as $product) {
+            $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
+            $productWithImagesDto = new ProductWithImageDto();
+            $productWithImagesDto->setProduct($product);
+            if($images){
+                $productWithImagesDto->setImages($images);
+            }
+            $productWithImagesDtoArray[] = $productWithImagesDto;
+        }
+        return $productWithImagesDtoArray;
+
+    }
+
+
+    public function findAllProductsWithDetails(): array
+    {
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -35,9 +72,10 @@ class ProductRepository extends EntityRepository
                 'c',
                 Join::WITH,
                 'ptc.categoryId = c.id',
-            );
+            )
+            ->orderBy('p.id', 'ASC');
 
-        $result =  $qb->getQuery()->getResult();
+        $result = $qb->getQuery()->getResult();
         $productDetailDtoArray = [];
         foreach ($result as $row) {
             $productDetailDto = new ProductDetailDto();

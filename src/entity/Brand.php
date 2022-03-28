@@ -2,7 +2,6 @@
 
 namespace src\entity;
 
-namespace src\entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

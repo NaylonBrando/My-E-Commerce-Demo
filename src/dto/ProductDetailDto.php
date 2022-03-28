@@ -1,6 +1,7 @@
 <?php
 
 namespace src\dto;
+
 use DateTime;
 
 class ProductDetailDto

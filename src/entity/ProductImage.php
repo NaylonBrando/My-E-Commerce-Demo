@@ -65,7 +65,7 @@ class ProductImage
         $this->path = $path;
     }
 
-    public function getIsThumbnail(): string
+    public function getIsThumbnail(): bool
     {
         return $this->isThumbnail;
     }
@@ -74,7 +74,6 @@ class ProductImage
     {
         $this->isThumbnail = $isThumbnail;
     }
-
 
 
 }
