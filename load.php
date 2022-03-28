@@ -1,9 +1,18 @@
 <?php
-require_once 'Connection.php';
-require_once __DIR__ . '/controller/Homepage.php';
-require_once __DIR__ . '/src/entity/User.php';
-require_once __DIR__ . '/src/repository/UserRepository.php';
-require_once __DIR__ . '/controller/AbstractController.php';
-require_once __DIR__ . '/controller/UserController.php';
-require_once __DIR__ . '/controller/Database.php';
-require_once __DIR__ . '/router.php';
+function loader($dir)
+{
+    $cdir = scandir($dir);
+    foreach ($cdir as $key => $value) {
+        if (str_contains($value, '.php')) {
+            $test = __DIR__ . '/' . $dir . '/' . $value;
+            require_once($test);
+        }
+    }
+}
+
+require_once('Connection.php');
+loader('src/entity');
+loader('src/repository');
+loader('src/dto');
+loader('controller');
+require_once('Router.php');
