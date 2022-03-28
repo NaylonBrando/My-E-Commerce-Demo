@@ -1,5 +1,4 @@
 body {
-    margin-top: 20px;
     background-color: #f2f6fc;
     color: #69707a;
 }
@@ -66,3 +65,20 @@ body {
     margin-left: 1rem;
     margin-right: 1rem;
 }
+
+.navbar-customer-name {
+    width: 20ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis
+}
+
+.navbar-nav {
+    margin-left: auto;
+}
+
+/*.navbar-nav.navbar-center {*/
+/*    position: absolute;*/
+/*    left: 50%;*/
+/*    transform: translatex(-50%);*/
+/*}*/

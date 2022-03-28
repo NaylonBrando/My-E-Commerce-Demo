@@ -1,7 +1,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Giriş</title>
+    <title>Login</title>
 
 
     <!-- CSS only -->
@@ -14,31 +14,32 @@
 <body class="text-center">
 <main class="form-signin">
     <form action="check-login" method="post">
-        <img class="mb-4" src="../ecommerce-customer.png" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Müsteri Girisi</h1>
+        <img class="mb-4" src="../image/ecommerce-customer.png" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Sign In</h1>
 
         <div class="form-floating">
             <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com"
                    autofocus required>
-            <label for="floatingInput">Email adresi</label>
+            <label for="floatingInput">Email adress</label>
         </div>
         <div class="form-floating">
             <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
-            <label for="floatingPassword">Şifre</label>
+            <label for="floatingPassword">Password</label>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit" name="login">Giriş Yap</button>
-
-        <?php
-        if (isset($_SESSION['login_error'])) {
-            echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['login_error'] .'</div>';
-        }
-        ?>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" name="login">Log In</button>
 
         <p class="mt-5 mb-3 text-muted">&copy; 2022-2023</p>
 
-        <div class="">
-            <p><a href="kayit" class="account">Kayit Ekranına Git</a></p>
+        <?php
+        if (isset($_SESSION['login_error'])) {
+            echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['login_error'] . '</div>';
+        }
+        ?>
+        <div>
+            <p><a href="register" class="account">Go to Create Account Page</a></p>
+            <p><a href="/" class="account">Back to Main Page</a></p>
+
         </div>
     </form>
 </main>
