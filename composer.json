@@ -3,9 +3,12 @@
              "doctrine/orm": "^2.6.2",
              "symfony/yaml": "2.*",
              "symfony/cache": "^5.3",
-              "doctrine/annotations": "^1.13"
+              "doctrine/annotations": "^1.13",
+        "rakit/validation": "^1.4"
          },
     "autoload": {
-        "psr-0": {"": "src/"}
+       "psr-4": {
+                   "App\\": "src"
+               }
     }
 }
