@@ -4,7 +4,7 @@ include('category_dal.php');
 ?>
 <?php
 
-$str="";
+$str = "";
 function listAllCategories($parentId = 0)
 {
     global $con, $str;
@@ -16,11 +16,11 @@ function listAllCategories($parentId = 0)
         while ($row = mysqli_fetch_assoc($result)) {
 
             $id = $row['id'];
-            $str.='<li><a href="mainpage.php?catId=' .$id. '&pg=1' . '">' . $row['category_name'] . '</a> <ul>';
-            $str.=listAllCategories($row['id']);
-            $str.='</ul> </li>';
+            $str .= '<li><a href="homepage.php?catId=' . $id . '&pg=1' . '">' . $row['category_name'] . '</a> <ul>';
+            $str .= listAllCategories($row['id']);
+            $str .= '</ul> </li>';
         }
-        if ($parentId==0){
+        if ($parentId == 0) {
             echo $str;
         }
     }
@@ -40,7 +40,7 @@ function listAllCategories($parentId = 0)
 
 <div class="vertical">
     <ul>
-        <li><a href="mainpage.php">Tümü</a></li>
+        <li><a href="view/homepage.php">Tümü</a></li>
         <?php listAllCategories(); ?>
     </ul>
 </div>

@@ -13,8 +13,7 @@ class CategoryDal
 
         if (mysqli_num_rows($result) > 0) {
             return $result;
-        }
-        else{
+        } else {
             return null;
         }
     }
@@ -28,8 +27,7 @@ class CategoryDal
 
         if (mysqli_num_rows($result) > 0) {
             return $result;
-        }
-        else{
+        } else {
             return null;
         }
 

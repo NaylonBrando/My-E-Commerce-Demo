@@ -2,14 +2,15 @@
 
 namespace Connection;
 
-use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
+
 require_once "vendor/autoload.php";
 
 class Connection
 {
 
-    public $entityManager;
+    public EntityManager $entityManager;
 
     public function __construct()
     {
@@ -17,14 +18,14 @@ class Connection
         $proxyDir = null;
         $cache = null;
         $useSimpleAnnotationReader = false;
-        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
+        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/src"), $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
 
         $conn = array(
-            'driver'   => 'pdo_mysql',
-            'user'     => 'root',
+            'driver' => 'pdo_mysql',
+            'user' => 'root',
             'password' => '',
-            'dbname'   => 'ecommerce',
-            'host'     => '127.0.0.1'
+            'dbname' => 'ecommerce',
+            'host' => '127.0.0.1'
         );
 
         $this->entityManager = EntityManager::create($conn, $config);

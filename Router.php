@@ -86,6 +86,13 @@ class Router
                 "function" => "delete",
                 "type" => "check",
             ],
+            "pagination-without-category" => [
+                "url" => "/\\?pg={id}",
+                "class" => "HomepageController",
+                "function" => "index",
+                "type" => "normal",
+                "template" => "homepage.php"
+            ],
             "product-slug" => [
                 "url" => "/{productSlug}",
                 "class" => "ProductController",
