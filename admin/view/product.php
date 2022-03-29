@@ -21,7 +21,7 @@ $productController = new ProductController();
                 <th scope="col">Brand</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Price</th>
-                <th scope="col">(Update)<br>(Disable/Enable)<br>(See Images)<br>(Delete)</th>
+                <th scope="col">Operation</th>
             </tr>
             </thead>
             <tbody>

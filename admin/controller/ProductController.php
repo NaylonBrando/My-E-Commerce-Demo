@@ -147,7 +147,7 @@ class ProductController extends AdminAbstractController
                     $row->getId(), $row->getStockNumber(), $row->getIsActive(),
                     $row->getTitle(), $row->getCreatedAt()->format('d/m/Y H:i:s'),
                     $row->getCategoryName(), $row->getBrandName(),
-                    $row->getQuantity(), $row->getPrice());
+                    $row->getQuantity(), $row->getPrice(), $row->getSlug());
             }
             echo $str;
         }
@@ -163,7 +163,7 @@ class ProductController extends AdminAbstractController
     }
 
     public function productTableRow($id, $stockNumber, $isActive, $title, $createdAt,
-                                    $category, $brand, $quantity, $price): string
+                                    $category, $brand, $quantity, $price, $slug): string
     {
         $status = '';
 
@@ -174,7 +174,7 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$id</td>
             <td class=\"miniCol\">$stockNumber</td>
             <td class=\"miniCol\">$isActive</td>
-            <td class=\"lgTitleCol\">$title</td>
+            <td class=\"lgTitleCol\"><a href=\"/$slug\"><p class=\"title\" title=\"$title\">$title</p></a></td>
             <td class=\"miniCol\">$createdAt</td>
             <td class=\"miniCol\">$category</td>
             <td class=\"miniCol\">$brand</td>
@@ -192,7 +192,7 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$id</td>
             <td class=\"miniCol\">$stockNumber</td>
             <td class=\"miniCol\">$isActive</td>
-            <td class=\"lgTitleCol\">$title</td>
+            <td class=\"lgTitleCol\"><p class=\"title\">$title</p></td>
             <td class=\"miniCol\">$createdAt</td>
             <td class=\"miniCol\">$category</td>
             <td class=\"miniCol\">$brand</td>
