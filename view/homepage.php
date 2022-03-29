@@ -14,8 +14,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/head.php'); ?>
         }
         else{
             $productController = new ProductController();
-            $productController->productCardGenerator();
-
+            $page = empty($_GET['pg']) ? 1 : $_GET['pg'];
+            $productController->productCardGenerator($page);
+            $productController->paginator($page);
         }?>
     </div>
 </div>

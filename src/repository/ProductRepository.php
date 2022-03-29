@@ -16,6 +16,39 @@ use src\entity\ProductToCategory;
 class ProductRepository extends EntityRepository
 {
 
+
+    /**
+     * @var ProductWithImageDto[]
+     */
+    public function findProductsWithPaginator($page, $limit):array
+    {
+        $productWithImagesDtoArray = [];
+
+        /** @var Product[] $products */
+        $products = [];
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('p')
+            ->from(Product::class, 'p')
+            ->orderBy('p.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+        $products = $qb->getQuery()->getResult();
+
+        foreach ($products as $product) {
+            $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
+            $productWithImagesDto = new ProductWithImageDto();
+            $productWithImagesDto->setProduct($product);
+            if($images){
+                $productWithImagesDto->setImages($images);
+            }
+            $productWithImagesDtoArray[] = $productWithImagesDto;
+        }
+        return $productWithImagesDtoArray;
+    }
+
     /**
      * @var ProductWithImageDto[]
      */

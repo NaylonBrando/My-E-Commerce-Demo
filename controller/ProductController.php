@@ -2,35 +2,49 @@
 
 namespace controller;
 
+use src\dto\ProductWithImageDto;
 use src\entity\Product;
 use src\entity\ProductImage;
+use src\repository\ProductRepository;
 
 class ProductController extends AbstractController
 {
 
 
-    public function productCardGenerator()
+    public function productCardGenerator($pageNumber)
     {
-
+        $pageNumber = intval($pageNumber);
         $em = $this->getEntityManager();
         /** @var Product[] $products */
         $products = $em->getRepository(Product::class)->findAll();
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        /** @var ProductWithImageDto[] $productResult */
+        $productResult = $productRepository->findProductsWithPaginator($pageNumber, 6);
         $str = "";
-        foreach ($products as $product) {
-            /** @var ProductImage[] $productImages */
-            $productImages = $em->getRepository(ProductImage::class)->findBy(array('productId' => $product->getId()));
-            if ($productImages) {
-                $productImagePath = '/upload/' . $productImages[0]->getPath();
-                foreach ($productImages as $image) {
-                    if ($image->getIsThumbnail()) {
-                        $productImagePath = '/upload/' . $image->getPath();
 
+        foreach ($productResult as $row) {
+            $match = false;
+
+            $product = $row->getProduct();
+            $images = $row->getImages();
+            $imagePath ="";
+
+            if ($images != null) {
+                foreach ($images as $image) {
+                    if ($image->getIsThumbnail()) {
+                        $imagePath = '../upload/' . $image->getPath();
+                        $match = true;
+                        break;
                     }
                 }
-                $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), $productImagePath, $product->getSlug());
+                if (!$match) {
+                    $imagePath = '../upload/' . $images[0]->getPath();
+                }
             } else {
-                $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), 'image/productImageComingSoon.jpg', $product->getSlug());
+                $imagePath = '../image/productImageComingSoon.jpg';
             }
+            $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug());
         }
         echo $str;
 
@@ -101,6 +115,41 @@ class ProductController extends AbstractController
         } else {
             return "<div class=\"carousel-item\"><img src=\"$imagePath\" class=\"d-block w-100\" alt=\"...\" style=\"height: 500px\"></div>";
         }
+
+    }
+
+    public function paginator($page)
+    {
+        $limit = 6;
+        $record = 2;
+        $em = $this->getEntityManager();
+        $productCount = $em->getRepository(Product::class)->count(array());
+        $pageCount = ceil($productCount / $limit);
+        $str = '<div class="row justify-content-end mt-3"> <nav aria-label="Page navigation example">
+                 <ul class="pagination justify-content-center">';
+        if ($page > 1) {
+            $newPage = $page - 1;
+            $str .= '<li class="page-item"><a class="page-link" href="/?pg=' . $newPage . '"' . '>Geri</a></li>';
+        } else {
+            $str .= '<li class="page-item disabled"><a class="page-link" href="/?pg=">Geri</a></li>';
+        }
+        for ($i = $page - $record; $i <= $page + $record; $i++) {
+            if ($i == $page) {
+                $str .= '<li class="page-item active"><a class="page-link" href="/?pg=' . $i . '"' . '>' . $i . '</a></li>';
+            } else {
+                if ($i > 0 and $i <= $pageCount) {
+                    $str .= '<li class="page-item"><a class="page-link" href="/?pg=' . $i . '"' . '>' . $i . '</a></li>';
+                }
+            }
+        }
+        if ($page < $pageCount) {
+            $newPage = $page + 1;
+            $str .= '<li class="page-item"><a class="page-link" href="/?pg=' . $newPage . '"' . '>İleri</a></li>';
+        } else {
+            $str .= '<li class="page-item disabled"><a class="page-link" href="#">İleri</a></li>';
+        }
+        $str .= '</ul></nav></div>';
+        echo $str;
     }
 
 

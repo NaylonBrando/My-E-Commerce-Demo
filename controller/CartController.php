@@ -80,7 +80,6 @@ class CartController extends AbstractController
     {
 
         $str = "";
-        $match = false;
         $em = $this->getEntityManager();
 
         /** @var ProductRepository $productRepository */
@@ -90,6 +89,8 @@ class CartController extends AbstractController
 
         if ($productWithImages) {
             foreach ($productWithImages as $row) {
+                $match = false;
+
                 $product = $row->getProduct();
                 $images = $row->getImages();
 
