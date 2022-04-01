@@ -37,7 +37,7 @@ $categoryController = new CategoryController();
                     <label for="parent-category-name">Parent Category</label>
                     <select name="addCategoryParentId" class="form-control">
                         <option selected value="0">None</option>
-                        <?php $categoryController->categoryComponents() ?>
+                        <?php $categoryController->categoryComponentRowGenerator() ?>
                     </select>
                 </div>
 
@@ -60,7 +60,7 @@ $categoryController = new CategoryController();
                 <div class="mb-3">
                     <label for="deleteCategory">Select Category</label>
                     <select name="deleteCategory" id="deleteCategory" class="form-control">
-                        <?php $categoryController->categoryComponents() ?>
+                        <?php $categoryController->categoryComponentRowGenerator() ?>
                     </select>
                 </div>
                 <div class="mb-3 mt-2">
@@ -74,7 +74,7 @@ $categoryController = new CategoryController();
                 <div class="mb-3">
                     <label>Select Category</label>
                     <select name="updateCategory" id="updateCategory" class="form-control">
-                        <?php $categoryController->categoryComponents(); ?>
+                        <?php $categoryController->categoryComponentRowGenerator(); ?>
                     </select>
                 </div>
                 <div class="mb-3 mt-2">

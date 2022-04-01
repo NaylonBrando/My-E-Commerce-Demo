@@ -46,7 +46,7 @@ $categoryController = new CategoryController();
                 <div class="col-sm-3">
                     <select class="form-control" name="categoryId" required>
                         <?php /** @var ProductToCategory $product_to_category */
-                        $categoryController->categoryComponents($product_to_category->getCategoryId()) ?>
+                        $categoryController->categoryComponentRowGenerator($product_to_category->getCategoryId()) ?>
                     </select>
                 </div>
 

@@ -1,21 +1,17 @@
 .miniCol {
-    width: 50px;
 }
 
 th.medCol {
-    width: 75px;
 
 }
 
 .lgTitleCol {
-    width: 395px;
     height: 100%;
     font-size: 13px;
 }
 
 p.title {
-    position: absolute;
-    width: 390px;
+    width: 40ch;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

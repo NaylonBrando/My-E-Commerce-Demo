@@ -93,7 +93,7 @@ class ProductController extends AdminAbstractController
                 $em = $this->getEntityManager();
                 $em->persist($product);
                 $em->flush();
-                header('location: /admin/product');
+                header('location: /admin/product/update/' . $_POST['productId']);
             }
 
         }

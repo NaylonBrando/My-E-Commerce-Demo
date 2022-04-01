@@ -24,17 +24,26 @@ $categoryController = new CategoryController();
                     echo $category->getId()
                     ?>" type="hidden" class="form-control" name="categoryId">
                 </div>
-                <label for="brandName" class="control-label">Category Name</label>
+
                 <div class="row">
-                    <div class="col-sm-9" id="brandName">
+                    <div class="col-sm-5">
+                        <label for="parentId" class="control-label">Parent Category</label>
+                        <select name="parentId" class="form-control">
+                            <option selected value="0">None</option>
+                            <?php $categoryController->categoryComponentRowGeneratorForUpdate($category->getId(), $category->getParentId()) ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="categoryName" class="control-label">Category Name</label>
                         <input value="<?php
                         /** @var Category $category */
                         echo $category->getName()
                         ?>" type="text" class="form-control" name="categoryName"
                                id="categoryName" maxlength="80" required autofocus>
                     </div>
-                    <div class="col-3 col-sm-3">
-                        <button type="submit" class="btn btn-primary" name="/brand/update">Update</button>
+                    <div class="col-sm-2">
+                        <br>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
             </form>

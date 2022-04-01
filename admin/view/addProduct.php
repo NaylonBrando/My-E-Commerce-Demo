@@ -25,7 +25,7 @@ $categoryController = new CategoryController();
                 <label for="categoryId" class="col-sm-3 control-label"><h6>Category</h6></label>
                 <div class="col-sm-3">
                     <select class="form-control" name="categoryId" id="categoryId" required>
-                        <?php $categoryController->categoryComponents() ?>
+                        <?php $categoryController->categoryComponentRowGenerator() ?>
                     </select>
                 </div>
 

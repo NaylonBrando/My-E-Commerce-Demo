@@ -6,6 +6,7 @@ use src\entity\Category;
 use src\repository\CategoryRepository;
 
 $str = "";
+$categoryArray = [];
 
 class CategoryController extends AdminAbstractController
 {
@@ -27,6 +28,7 @@ class CategoryController extends AdminAbstractController
         $em = $this->getEntityManager();
         /** @var Category $category */
         $category = $em->find(Category::class, $id[1]);
+
 
         if ($category) {
             $pageModule = $pageModulePath;
@@ -86,12 +88,13 @@ class CategoryController extends AdminAbstractController
     public function update()
     {
         $categoryId = $_POST['categoryId'];
+        $parentId = $_POST['parentId'];
         $categoryName = $_POST['categoryName'];
 
         $em = $this->getEntityManager();
         $category = $em->find(Category::class, $categoryId);
         $category->setName($categoryName);
-
+        $category->setParentId($parentId);
         $em->persist($category);
         $em->flush();
 
@@ -99,17 +102,35 @@ class CategoryController extends AdminAbstractController
 
     }
 
-    function categoryComponentParent($id, $categoryName): string
+    private function getSubCategories($parentId): null|array
     {
-        return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
+        global $categoryArray;
+        $em = $this->getEntityManager();
+        $category = $em->getRepository(Category::class)->findBy(array('parent_id' => $parentId));
+        foreach ($category as $cat) {
+            $categoryArray[] = $cat;
+            $this->getSubCategories($cat->getId());
+        }
+        return $categoryArray;
     }
 
-    function parentSelectedCategoryComponent($categoryId, $parentId)
+    function categoryComponentRowGeneratorForUpdate($categoryId, $parentId)
     {
         /** @var CategoryRepository $query */
         $query = $this->getEntityManager()->getRepository(Category::class);
         /** @var Category $result */
         $result = $query->findAll();
+        $resultChild = $this->getSubCategories($categoryId);
+
+        if ($resultChild!=null) {
+            foreach ($resultChild as $child) {
+                foreach ($result as $key => $value) {
+                    if ($child->getId() == $value->getId()) {
+                        unset($result[$key]);
+                    }
+                }
+            }
+        }
 
         if ($result) {
             $str = "";
@@ -129,12 +150,27 @@ class CategoryController extends AdminAbstractController
     }
 
 
-    public function categoryComponents($categoryIdOfProduct = null)
+    function categoryComponentParent($id, $categoryName): string
+    {
+        return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
+    }
+
+    function categoryComponent($id, $categoryName, $categoryIdOfProduct = null): string
+    {
+        if ($categoryIdOfProduct != null) {
+            return "<option selected value=\"$id\">$categoryName</option>";
+        } else {
+            return "<option value=\"$id\">$categoryName</option>";
+        }
+    }
+
+    public function categoryComponentRowGenerator($categoryIdOfProduct = null)
     {
         /** @var CategoryRepository $query */
         $query = $this->getEntityManager()->getRepository(Category::class);
         /** @var Category $result */
         $result = $query->findAll();
+
 
         if ($result) {
             $str = "";
@@ -148,15 +184,6 @@ class CategoryController extends AdminAbstractController
                 }
             }
             echo $str;
-        }
-    }
-
-    function categoryComponent($id, $categoryName, $categoryIdOfProduct = null): string
-    {
-        if ($categoryIdOfProduct != null) {
-            return "<option selected value=\"$id\">$categoryName</option>";
-        } else {
-            return "<option value=\"$id\">$categoryName</option>";
         }
     }
 
