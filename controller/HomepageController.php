@@ -5,8 +5,15 @@ namespace controller;
 class HomepageController extends AbstractController
 {
 
-    function index($templateFile)
+    public function show($pageModulePath)
     {
-        include_once $templateFile;
+        $pageModule = $pageModulePath;
+        $templateFilePath = str_replace('homepage', 'homepageTemplate', $pageModulePath);
+        $title = "My-Ecommerce-Demo";
+        require_once($templateFilePath);
+
     }
+
+
+
 }

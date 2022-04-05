@@ -79,8 +79,10 @@ a {
     text-overflow: ellipsis
 }
 
-.navbar-nav {
-    margin-left: auto;
+#carouselHero .carousel-item img{
+    object-fit: cover;
+    object-position: center;
+    height: 60vh;
 }
 
 .text-default {

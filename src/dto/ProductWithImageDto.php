@@ -19,9 +19,6 @@ class ProductWithImageDto
      */
     private array $images;
 
-    /**
-     * @var Product
-     */
     public function getProduct(): Product
     {
         return $this->product;

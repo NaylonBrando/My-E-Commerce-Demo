@@ -4,6 +4,7 @@ namespace src\repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use src\dto\ProductDetailDto;
 use src\dto\ProductWithImageDto;
 use src\entity\Brand;
@@ -16,71 +17,100 @@ use src\entity\ProductToCategory;
 class ProductRepository extends EntityRepository
 {
 
+    /**
+     * @return ProductWithImageDto[]
+     */
+    public function getLastProductsByLimit(int $limit): array
+    {
+        $productWithImagesDtoArray = [];
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('p')
+            ->from(Product::class, 'p')
+            ->where('p.isActive = 1')
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        return $this->extracted($qb, $productWithImagesDtoArray);
+    }
 
     /**
-     * @var ProductWithImageDto[]
+     * @return ProductWithImageDto[]
      */
-    public function findProductsWithPaginator($page, $limit):array
+    public function findProductsByCategoryName($page, $limit, $categoryName = null): array
     {
         $productWithImagesDtoArray = [];
 
         /** @var Product[] $products */
-        $products = [];
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-
         $qb->select('p')
             ->from(Product::class, 'p')
-            ->orderBy('p.id', 'DESC')
+            ->innerJoin(
+                ProductToCategory::class,
+                'ptc',
+                Join::WITH,
+                'ptc.productId = p.id',
+            )
+            ->innerJoin(
+                Category::class,
+                'c',
+                Join::WITH,
+                'ptc.categoryId = c.id',
+            )
+            ->where('c.name IN (:categoryName)', 'p.isActive = 1')
+            ->setParameter('categoryName', $categoryName)
             ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
-            ->getQuery();
-        $products = $qb->getQuery()->getResult();
+            ->setMaxResults($limit);
 
-        foreach ($products as $product) {
-            $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
-            $productWithImagesDto = new ProductWithImageDto();
-            $productWithImagesDto->setProduct($product);
-            if($images){
-                $productWithImagesDto->setImages($images);
-            }
-            $productWithImagesDtoArray[] = $productWithImagesDto;
-        }
-        return $productWithImagesDtoArray;
+        return $this->extracted($qb, $productWithImagesDtoArray);
+    }
+
+    public function countProductsByCategoryName($categoryName): int
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(p)')
+            ->from(Product::class, 'p')
+            ->innerJoin(
+                ProductToCategory::class,
+                'ptc',
+                Join::WITH,
+                'ptc.productId = p.id',
+            )
+            ->innerJoin(
+                Category::class,
+                'c',
+                Join::WITH,
+                'ptc.categoryId = c.id',
+            )
+            ->where('c.name IN (:categoryName)')
+            ->setParameter('categoryName', $categoryName);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @var ProductWithImageDto[]
+     * @return ProductWithImageDto[]
      */
     public function findProductsByCartUserId(int $cartUserId): array
     {
         $productWithImagesDtoArray = [];
 
         /** @var Product[] $products */
-        $products = [];
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
-            ->from('src\entity\Product', 'p')
-            ->join(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
-            ->where('c.userId = :userId')
+            ->from(Product::class, 'p')
+            ->innerjoin(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
+            ->where('c.userId = :userId', 'p.isActive = 1')
             ->setParameter('userId', $cartUserId);
-        $products = $qb->getQuery()->getResult();
-
-        foreach ($products as $product) {
-            $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
-            $productWithImagesDto = new ProductWithImageDto();
-            $productWithImagesDto->setProduct($product);
-            if($images){
-                $productWithImagesDto->setImages($images);
-            }
-            $productWithImagesDtoArray[] = $productWithImagesDto;
-        }
-        return $productWithImagesDtoArray;
+        return $this->extracted($qb, $productWithImagesDtoArray);
 
     }
 
-
+    /**
+     * @return ProductDetailDto[]
+     */
     public function findAllProductsWithDetails(): array
     {
 
@@ -127,5 +157,26 @@ class ProductRepository extends EntityRepository
             $productDetailDtoArray[] = $productDetailDto;
         }
         return $productDetailDtoArray;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param array $productWithImagesDtoArray
+     * @return array
+     */
+    public function extracted(QueryBuilder $qb, array $productWithImagesDtoArray): array
+    {
+        $products = $qb->getQuery()->getResult();
+
+        foreach ($products as $product) {
+            $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
+            $productWithImagesDto = new ProductWithImageDto();
+            $productWithImagesDto->setProduct($product);
+            if ($images) {
+                $productWithImagesDto->setImages($images);
+            }
+            $productWithImagesDtoArray[] = $productWithImagesDto;
+        }
+        return $productWithImagesDtoArray;
     }
 }
