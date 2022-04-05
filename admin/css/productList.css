@@ -16,3 +16,8 @@ p.title {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.buttonsCol {
+    width: 234px;
+    height: 31px;
+}

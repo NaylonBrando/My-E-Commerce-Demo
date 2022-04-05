@@ -82,7 +82,8 @@ $categoryController = new CategoryController();
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price" id="price" required
+                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price"
+                           id="price" required
                            value="<?php /** @var Product $product */
                            echo $product->getPrice() ?>">
                 </div>

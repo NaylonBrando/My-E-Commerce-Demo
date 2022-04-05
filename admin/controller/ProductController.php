@@ -17,7 +17,7 @@ class ProductController extends AdminAbstractController
     {
 
         $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('product', 'homepage', $pageModulePath);
+        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
         $title = "Product";
         require_once($templateFilePath);
 
@@ -27,7 +27,7 @@ class ProductController extends AdminAbstractController
     {
 
         $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('addProduct', 'homepage', $pageModulePath);
+        $templateFilePath = str_replace('addProduct', 'adminPanelTemplate', $pageModulePath);
         $title = "Add Product";
         require_once($templateFilePath);
 
@@ -112,6 +112,8 @@ class ProductController extends AdminAbstractController
                 $productImageController->deleteAll($id);
                 $em->remove($product);
                 $em->flush();
+                $cartController = new CartController();
+                $cartController->deleteByProductId($id);
                 header('location: /admin/product');
             }
         } else {
@@ -174,13 +176,13 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$id</td>
             <td class=\"miniCol\">$stockNumber</td>
             <td class=\"miniCol\">$isActive</td>
-            <td class=\"lgTitleCol\"><a href=\"/$slug\"><p class=\"title\" title=\"$title\">$title</p></a></td>
+            <td class=\"lgTitleCol\"><a href=\"/product/$slug\"><p class=\"title\" title=\"$title\">$title</p></a></td>
             <td class=\"miniCol\">$createdAt</td>
             <td class=\"miniCol\">$category</td>
             <td class=\"miniCol\">$brand</td>
             <td class=\"miniCol\">$quantity</td>
             <td class=\"miniCol\">$price</td>
-            <td><a class=\"btn btn-warning btn-sm\" href=\"/admin/check-set-deactivate-product/$id\" role=\"button\">Set Deactive</a>
+            <td class=\"buttonsCol\"><a class=\"btn btn-warning btn-sm\" href=\"/admin/check-set-deactivate-product/$id\" role=\"button\">Set Deactive</a>
             <a class=\"btn btn-info btn-sm\" href=\"product/update/$id\" role=\"button\">Update</a>
             <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\">Delete</a></td>
         </tr>
@@ -198,7 +200,7 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$brand</td>
             <td class=\"miniCol\">$quantity</td>
             <td class=\"miniCol\">$price</td>
-            <td><a class=\"btn btn-success btn-sm\" href=\"/admin/check-set-active-product/$id\" role=\"button\">Set Active</a>
+            <td class=\"buttonsCol\"><a class=\"btn btn-success btn-sm\" href=\"/admin/check-set-active-product/$id\" role=\"button\">Set Active</a>
             <a class=\"btn btn-info btn-sm\" href=\"product/image/$id\" role=\"button\">Update</a>
             <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\">Delete</a></td>
         </tr>

@@ -16,7 +16,7 @@ class Router
                 "class" => "HomepageController",
                 "function" => "index",
                 "type" => "normal",
-                "template" => "homepage.php"
+                "template" => "adminPanelTemplate.php"
 
             ],
             "login" => [
