@@ -8,7 +8,7 @@ use src\entity\Product;
 $productController = new ProductController();
 ?>
 
-<div class="container-fluid mt-2 mb-3">
+<div class="container mt-50 mb-50">
     <div class="row">
         <div class="col-md-6">
             <div class="card">
@@ -40,9 +40,7 @@ $productController = new ProductController();
                         <h4><?php echo '$' . $product->getPrice() ?></h4>
                     </div>
                     <div class="buttons">
-                        <button class="btn btn-outline-warning btn-long cart" type="submit" name="addProductToCart">Add to Cart</button>
-                        <button class="btn btn-warning btn-long buy">Buy it Now</button>
-                        <button class="btn btn-light wishlist"><i class="fa fa-heart"></i></button>
+                        <button class="btn btn-outline-warning btn-long cart" type="submit" name="addProductToCart" value="fromProductPage">Add to Cart</button>
                     </div>
                     <hr>
                     <div class="product-description">

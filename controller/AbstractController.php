@@ -5,12 +5,12 @@ namespace controller;
 use Connection\Connection;
 use Doctrine\ORM\EntityManager;
 
-require_once "bootstrap.php";
+require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 class AbstractController
 {
 
-    public $entityManager;
+    public EntityManager $entityManager;
 
     /**
      * AbstractController constructor.
@@ -24,7 +24,7 @@ class AbstractController
     /**
      * @return EntityManager
      */
-    public function getEntityManager()
+    public function getEntityManager(): EntityManager
     {
         return $this->entityManager;
     }

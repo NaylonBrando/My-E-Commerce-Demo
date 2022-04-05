@@ -2,7 +2,6 @@
 
 namespace controller;
 
-use src\dto\ProductWithImageDto;
 use src\entity\Cart;
 use src\entity\Product;
 use src\repository\ProductRepository;
@@ -27,10 +26,9 @@ class CartController extends AbstractController
     {
         if (!isset($_SESSION['user_id'])) {
             header("Location:/login");
-        }
-        else{
+        } else {
             $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('cart', 'homepage', $pageModulePath);
+            $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
             $title = "Cart";
             require_once($templateFilePath);
         }
@@ -52,27 +50,65 @@ class CartController extends AbstractController
                 $cart->setQuantity(1);
                 $em->persist($cart);
                 $em->flush();
-                header("Location:/");
+
+                $productController = new ProductController();
+                $product = $productController->getProductById($_POST['productId']);
+                $slug = $product->getSlug();
+
+                if (strcmp($_POST['addProductToCart'], 'fromProductCard') == 0) {
+                    echo "<script>alert('Product added your cart!')</script>";
+                    echo "<script>window.location = '/'</script>";
+                } elseif (strcmp($_POST['addProductToCart'], 'fromProductPage') == 0) {
+                    echo "<script>alert('Product added your cart!')</script>";
+                    echo "<script>window.location = '/product/$slug'</script>";
+                }
             } else {
                 echo "<script>alert('Product is already added in the cart..!')</script>";
-                echo "<script>window.location = 'index.php'</script>";
+                echo "<script>window.location = '/cart'</script>";
             }
 
         }
 
     }
 
-    public function delete($productId)
+    public function delete()
     {
-        $em = $this->getEntityManager();
-        $cartRepository = $em->getRepository(Cart::class);
-        $cart = $cartRepository->findOneBy(['productId' => $productId, 'userId' => $_SESSION['user_id']]);
-        if ($cart != null) {
-            $em->remove($cart);
-            $em->flush();
-            header("Location:/cart");
-        } else {
-            require_once($_SERVER['DOCUMENT_ROOT'] . '/view/404.php');
+        if (isset($_POST['action']) && $_POST['action'] == "delete") {
+            $em = $this->getEntityManager();
+            $cartItem = $em->find(Cart::class, $_POST['cartId']);
+            if ($cartItem != null) {
+                $em->remove($cartItem);
+                $em->flush();
+                header("Location:/cart");
+            } else {
+                require_once($_SERVER['DOCUMENT_ROOT'] . '/view/404.php');
+            }
+        }
+    }
+
+    public function update()
+    {
+        if (isset($_POST['action']) && $_POST['action'] == "update") {
+            $em = $this->getEntityManager();
+            $cart = $em->find(Cart::class, $_POST['cartId']);
+            if ($cart != null) {
+                $productController = new ProductController();
+                $product = $productController->getProductById($cart->getProductId());
+
+                if ($_POST['quantity'] > $product->getQuantity()) {
+                    $quantity = $_POST['quantity'];
+                    $maxQuantity = $product->getQuantity();
+                    echo "<script>alert('You cannot buy $quantity of this product, you can only buy $maxQuantity at most.')</script>";
+                    echo "<script>window.location = '/cart'</script>";
+                } else {
+                    $cart->setQuantity($_POST['quantity']);
+                    $em->persist($cart);
+                    $em->flush();
+                    header("Location:/cart");
+                }
+            } else {
+                require_once($_SERVER['DOCUMENT_ROOT'] . '/view/404.php');
+            }
         }
     }
 
@@ -84,7 +120,6 @@ class CartController extends AbstractController
 
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
-        /** @var ProductWithImageDto[] $productWithImages */
         $productWithImages = $productRepository->findProductsByCartUserId($_SESSION['user_id']);
 
         if ($productWithImages) {
@@ -114,7 +149,7 @@ class CartController extends AbstractController
                 } else {
                     $imagePath = '../image/productImageComingSoon.jpg';
                 }
-                $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(), $product->getPrice());
+                $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(), $product->getPrice(), $product->getQuantity(), $cart->getId(), $cart->getQuantity());
             }
         } else {
             $str = "<h6>Cart is Empty!</h6>";
@@ -123,7 +158,7 @@ class CartController extends AbstractController
         echo $str;
     }
 
-    public function cartItemRow($productId, $productImg, $productTitle, $productPrice): string
+    public function cartItemRow($productId, $productImg, $title, $price, $productQuantity, $cartId, $cartQuantity): string
     {
         return "
                <div class=\"border rounded\">
@@ -132,16 +167,20 @@ class CartController extends AbstractController
                                             <img src=$productImg alt=\"Image1\" class=\"img-fluid cartImg\">
                                         </div>
                                         <div class=\"col-md-6\">
-                                            <h5 class=\"pt-2\">$productTitle</h5>
-                                            <h5 class=\"pt-2\">$$productPrice</h5>
-                                            <a class=\"btn btn-danger mx-2\"  href=\"/check-delete-product-from-cart/$productId\">Remove</a>
+                                        <h5 class=\"pt-2\">$title</h5>
+                                        <h5 class=\"pt-2\">$$price</h5>
+                                        <form action=\"/check-delete-product-from-cart\" method=\"post\">
+                                            <input type=\"hidden\" name=\"cartId\" value=\"$cartId\">
+                                            <input type=\"hidden\" name=\"action\" value=\"delete\"/>
+                                            <button type=\"submit\" class=\"btn btn-danger\">Remove Item</button>
+                                        </form>
                                         </div>
                                         <div class=\"col-md-3 py-5\">
-                                            <div>
-                                                <button type=\"button\" class=\"btn bg-light border rounded-circle\"><i class=\"fas fa-minus\"></i></button>
-                                                <input type=\"text\" value=\"1\" class=\"form-control w-25 d-inline\">
-                                                <button type=\"button\" class=\"btn bg-light border rounded-circle\"><i class=\"fas fa-plus\"></i></button>
-                                            </div>
+                                             <form action=\"/check-change-quantity-from-cart\" method=\"post\">
+                                             <input type=\"hidden\" name=\"cartId\" value=\"$cartId\">
+                                             <input type=\"hidden\" name=\"action\" value=\"update\">
+                                             <input type=\"number\" value=\"$cartQuantity\" pattern=\"[1-9]+\" min=\"1\" max=\"$productQuantity\" name=\"quantity\" class=\"form-control\" onChange=\"this.form.submit()\">
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

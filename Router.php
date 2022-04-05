@@ -12,7 +12,7 @@ class Router
             "homepage" => [
                 "url" => "/",
                 "class" => "HomepageController",
-                "function" => "index",
+                "function" => "show",
                 "type" => "normal",
                 "template" => "homepage.php"
             ],
@@ -81,22 +81,42 @@ class Router
                 "type" => "check",
             ],
             "check-delete-product-from-cart" => [
-                "url" => "/check-delete-product-from-cart/{id}",
+                "url" => "/check-delete-product-from-cart",
                 "class" => "CartController",
                 "function" => "delete",
                 "type" => "check",
             ],
-            "pagination-without-category" => [
-                "url" => "/\\?pg={id}",
-                "class" => "HomepageController",
-                "function" => "index",
+            "check-change-quantity-from-cart" => [
+                "url" => "/check-change-quantity-from-cart",
+                "class" => "CartController",
+                "function" => "update",
+                "type" => "check",
+            ],
+            "pagination" => [
+                "url" => "/pg/{id}",
+                "class" => "ProductController",
+                "function" => "showProductCardPage",
                 "type" => "normal",
-                "template" => "homepage.php"
+                "template" => "productCard.php"
+            ],
+            "categoryFilter" => [
+                "url" => "/category/{categoryName}",
+                "class" => "ProductController",
+                "function" => "showProductCardPageWithCategoryFilter",
+                "type" => "normal",
+                "template" => "productCard.php"
+            ],
+            "categoryFilter-with-pagination" => [
+                "url" => "/category/{categoryName}\\?pg={id}",
+                "class" => "ProductController",
+                "function" => "showProductCardPageWithCategoryFilter",
+                "type" => "normal",
+                "template" => "productCard.php"
             ],
             "product-slug" => [
-                "url" => "/{productSlug}",
+                "url" => "/product/{productSlug}",
                 "class" => "ProductController",
-                "function" => "show",
+                "function" => "showProductPage",
                 "type" => "normal",
                 "template" => "product.php",
             ],
@@ -110,13 +130,14 @@ class Router
             $patterns = [
                 '{url}' => '([0-9a-zA-Z]+)',
                 '{id}' => '([0-9]+)',
-                '{productSlug}' => '([a-z0-9-&]+)'
+                '{productSlug}' => '([a-z0-9-&]+)',
+                '{categoryName}' => '([a-z0-9-&]+)',
             ];
 
             $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
 
             if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
-                unset($parameters[0]);
+                    unset($parameters[0]);
                 $controllerClassName = $router['class'];
                 $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
                 $functionName = $router['function'];
