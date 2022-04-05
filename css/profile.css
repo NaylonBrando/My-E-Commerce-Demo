@@ -72,13 +72,3 @@ body {
     white-space: nowrap;
     text-overflow: ellipsis
 }
-
-.navbar-nav {
-    margin-left: auto;
-}
-
-/*.navbar-nav.navbar-center {*/
-/*    position: absolute;*/
-/*    left: 50%;*/
-/*    transform: translatex(-50%);*/
-/*}*/

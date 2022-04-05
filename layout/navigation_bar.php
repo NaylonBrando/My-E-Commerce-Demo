@@ -7,15 +7,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart"> Cart </a>
-                </li>
-                <?php navbarCustomerDropDown(); ?>
-            </ul>
+                <li class="nav-item dropdown has-megamenu">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categories </a>
+                    <div class="dropdown-menu megamenu" role="menu">
+                        <div class="row g-3">
+                            <?php
+
+                            use controller\NavigationBarController;
+
+                            $navigationBarController = new NavigationBarController();
+                            $navigationBarController->selectCategoryRowGenerator();
+
+                            ?>
+                        </div><!-- end col-3 -->
+                    </div><!-- end row -->
         </div>
+        <ul class="nav navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/cart"> Cart </a>
+            </li>
+            <?php navbarCustomerDropDown(); ?>
+        </ul>
     </div>
 </nav>
-
 <?php
 
 function navbarCustomerDropDown()
@@ -29,8 +44,8 @@ function navbarCustomerDropDown()
                         $userNameAndLastName 
                     </a>
                     <ul class=\"dropdown-menu dropdown-menu-end dropdown-menu-dark\" aria-labelledby=\"navbarDropdown\">
-                        <li><a class=\"dropdown-item\" href=\"profile\">My Account</a></li>
-                        <li><a class=\"dropdown-item\" href=\"logout\">Log Out</a></li>
+                        <li><a class=\"dropdown-item\" href=\"/profile\">My Account</a></li>
+                        <li><a class=\"dropdown-item\" href=\"/logout\">Log Out</a></li>
                     </ul>
                 </li>
         ";
