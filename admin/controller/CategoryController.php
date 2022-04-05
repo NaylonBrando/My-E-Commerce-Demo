@@ -14,7 +14,7 @@ class CategoryController extends AdminAbstractController
     public function show($pageModulePath)
     {
         $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('category', 'homepage', $pageModulePath);
+        $templateFilePath = str_replace('category', 'adminPanelTemplate', $pageModulePath);
         $title = "Category";
         require_once($templateFilePath);
         if (isset($_SESSION['category_add_error'])) {
@@ -32,7 +32,7 @@ class CategoryController extends AdminAbstractController
 
         if ($category) {
             $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('updateCategory', 'homepage', $pageModulePath);
+            $templateFilePath = str_replace('updateCategory', 'adminPanelTemplate', $pageModulePath);
             require_once($templateFilePath);
         } else {
             $templateFilePath = str_replace('updateCategory', '404', $pageModulePath);

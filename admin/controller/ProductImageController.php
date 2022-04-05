@@ -20,7 +20,7 @@ class ProductImageController extends AdminAbstractController
             $title = $product->getTitle() . ' images';
             $slug = 'Slug: ' . $product->getSlug();
             $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('productImage', 'homepage', $pageModulePath);
+            $templateFilePath = str_replace('productImage', 'adminPanelTemplate', $pageModulePath);
         } else {
             $templateFilePath = str_replace('productImage', '404', $pageModulePath);
         }

@@ -10,7 +10,7 @@ class BrandController extends AdminAbstractController
     public function show($pageModulePath)
     {
         $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('brand', 'homepage', $pageModulePath);
+        $templateFilePath = str_replace('brand', 'adminPanelTemplate', $pageModulePath);
         $title = "Brand";
         require_once($templateFilePath);
     }
@@ -18,7 +18,7 @@ class BrandController extends AdminAbstractController
     public function showAdd($pageModulePath)
     {
         $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('addBrand', 'homepage', $pageModulePath);
+        $templateFilePath = str_replace('addBrand', 'adminPanelTemplate', $pageModulePath);
         $title = "Add Brand";
         require_once($templateFilePath);
         if (isset($_SESSION['brand_add_error'])) {
@@ -34,7 +34,7 @@ class BrandController extends AdminAbstractController
 
         if ($brand) {
             $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('updateBrand', 'homepage', $pageModulePath);
+            $templateFilePath = str_replace('updateBrand', 'adminPanelTemplate', $pageModulePath);
         } else {
             $templateFilePath = str_replace('updateBrand', '404', $pageModulePath);
         }
