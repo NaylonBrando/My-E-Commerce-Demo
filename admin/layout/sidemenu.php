@@ -22,14 +22,16 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Customer
+                <a class="nav-link" href="/admin/user">
+                    User
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Comment
-                </a>
+            <li class="nav-item has-submenu">
+                <a class="nav-link" href="#"> Review  </a>
+                <ul class="submenu collapse">
+                    <li><a class="nav-link" href="/admin/review">Pending Reviews</a></li>
+                    <li><a class="nav-link" href="#">Approved Reviews</a></li>
+                </ul>
             </li>
         </ul>
     </div>
