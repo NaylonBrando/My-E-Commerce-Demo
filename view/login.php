@@ -14,7 +14,7 @@
 <body class="text-center">
 <main class="form-signin">
     <form action="check-login" method="post">
-        <img class="mb-4" src="../image/ecommerce-customer.png" alt="" width="72" height="57">
+        <img class="mb-4" src="../image/ecommerce-customer.png" alt="" width="64" height="64">
         <h1 class="h3 mb-3 fw-normal">Sign In</h1>
 
         <div class="form-floating">
@@ -23,7 +23,7 @@
             <label for="floatingInput">Email adress</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+            <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" required>
             <label for="floatingPassword">Password</label>
         </div>
 

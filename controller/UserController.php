@@ -2,6 +2,7 @@
 
 namespace controller;
 
+use src\entity\Cart;
 use src\entity\User;
 use src\repository\UserRepository;
 
@@ -39,8 +40,12 @@ class UserController extends AbstractController
 
     public function logout()
     {
-        session_start();
-        session_destroy();
+        if(isset($_SESSION['user_id'])) {
+            unset($_SESSION['user_id']);
+            unset($_SESSION['user_name']);
+            unset($_SESSION['user_last_name']);
+            unset($_SESSION['user_status']);
+        }
         header('location:/');
     }
 
@@ -60,7 +65,7 @@ class UserController extends AbstractController
             $user->setPassword(md5($password));
             $user->setEmail($email);
 
-            /** @var src\repository\UserRepository $emailCheckQuery */
+            /** @var UserRepository $emailCheckQuery */
             $emailCheckQuery = $em->getRepository(User::class)
                 ->findOneBy(array('email' => $user->getEmail()));
 
@@ -127,6 +132,10 @@ class UserController extends AbstractController
                 header('location: /login');
             }
         }
+        else{
+            $_SESSION['login_error'] = 'Password or email is incorrect';
+            header('location: /login');
+        }
 
     }
 
@@ -170,9 +179,7 @@ class UserController extends AbstractController
         $lastName = $_POST['lastName'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-
-        //sonradan validatorler gelecek
-
+        
         $em = $this->getEntityManager();
         $user = $em->find(User::class, $id);
 
@@ -185,11 +192,10 @@ class UserController extends AbstractController
                 $em->flush();
                 $_SESSION['user_name'] = $user->getFirstName();
                 $_SESSION['user_last_name'] = $user->getLastName();
-                header('location: /profile');
             } else {
                 $_SESSION['user_update_profile_error'] = 'Wrong password';
-                header('location: /profile');
             }
+            header('location: /profile');
         }
     }
 
@@ -210,16 +216,14 @@ class UserController extends AbstractController
                     $user->setPassword(md5($newPassword));
                     $em->persist($user);
                     $em->flush();
-                    header('location: /profile');
                 } else {
                     $_SESSION['user_update_password_error'] = 'Passwords doesnt match';
-                    header('location: /profile');
                 }
 
             } else {
                 $_SESSION['user_update_password_error'] = 'Wrong password';
-                header('location: /profile');
             }
+            header('location: /profile');
         }
 
     }
