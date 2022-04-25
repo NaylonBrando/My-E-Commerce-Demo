@@ -2,7 +2,7 @@
 
 namespace controller;
 
-use Router\Router;
+use Router;
 use src\entity\Review;
 use src\repository\ReviewRepository;
 

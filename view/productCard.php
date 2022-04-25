@@ -1,7 +1,6 @@
 <?php
 
 use controller\ProductController;
-use Router\Router;
 
 ?>
 
@@ -35,8 +34,8 @@ use Router\Router;
         }
         if (isset($categoryParameters)) {
             $productController->productCardGeneratorWithCategory($categoryParameters['categoryName'], $categoryParameters['pg'], $categoryParameters['rate'], $categoryParameters['price']);
-        } elseif (isset($function, $searchTerm) && $function == "showProductSearch") {
-            $productController->productCardGeneratorWithSearchTerm($pageNumber, $searchTerm);
+        } elseif (isset($searchTermParameters)) {
+            $productController->productCardGeneratorWithSearchTerm($searchTermParameters['searchTerm'], $searchTermParameters['pg'], $searchTermParameters['rate'], $searchTermParameters['price']);
         }
         ?>
     </div>

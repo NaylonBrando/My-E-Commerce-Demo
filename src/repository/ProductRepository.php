@@ -82,7 +82,7 @@ class ProductRepository extends EntityRepository
     /**
      * @return ProductWithImageDto[]
      */
-    public function findProductsBySearchTerm($page, $limit, string $searchTerm = null): array
+    public function findProductsBySearchTerm($page, $limit, string $searchTerm, $rate, $price): array
     {
         $productWithImagesDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -113,6 +113,29 @@ class ProductRepository extends EntityRepository
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->orderBy('p.id', 'ASC');
+        if ($price) {
+            if ($price === 'desc') {
+                $qb->orderBy('p.price', 'desc');
+            } elseif ($price === 'asc') {
+                $qb->orderBy('p.price', 'asc');
+            }
+        }
+        if ($rate) {
+            $qb->leftJoin(
+                Review::class,
+                'r',
+                Join::WITH,
+                'p.id = r.productId',
+            )
+                ->groupBy('p.id');
+            if ($rate === 'desc') {
+                $qb->orderBy('AVG(r.rating)', 'desc');
+            } elseif ($rate === 'asc') {
+                $qb->orderBy('AVG(r.rating)', 'asc');
+            }
+        }
+
+
         return $this->extracted($qb, $productWithImagesDtoArray);
     }
 
@@ -133,7 +156,7 @@ class ProductRepository extends EntityRepository
     /**
      * @return ProductWithImageDto[]
      */
-    public function findProductsByCategoryName($page, $limit, $categoryName, $rate = null, $price=null): array
+    public function findProductsByCategoryName($page, $limit, $categoryName, $rate = null, $price = null): array
     {
         $productWithImagesDtoArray = [];
 
@@ -179,7 +202,7 @@ class ProductRepository extends EntityRepository
                 $qb->orderBy('AVG(r.rating)', 'asc');
             }
         }
-        
+
         return $this->extracted($qb, $productWithImagesDtoArray);
     }
 

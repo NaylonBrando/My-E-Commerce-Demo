@@ -13,15 +13,11 @@ class ProductController extends AbstractController
     public function showProductCardPageWithCategoryFilter($pageModulePath, array $parameters)
     {
         $pageModule = $pageModulePath;
-
-
+        
         if (isset($parameters['categoryName'])) {
-            $categoryName = $parameters['categoryName'];
-            $categoryName = str_replace('-', ' ', $categoryName);
+            $parameters['categoryName'] = str_replace('-', ' ', $parameters['categoryName']);
         }
-
-
-        //check index name pg and get the page number
+        
         if (isset($parameters['pg'])) {
             (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
         } else {
@@ -67,16 +63,40 @@ class ProductController extends AbstractController
     public function showProductCardPageWithSearchTerm($pageModulePath, array $parameters)
     {
         $pageModule = $pageModulePath;
-
-        $function = 'showProductSearch';
-        $searchTerm = $parameters[1];
-        $searchTerm = str_replace('-', ' ', $searchTerm);
-
-        if (isset($parameters[2])) {
-            $pageNumber = $parameters[2];
+        
+        if (isset($parameters['searchTerm'])) {
+            $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
         }
-        $categoryController = new CategoryController();
-        $categoryEntity = $categoryController->getCategoryByName($searchTerm);
+
+        if (isset($parameters['pg'])) {
+            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
+        } else {
+            $parameters['pg'] = 1;
+        }
+
+        if (isset($parameters['rate'])) {
+            if ($parameters['rate'] == 'asc' || $parameters['rate'] == 'desc') {
+                $rate = $parameters['rate'];
+            } else {
+                $rate = 'asc';
+            }
+        } else {
+            $parameters['rate'] = null;
+        }
+
+        if (isset($parameters['price'])) {
+            if ($parameters['price'] == 'asc' || $parameters['price'] == 'desc') {
+                $price = $parameters['price'];
+            } else {
+                $price = 'asc';
+            }
+        }
+        else {
+            $parameters['price'] = null;
+        }
+
+        $searchTermParameters = $parameters;
+        
 
         $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
         $title = 'Product';
@@ -159,16 +179,15 @@ class ProductController extends AbstractController
         ";
     }
 
-    public function productCardGeneratorWithSearchTerm($pageNumber, $searchTerm)
+    public function productCardGeneratorWithSearchTerm($searchTerm, $pageNumber, $rate = null, $price = null)
     {
-        $pageNumber = intval($pageNumber);
         $em = $this->getEntityManager();
 
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
 
         $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm);
-        $productResult = $productRepository->findProductsBySearchTerm($pageNumber, 4, $searchTerm);
+        $productResult = $productRepository->findProductsBySearchTerm($pageNumber, 4, $searchTerm, $rate, $price);
 
         if (count($productResult) > 0) {
             $this->extracted($productResult);
@@ -216,7 +235,6 @@ class ProductController extends AbstractController
 
     public function productCardGeneratorWithCategory($categoryName, $pageNumber, $rate = null, $price = null)
     {
-        $pageNumber = intval($pageNumber);
         $em = $this->getEntityManager();
 
         /** @var ProductRepository $productRepository */

@@ -1,7 +1,5 @@
 <?php
 
-namespace Router;
-
 
 //son kullanici router
 use controller\UserController;
@@ -120,13 +118,17 @@ class Router
             ],
             "product-search" => [
                 "url" => "/search/{searchValue}",
+                "searchTerm" => "searchTerm",
                 "class" => "ProductController",
                 "function" => "showProductCardPageWithSearchTerm",
                 "type" => "normal",
                 "template" => "productCard.php"
             ],
-            "product-search-with-pagination" => [
-                "url" => "/search/{searchValue}\\?pg={id}",
+            "product-search-with-parameters" => [
+                "url" => "/search/{searchValue}\\?{parameters}",
+                "searchTerm" => "searchTerm",
+                "hasParameters" => true,
+                "parameterNames" => ["pg", "rate", "price"],
                 "class" => "ProductController",
                 "function" => "showProductCardPageWithSearchTerm",
                 "type" => "normal",
@@ -159,7 +161,7 @@ class Router
                     '{id}' => '([0-9]+)',
                     '{productSlug}' => '([a-z0-9-&]+)',
                     '{categoryName}' => '([a-z0-9-&]+)',
-                    '{searchValue}' => '([a-z0-9-&]+)',
+                    '{searchValue}' => '([a-z0-9-&%]+)',
                     '{parameters}' => '([a-z0-9=&]+)',
                 ];
 
@@ -169,6 +171,10 @@ class Router
                     unset($parameters[0]);
                     if(isset($router['categoryName'])){
                         $parameters[$router['categoryName']] = $parameters[1];
+                        unset($parameters[1]);
+                    }
+                    if(isset($router['searchTerm'])){
+                        $parameters[$router['searchTerm']] = $parameters[1];
                         unset($parameters[1]);
                     }
                     if(isset($router['hasParameters'])){

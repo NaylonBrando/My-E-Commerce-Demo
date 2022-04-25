@@ -2,7 +2,7 @@
 
 namespace controller;
 
-use Router\Router;
+use Router;
 use src\entity\Cart;
 use src\entity\CartItem;
 use src\entity\Product;
