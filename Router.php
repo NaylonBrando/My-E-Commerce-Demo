@@ -1,11 +1,13 @@
 <?php
+
 namespace Router;
 
 
 //son kullanici router
+use controller\UserController;
+
 class Router
 {
-
     public function run()
     {
         $routes = [
@@ -92,24 +94,41 @@ class Router
                 "function" => "update",
                 "type" => "check",
             ],
-            "pagination" => [
-                "url" => "/pg/{id}",
-                "class" => "ProductController",
-                "function" => "showProductCardPage",
-                "type" => "normal",
-                "template" => "productCard.php"
-            ],
             "categoryFilter" => [
                 "url" => "/category/{categoryName}",
+                "categoryName" => "categoryName",
                 "class" => "ProductController",
                 "function" => "showProductCardPageWithCategoryFilter",
                 "type" => "normal",
                 "template" => "productCard.php"
             ],
-            "categoryFilter-with-pagination" => [
-                "url" => "/category/{categoryName}\\?pg={id}",
+            "categoryFilter-with-parameters" => [
+                "url" => "/category/{categoryName}\\?{parameters}",
+                "categoryName" => "categoryName",
+                "hasParameters" => true,
+                "parameterNames" => ["pg", "rate", "price"],
                 "class" => "ProductController",
                 "function" => "showProductCardPageWithCategoryFilter",
+                "type" => "normal",
+                "template" => "productCard.php"
+            ],
+            "check-add-review-to-product" => [
+                "url" => "/check-add-review-to-product",
+                "class" => "ReviewController",
+                "function" => "add",
+                "type" => "check",
+            ],
+            "product-search" => [
+                "url" => "/search/{searchValue}",
+                "class" => "ProductController",
+                "function" => "showProductCardPageWithSearchTerm",
+                "type" => "normal",
+                "template" => "productCard.php"
+            ],
+            "product-search-with-pagination" => [
+                "url" => "/search/{searchValue}\\?pg={id}",
+                "class" => "ProductController",
+                "function" => "showProductCardPageWithSearchTerm",
                 "type" => "normal",
                 "template" => "productCard.php"
             ],
@@ -125,48 +144,79 @@ class Router
         $match = false;
         $request_uri = self::parse_url();
 
-        foreach ($routes as $router) {
+        if (isset($_SESSION['user_id'])) {
+            $userController = new UserController();
+            $user = $userController->getById($_SESSION['user_id']);
+            $_SESSION['user_status'] = $user->getIsActive();
+        }
 
-            $patterns = [
-                '{url}' => '([0-9a-zA-Z]+)',
-                '{id}' => '([0-9]+)',
-                '{productSlug}' => '([a-z0-9-&]+)',
-                '{categoryName}' => '([a-z0-9-&]+)',
-            ];
 
-            $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_status'] == true) {
+            foreach ($routes as $router) {
 
-            if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
+                $patterns = [
+                    '{url}' => '([0-9a-zA-Z]+)',
+                    '{id}' => '([0-9]+)',
+                    '{productSlug}' => '([a-z0-9-&]+)',
+                    '{categoryName}' => '([a-z0-9-&]+)',
+                    '{searchValue}' => '([a-z0-9-&]+)',
+                    '{parameters}' => '([a-z0-9=&]+)',
+                ];
+
+                $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
+
+                if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
                     unset($parameters[0]);
-                $controllerClassName = $router['class'];
-                $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
-                $functionName = $router['function'];
-                $routeType = $router['type'];
-
-                if ($routeType == "normal") {
-                    $templateFile = $router['template'];
-                    $templateFilePath = __DIR__ . "/view/" . $templateFile;
-                    if (!file_exists($templateFilePath)) {
-                        $pageNotFoundPath = __DIR__ . "/view/404.php";
-                        require_once($pageNotFoundPath);
+                    if(isset($router['categoryName'])){
+                        $parameters[$router['categoryName']] = $parameters[1];
+                        unset($parameters[1]);
                     }
-                    require_once($controllerFile);
-                    $match = true;
-                    $controllerClassName = '\controller\\' . $controllerClassName;
-                    call_user_func_array(array(new $controllerClassName, $functionName), array($templateFilePath, $parameters));
-                    break;
+                    if(isset($router['hasParameters'])){
+                        $params = explode('&', $parameters[2]);
+                       foreach ($params as $param){
+                           $param = explode('=', $param);
+                           if(in_array($param[0], $router['parameterNames'])){
+                               $parameters[$param[0]] = $param[1];
+                           }
+                       }
+                       unset($parameters[2]);
+                    }
+                    $controllerClassName = $router['class'];
+                    $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
+                    $functionName = $router['function'];
+                    $routeType = $router['type'];
 
-                } else if ($routeType == "check") {
-                    $match = true;
-                    $controllerClassName = '\controller\\' . $controllerClassName;
-                    call_user_func_array(array(new $controllerClassName, $functionName), $parameters);
-                    break;
+                    if ($routeType == "normal") {
+                        $templateFile = $router['template'];
+                        $templateFilePath = __DIR__ . "/view/" . $templateFile;
+                        if (!file_exists($templateFilePath)) {
+                            $pageNotFoundPath = __DIR__ . "/view/404.php";
+                            require_once($pageNotFoundPath);
+                        }
+                        require_once($controllerFile);
+                        $match = true;
+                        $controllerClassName = '\controller\\' . $controllerClassName;
+                        call_user_func_array(array(new $controllerClassName, $functionName), array($templateFilePath, $parameters));
+                        break;
+
+                    } else if ($routeType == "check") {
+                        $match = true;
+                        $controllerClassName = '\controller\\' . $controllerClassName;
+                        call_user_func_array(array(new $controllerClassName, $functionName), $parameters);
+                        break;
+                    }
                 }
             }
+            if ($match == false) {
+                $pageNotFoundPath = __DIR__ . "/view/404.php";
+                require_once($pageNotFoundPath);
+            }
         }
-        if ($match == false) {
-            $pageNotFoundPath = __DIR__ . "/view/404.php";
-            require_once($pageNotFoundPath);
+        else{
+            $userController = new UserController();
+            $userController->logout();
+            $_SESSION['login_error'] = 'Your Account Has Been Suspended';
+            header('location: /login');
         }
     }
 
@@ -182,5 +232,14 @@ class Router
             return $request_uri;
         }
     }
+
+    public static function parse_referer(): string
+    {
+        $referer = $_SERVER['HTTP_REFERER'];
+        $domainName = $_SERVER['HTTP_ORIGIN'];
+        return str_replace($domainName, null, $referer);
+    }
+
+
 }
 

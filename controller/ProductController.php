@@ -2,7 +2,6 @@
 
 namespace controller;
 
-use src\dto\ProductWithImageDto;
 use src\entity\Category;
 use src\entity\Product;
 use src\entity\ProductImage;
@@ -15,14 +14,45 @@ class ProductController extends AbstractController
     {
         $pageModule = $pageModulePath;
 
-        $categoryName = $parameters[1];
-        $categoryName = str_replace('-', ' ', $categoryName);
 
-        if (isset($parameters[2])) {
-            $pageNumber = $parameters[2];
+        if (isset($parameters['categoryName'])) {
+            $categoryName = $parameters['categoryName'];
+            $categoryName = str_replace('-', ' ', $categoryName);
         }
+
+
+        //check index name pg and get the page number
+        if (isset($parameters['pg'])) {
+            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
+        } else {
+            $parameters['pg'] = 1;
+        }
+
+        if (isset($parameters['rate'])) {
+            if ($parameters['rate'] == 'asc' || $parameters['rate'] == 'desc') {
+                $rate = $parameters['rate'];
+            } else {
+                $rate = 'asc';
+            }
+        } else {
+            $parameters['rate'] = null;
+        }
+
+        if (isset($parameters['price'])) {
+            if ($parameters['price'] == 'asc' || $parameters['price'] == 'desc') {
+                $price = $parameters['price'];
+            } else {
+                $price = 'asc';
+            }
+        }
+        else {
+            $parameters['price'] = null;
+        }
+
+        $categoryParameters = $parameters;
+
         $categoryController = new CategoryController();
-        $categoryEntity = $categoryController->getCategoryByName($categoryName);
+        $categoryEntity = $categoryController->getCategoryByName($parameters['categoryName']);
 
         if ($categoryEntity == null) {
             $templateFilePath = str_replace('productCard', '404', $pageModulePath);
@@ -31,9 +61,27 @@ class ProductController extends AbstractController
             $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
             $title = $categoryEntity->getName();
         }
+        require_once($templateFilePath);
+    }
+
+    public function showProductCardPageWithSearchTerm($pageModulePath, array $parameters)
+    {
+        $pageModule = $pageModulePath;
+
+        $function = 'showProductSearch';
+        $searchTerm = $parameters[1];
+        $searchTerm = str_replace('-', ' ', $searchTerm);
+
+        if (isset($parameters[2])) {
+            $pageNumber = $parameters[2];
+        }
+        $categoryController = new CategoryController();
+        $categoryEntity = $categoryController->getCategoryByName($searchTerm);
+
+        $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
+        $title = 'Product';
 
         require_once($templateFilePath);
-
     }
 
     public function getProductById($id): Product|null
@@ -52,6 +100,40 @@ class ProductController extends AbstractController
             $this->extracted($productResult);
         }
 
+    }
+
+    /**
+     * @param array $productResult
+     * @return void
+     */
+    public function extracted(array $productResult): void
+    {
+        $str = "<div class=\"row justify-content-center\">";
+        foreach ($productResult as $row) {
+            $match = false;
+
+            $product = $row->getProduct();
+            $images = $row->getImages();
+            $imagePath = "";
+
+            if ($images != null) {
+                foreach ($images as $image) {
+                    if ($image->getIsThumbnail()) {
+                        $imagePath = '../upload/' . $image->getPath();
+                        $match = true;
+                        break;
+                    }
+                }
+                if (!$match) {
+                    $imagePath = '../upload/' . $images[0]->getPath();
+                }
+            } else {
+                $imagePath = '../image/productImageComingSoon.jpg';
+            }
+            $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug());
+        }
+        $str .= "</div>";
+        echo $str;
     }
 
     public function productCard($id, $title, $price, $img, $slug): string
@@ -77,87 +159,35 @@ class ProductController extends AbstractController
         ";
     }
 
-    public function productCardGenerator($pageNumber, $categoryName)
+    public function productCardGeneratorWithSearchTerm($pageNumber, $searchTerm)
     {
-        $countOfProducts = "";
         $pageNumber = intval($pageNumber);
         $em = $this->getEntityManager();
 
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
 
-        $categoryController = new CategoryController();
-        $categoryEntity = $categoryController->getCategoryByName($categoryName);
-        /** @var Category[] $categoryArray */
-        $categoryArray = $categoryController->getSubCategories($categoryEntity->getId());
-
-        if ($categoryArray) {
-            $categoryArray[] = $categoryEntity;
-            $categoryNameArray = [];
-            foreach ($categoryArray as $category) {
-                $categoryNameArray[] = $category->getName();
-            }
-
-            /** @var ProductRepository $productRepository */
-            $productRepository = $em->getRepository(Product::class);
-            $countOfProducts = $productRepository->countProductsByCategoryName($categoryNameArray);
-
-            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryNameArray);
-        } else {
-
-            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryName);
-        }
+        $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm);
+        $productResult = $productRepository->findProductsBySearchTerm($pageNumber, 4, $searchTerm);
 
         if (count($productResult) > 0) {
             $this->extracted($productResult);
-            echo self::paginator($pageNumber, $countOfProducts);
+            $this->paginator($pageNumber, $countOfProducts);
         } else {
-            echo "No products found";
+            echo '<div class="row text-center">';
+            echo '<h3>No products found</h3>';
             echo '<a href="/">Back to Home</a>';
+            echo '</div>';
         }
 
     }
 
-    /**
-     * @param array $productResult
-     * @return void
-     */
-    public function extracted(array $productResult): void
-    {
-        $str = "";
-        foreach ($productResult as $row) {
-            $match = false;
-
-            $product = $row->getProduct();
-            $images = $row->getImages();
-            $imagePath = "";
-
-            if ($images != null) {
-                foreach ($images as $image) {
-                    if ($image->getIsThumbnail()) {
-                        $imagePath = '../upload/' . $image->getPath();
-                        $match = true;
-                        break;
-                    }
-                }
-                if (!$match) {
-                    $imagePath = '../upload/' . $images[0]->getPath();
-                }
-            } else {
-                $imagePath = '../image/productImageComingSoon.jpg';
-            }
-            $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug());
-        }
-        echo $str;
-    }
-
-
-    public function paginator($page, $countOfProduct): string
+    public function paginator($page, $countOfProduct): void
     {
         $limit = 4;
         $record = 2;
         $pageCount = ceil($countOfProduct / $limit);
-        $str = '<div class="row justify-content-end mt-3"> <nav aria-label="Page navigation example">
+        $str = '<div class="justify-content-end mt-3"> <nav aria-label="Page navigation example">
                  <ul class="pagination justify-content-center">';
         if ($page > 1) {
             $newPage = $page - 1;
@@ -181,7 +211,49 @@ class ProductController extends AbstractController
             $str .= '<li class="page-item disabled"><a class="page-link" href="#">İleri</a></li>';
         }
         $str .= '</ul></nav></div>';
-        return $str;
+        echo $str;
+    }
+
+    public function productCardGeneratorWithCategory($categoryName, $pageNumber, $rate = null, $price = null)
+    {
+        $pageNumber = intval($pageNumber);
+        $em = $this->getEntityManager();
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+
+        $categoryController = new CategoryController();
+        $categoryEntity = $categoryController->getCategoryByName($categoryName);
+        /** @var Category[] $categoryArray */
+        $categoryArray = $categoryController->getSubCategories($categoryEntity->getId());
+
+        if ($categoryArray) {
+            $categoryArray[] = $categoryEntity;
+            $categoryNameArray = [];
+            foreach ($categoryArray as $category) {
+                $categoryNameArray[] = $category->getName();
+            }
+
+            /** @var ProductRepository $productRepository */
+            $productRepository = $em->getRepository(Product::class);
+            $countOfProducts = $productRepository->countProductsByCategoryName($categoryNameArray);
+
+            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryNameArray, $rate, $price);
+        } else {
+            $countOfProducts = $productRepository->countProductsByCategoryName($categoryName);
+            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryName, $rate, $price);
+        }
+
+        if (count($productResult) > 0) {
+            $this->extracted($productResult);
+            $this->paginator($pageNumber, $countOfProducts);
+        } else {
+            echo '<div class="row text-center">';
+            echo '<h3>No products found</h3>';
+            echo '<a href="/">Back to Home</a>';
+            echo '</div>';
+        }
+
     }
 
     public function showProductPage($pageModulePath, $parameters)

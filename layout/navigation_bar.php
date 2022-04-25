@@ -1,3 +1,16 @@
+<script>
+    function productCardSearchProduct() {
+        let searchValue = document.getElementById("search").value;
+        if(searchValue === '' && searchValue.length === 0) {
+            document.searchProduct.action = "/";
+        }
+        else {
+            document.searchProduct.action = "/search/" + searchValue;
+        }
+    }
+</script>
+
+    
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand text-success" href="/">My ECommerce Demo</a>
@@ -22,8 +35,18 @@
                             ?>
                         </div><!-- end col-3 -->
                     </div><!-- end row -->
+                </li>
         </div>
+
         <ul class="nav navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <form name="searchProduct" id="searchProduct" method="post" onsubmit="productCardSearchProduct()">
+                    <label for="search">
+                        <input type="text" class="form-control" name="search" id="search" placeholder="Search" >
+                    </label>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="submit" id="submit">Search</button>
+                </form>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/cart"> Cart </a>
             </li>
@@ -52,10 +75,10 @@ function navbarCustomerDropDown()
     } else {
         $element = "
     <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"register\"> Register </a>
+                    <a class=\"nav-link\" href=\"/register\"> Register </a>
                 </li>
                 <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"login\"> Sign In </a>
+                    <a class=\"nav-link\" href=\"/login\"> Sign In </a>
                 </li>
     ";
     }

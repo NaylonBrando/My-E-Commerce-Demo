@@ -150,7 +150,7 @@ class Product
         $this->createdAt = $createdAt;
     }
 
-    public function isActive(): bool
+    public function getIsActive(): bool
     {
         return $this->isActive;
     }
