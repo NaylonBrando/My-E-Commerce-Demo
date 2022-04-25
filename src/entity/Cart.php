@@ -3,69 +3,71 @@
 namespace src\entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="src\repository\CartRepository")
- * @ORM\Table(name="cart_items")
+ * @ORM\Table(name="cart")
  */
 class Cart
 {
+    public function __construct()
+    {
+        $this->grandTotal = 0;
+    }
+    
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     private int $id;
-
+    
     /**
-     * @ORM\Column(type="integer", name="user_id")
+     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart")
      */
-    private int $userId;
-
+    private $cartItem;
+    
     /**
-     * @ORM\Column(type="integer", name="product_id")
+     * @ORM\OneToOne(targetEntity="src\entity\User", inversedBy="cart")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
-    private int $productId;
-
+    private $user;
+    
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
-    private int $quantity;
-
+    private float $grandTotal;
+    
+ 
     public function getId(): int
     {
         return $this->id;
     }
-
-    public function getUserId(): int
+    
+    public function getCartItem(): PersistentCollection
     {
-        return $this->userId;
+        return $this->cartItem;
     }
-
-    public function setUserId(int $userId): void
+    
+    public function setCartItem(CartItem $cartItem): void
     {
-        $this->userId = $userId;
+        $this->cartItem = $cartItem;
     }
-
-    public function getProductId(): int
+    
+    public function setUser(User $user): void
     {
-        return $this->productId;
+        $this->user = $user;
     }
-
-    public function setProductId(int $productId): void
+    
+    public function getGrandTotal(): float
     {
-        $this->productId = $productId;
+        return $this->grandTotal;
     }
-
-    public function getQuantity(): int
+    
+    public function setGrandTotal(float $grandTotal): void
     {
-        return $this->quantity;
+        $this->grandTotal = $grandTotal;
     }
-
-    public function setQuantity(int $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
-
 }

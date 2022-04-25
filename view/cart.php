@@ -22,10 +22,9 @@ $cartController = new CartController()
                 <hr>
                 <div class="row price-details">
                     <?php
-                    if ($cartController->getTotal() && $cartController->getQuantity() > 0) {
-                        $quantity = $cartController->getQuantity();
-                        $total = $cartController->getTotal();
-                        echo "<h6>Total Price ($quantity items) : $$total </h6> ";
+                    $total= $cartController->getTotalPrice();
+                    if (isset($total)) {
+                        echo "<h6>Total Price : $$total </h6> ";
                     }
                     else{
                         echo "<h6>Cart is Empty</h6>";

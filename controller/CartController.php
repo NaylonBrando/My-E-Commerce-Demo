@@ -2,113 +2,232 @@
 
 namespace controller;
 
+use Router\Router;
 use src\entity\Cart;
+use src\entity\CartItem;
 use src\entity\Product;
+use src\entity\User;
+use src\repository\CartRepository;
 use src\repository\ProductRepository;
 
 class CartController extends AbstractController
 {
 
-    private float $total = 0;
-    private int $quantity = 0;
+    private float $totalPrice = 0;
 
-    public function getTotal(): float
+    public function getTotalPrice(): float
     {
-        return $this->total;
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->quantity;
+        return $this->totalPrice;
     }
 
     public function show($pageModulePath)
     {
-        if (!isset($_SESSION['user_id'])) {
-            header("Location:/login");
-        } else {
-            $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
-            $title = "Cart";
-            require_once($templateFilePath);
-        }
+        $pageModule = $pageModulePath;
+        $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
+        $title = "Cart";
+        require_once($templateFilePath);
+    }
+
+    public function findCartByUserId(): ?Cart
+    {
+        $em = $this->getEntityManager();
+        /* @var $cartRepository CartRepository */
+        $cartRepository = $em->getRepository(Cart::class);
+        return $cartRepository->findCartByUserId($_SESSION['user_id']);
     }
 
     public function add()
     {
-        if (!isset($_SESSION['user_id'])) {
-            header("Location:/login");
-        } else {
+        $em = $this->getEntityManager();
+        $url = Router::parse_referer();
 
-            $em = $this->getEntityManager();
+        if (!isset($_SESSION['user_id'])) {
+            if (isset($_SESSION['cart'])) {
+                $match = false;
+                for ($i = 0; $i < count($_SESSION['cart']); $i++) {
+                    $cartItem = $_SESSION['cart'][$i];
+                    if ($cartItem['productId'] == $_POST['productId']) {
+                        echo "<script>alert('Product is already added in the cart..!')</script>";
+                        echo "<script>window.location = '$url'</script>";
+                        $match = true;
+                        break;
+                    }
+                }
+                if (!$match) {
+                    $product = $em->find(Product::class, $_POST['productId']);
+                    if ($product) {
+                        $count = count($_SESSION['cart']);
+                        $_SESSION['cart'][$count] = array('productId' => $product->getId(), 'quantity' => 1);
+                        echo "<script>alert('Product is added in the cart..!')</script>";
+
+                    }
+                }
+            } else {
+                $_SESSION['cart'] = array();
+                $product = $em->find(Product::class, $_POST['productId']);
+                if ($product) {
+                    $_SESSION['cart'][0] = array('productId' => $product->getId(), 'quantity' => 1);
+                }
+
+            }
+        } else {
+            /* @var $cartRepository CartRepository */
             $cartRepository = $em->getRepository(Cart::class);
-            $cart = $cartRepository->findOneBy(['productId' => $_POST['productId'], 'userId' => $_SESSION['user_id']]);
-            if ($cart == null) {
+            $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+            if (!isset($cart)) {
+                $user = $em->getRepository(User::class)->find($_SESSION['user_id']);
                 $cart = new Cart();
-                $cart->setProductId($_POST['productId']);
-                $cart->setUserId($_SESSION['user_id']);
-                $cart->setQuantity(1);
+                $cart->setUser($user);
+
+                $product = $em->getRepository(Product::class)->find($_POST['productId']);
+                $cartItem = new CartItem();
+                $cartItem->setProduct($product);
+                $cartItem->setQuantity(1);
+                $cartItem->setCart($cart);
+
                 $em->persist($cart);
                 $em->flush();
 
-                $productController = new ProductController();
-                $product = $productController->getProductById($_POST['productId']);
-                $slug = $product->getSlug();
+                echo "<script>alert('Product added in the cart')</script>";
 
-                if (strcmp($_POST['addProductToCart'], 'fromProductCard') == 0) {
-                    echo "<script>alert('Product added your cart!')</script>";
-                    echo "<script>window.location = '/'</script>";
-                } elseif (strcmp($_POST['addProductToCart'], 'fromProductPage') == 0) {
-                    echo "<script>alert('Product added your cart!')</script>";
-                    echo "<script>window.location = '/product/$slug'</script>";
-                }
             } else {
-                echo "<script>alert('Product is already added in the cart..!')</script>";
-                echo "<script>window.location = '/cart'</script>";
+                $cartItem = $cartRepository->findCartItemByCartIdandProductId($cart->getId(), $_POST['productId']);
+                $cartItems = $cart->getCartItem();
+                if (!isset($cartItem)) {
+                    $product = $em->getRepository(Product::class)->find($_POST['productId']);
+                    $cartItem = new CartItem();
+                    $cartItem->setProduct($product);
+                    $cartItem->setQuantity(1);
+                    $cartItem->setCart($cart);
+
+                    $em->persist($cartItem);
+                    $em->flush();
+                    echo "<script>alert('Product added in the cart')</script>";
+                } else {
+                    echo "<script>alert('Product is already added in the cart..!')</script>";
+                }
             }
-
         }
-
+        echo "<script>window.location = '$url'</script>";
     }
 
     public function delete()
     {
         if (isset($_POST['action']) && $_POST['action'] == "delete") {
-            $em = $this->getEntityManager();
-            $cartItem = $em->find(Cart::class, $_POST['cartId']);
-            if ($cartItem != null) {
-                $em->remove($cartItem);
-                $em->flush();
-                header("Location:/cart");
+            if (isset($_SESSION['user_id'])) {
+                $em = $this->getEntityManager();
+                /* @var $cartRepository CartRepository */
+                $cartRepository = $em->getRepository(Cart::class);
+
+                $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+                $cartItems = $cart->getCartItem()->getValues();
+
+                foreach ($cartItems as $cartItem) {
+                    if ($cartItem->getProduct()->getId() == $_POST['productId']) {
+                        $em->remove($cartItem);
+                        $em->flush();
+                        break;
+                    }
+                }
+
             } else {
-                require_once($_SERVER['DOCUMENT_ROOT'] . '/view/404.php');
+                foreach ($_SESSION['cart'] as $key => $cartItem) {
+                    if ($cartItem['productId'] == $_POST['productId']) {
+                        unset($_SESSION['cart'][$key]);
+                        break;
+                    }
+                }
             }
         }
+        header("Location:/cart");
     }
 
     public function update()
     {
-        if (isset($_POST['action']) && $_POST['action'] == "update") {
-            $em = $this->getEntityManager();
-            $cart = $em->find(Cart::class, $_POST['cartId']);
-            if ($cart != null) {
-                $productController = new ProductController();
-                $product = $productController->getProductById($cart->getProductId());
 
-                if ($_POST['quantity'] > $product->getQuantity()) {
-                    $quantity = $_POST['quantity'];
-                    $maxQuantity = $product->getQuantity();
-                    echo "<script>alert('You cannot buy $quantity of this product, you can only buy $maxQuantity at most.')</script>";
-                    echo "<script>window.location = '/cart'</script>";
-                } else {
-                    $cart->setQuantity($_POST['quantity']);
-                    $em->persist($cart);
-                    $em->flush();
-                    header("Location:/cart");
+        if (isset($_POST['action']) && $_POST['action'] == "update") {
+            if (isset($_SESSION['user_id'])) {
+                $em = $this->getEntityManager();
+                /* @var $cartRepository CartRepository */
+                $cartRepository = $em->getRepository(Cart::class);
+
+                $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+                $cartItems = $cart->getCartItem()->getValues();
+
+                foreach ($cartItems as $cartItem) {
+                    if ($cartItem->getProduct()->getId() == $_POST['productId']) {
+                        $productController = new ProductController();
+                        $product = $productController->getProductById($_POST['productId']);
+
+                        if ($_POST['quantity'] > $product->getQuantity()) {
+                            $quantity = $_POST['quantity'];
+                            $maxQuantity = $product->getQuantity();
+                            echo "<script>alert('You cannot buy $quantity of this product, you can only buy $maxQuantity at most.')</script>";
+                            echo "<script>window.location = '/cart'</script>";
+                        } else {
+                            $cartItem->setQuantity($_POST['quantity']);
+                            $em->persist($cartItem);
+                            $em->flush();
+                            header("Location:/cart");
+                        }
+                        break;
+                    }
                 }
             } else {
-                require_once($_SERVER['DOCUMENT_ROOT'] . '/view/404.php');
+                foreach ($_SESSION['cart'] as $key => $cartItem) {
+                    if ($cartItem['productId'] == $_POST['productId']) {
+                        $productController = new ProductController();
+                        $product = $productController->getProductById($_POST['productId']);
+
+                        if ($_POST['quantity'] > $product->getQuantity()) {
+                            $quantity = $_POST['quantity'];
+                            $maxQuantity = $product->getQuantity();
+                            echo "<script>alert('You cannot buy $quantity of this product, you can only buy $maxQuantity at most.')</script>";
+                            echo "<script>window.location = '/cart'</script>";
+                        } else {
+                            $_SESSION['cart'][$key]['quantity'] = $_POST['quantity'];
+                            header("Location:/cart");
+                        }
+                        break;
+                    }
+                }
+
             }
+        }
+        header("Location:/cart");
+    }
+
+    public function cartSessionToCart()
+    {
+        if (isset($_SESSION['cart'])) {
+            //cart session ile cart ı karsilastir, eger cart sessionda var ve cartda yoksa cart sessiondan carta ekle
+            $em = $this->getEntityManager();
+            /* @var $cartRepository CartRepository */
+            $cartRepository = $em->getRepository(Cart::class);
+
+            $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+            $cartItems = $cart->getCartItem()->getValues();
+
+            foreach ($_SESSION['cart'] as $cartItem) {
+                $flag = false;
+                foreach ($cartItems as $cartItem2) {
+                    if ($cartItem['productId'] == $cartItem2->getProduct()->getId()) {
+                        $flag = true;
+                        break;
+                    }
+                }
+                if (!$flag) {
+                    $product = $em->getRepository(Product::class)->find($cartItem['productId']);
+                    $cartItem3 = new CartItem();
+                    $cartItem3->setProduct($product);
+                    $cartItem3->setQuantity($cartItem['quantity']);
+                    $cartItem3->setCart($cart);
+
+                    $em->persist($cartItem3);
+                    $em->flush();
+                }
+            }
+            unset($_SESSION['cart']);
         }
     }
 
@@ -117,48 +236,111 @@ class CartController extends AbstractController
 
         $str = "";
         $em = $this->getEntityManager();
-
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
-        $productWithImages = $productRepository->findProductsByCartUserId($_SESSION['user_id']);
+        $productImageController = new ProductImageController();
 
-        if ($productWithImages) {
-            foreach ($productWithImages as $row) {
+        if (!isset($_SESSION['user_id']) && isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
+            
+            for ($i = 0; $i < count($_SESSION['cart']) + 1; $i++) {
                 $match = false;
+                if(isset($_SESSION['cart'][$i])){
+                    $cartItem = $_SESSION['cart'][$i];
+                    $productWithImage = $productRepository->findProductById($cartItem['productId']);
+                    if($productWithImage ==null){
+                        if(count($_SESSION['cart']) == 1){
+                            $str = "<h6>Cart is Empty!</h6>";
+                        }
+                        unset($_SESSION['cart'][$i]);
+                    }
+                    else{
+                        $product = $productWithImage->getProduct();
+                        $images = $productWithImage->getImages();
+                        $totalPrice = $cartItem['quantity'] * $product->getPrice();
+                        $this->setTotal($totalPrice);
 
-                $product = $row->getProduct();
-                $images = $row->getImages();
+                        if ($images != null) {
+                            foreach ($images as $image) {
+                                if ($image->getIsThumbnail()) {
+                                    $imagePath = '../upload/' . $image->getPath();
+                                    $match = true;
+                                    break;
+                                }
+                            }
+                            if (!$match) {
+                                $imagePath = '../upload/' . $images[0]->getPath();
+                            }
+                        } else {
+                            $imagePath = '../image/productImageComingSoon.jpg';
+                        }
 
-                $cartRepository = $em->getRepository(Cart::class);
-                /** @var Cart $cart */
-                $cart = $cartRepository->findOneBy(array('productId' => $product->getId(), 'userId' => $_SESSION['user_id']));
-                $this->total += $product->getPrice() * $cart->getQuantity();
-                $this->quantity += $cart->getQuantity();
+                        $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(),
+                            $product->getPrice(), $product->getQuantity(), $cartItem['quantity']);
+                    }
+                }
+            }
 
-                if ($images != null) {
-                    foreach ($images as $image) {
-                        if ($image->getIsThumbnail()) {
-                            $imagePath = '../upload/' . $image->getPath();
-                            $match = true;
-                            break;
+        } elseif (isset($_SESSION['user_id'])) {
+            /* @var $cartRepository CartRepository */
+            $cartRepository = $em->getRepository(Cart::class);
+            $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+
+            /** @var CartItem[] $cartItems */
+            $cartItems = $cart->getCartItem()->getValues();
+            if ($cartItems) {
+                foreach ($cartItems as $cartItem) {
+                    $match = false;
+
+                    $product = $cartItem->getProduct();
+                    $images = $productImageController->findImagesByProductId($product->getId());
+
+                    if ($images != null) {
+                        foreach ($images as $image) {
+                            if ($image->getIsThumbnail()) {
+                                $imagePath = '../upload/' . $image->getPath();
+                                $match = true;
+                                break;
+                            }
+                        }
+                        if (!$match) {
+                            $imagePath = '../upload/' . $images[0]->getPath();
+                        }
+                    } else {
+                        $imagePath = '../image/productImageComingSoon.jpg';
+                    }
+
+                    $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(),
+                        $product->getPrice(), $product->getQuantity(), $cartItem->getQuantity());
+
+                    for ($i = 0; $i < count($cartItems); $i++) {
+                        $cartItem = $cartItems[$i];
+                        if ($cartItem->getProduct()->getId() == $product->getId()) {
+                            $totalPrice = $cartItem->getQuantity() * $product->getPrice();
                         }
                     }
-                    if (!$match) {
-                        $imagePath = '../upload/' . $images[0]->getPath();
-                    }
-                } else {
-                    $imagePath = '../image/productImageComingSoon.jpg';
+                    $this->setTotal($totalPrice);
+                    $cart->setGrandTotal($totalPrice);
+                    $em->persist($cart);
+                    $em->flush();
                 }
-                $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(), $product->getPrice(), $product->getQuantity(), $cart->getId(), $cart->getQuantity());
+            } else {
+                $str = "<h6>Cart is Empty!</h6>";
             }
+
+
         } else {
             $str = "<h6>Cart is Empty!</h6>";
         }
-
+    
         echo $str;
     }
 
-    public function cartItemRow($productId, $productImg, $title, $price, $productQuantity, $cartId, $cartQuantity): string
+    private function setTotal(float $total): void
+    {
+        $this->totalPrice = $total + $this->totalPrice;
+    }
+
+    public function cartItemRow($productId, $productImg, $title, $price, $productQuantity, $cartQuantity): string
     {
         return "
                <div class=\"border rounded\">
@@ -170,14 +352,14 @@ class CartController extends AbstractController
                                         <h5 class=\"pt-2\">$title</h5>
                                         <h5 class=\"pt-2\">$$price</h5>
                                         <form action=\"/check-delete-product-from-cart\" method=\"post\">
-                                            <input type=\"hidden\" name=\"cartId\" value=\"$cartId\">
+                                            <input type=\"hidden\" name=\"productId\" value=\"$productId\">
                                             <input type=\"hidden\" name=\"action\" value=\"delete\"/>
                                             <button type=\"submit\" class=\"btn btn-danger\">Remove Item</button>
                                         </form>
                                         </div>
                                         <div class=\"col-md-3 py-5\">
                                              <form action=\"/check-change-quantity-from-cart\" method=\"post\">
-                                             <input type=\"hidden\" name=\"cartId\" value=\"$cartId\">
+                                             <input type=\"hidden\" name=\"productId\" value=\"$productId\">
                                              <input type=\"hidden\" name=\"action\" value=\"update\">
                                              <input type=\"number\" value=\"$cartQuantity\" pattern=\"[1-9]+\" min=\"1\" max=\"$productQuantity\" name=\"quantity\" class=\"form-control\" onChange=\"this.form.submit()\">
                                             </form>
@@ -185,11 +367,6 @@ class CartController extends AbstractController
                                     </div>
                                 </div>
                 ";
-    }
-
-    private function setTotal(float $total): void
-    {
-        $this->total = $total + $this->total;
     }
 
 

@@ -14,49 +14,47 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
 
-    public function __construct()
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->isActive = true;
-    }
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="string", name="first_name")
      */
     private string $firstName;
-
     /**
      * @ORM\Column(type="string", name="last_name")
      */
     private string $lastName;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $email;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $password;
-
     /**
      * @ORM\Column(type="datetime", name="created_at")
      * @var DateTimeInterface
      */
     private DateTimeInterface $createdAt;
-
+    /**
+     * @ORM\OneToOne(targetEntity="Cart", mappedBy="user")
+     */
+    private Cart $cart;
     /**
      * @ORM\Column(type="boolean")
      */
     private bool $isActive;
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+        $this->isActive = true;
+    }
 
     public function getId(): int
     {

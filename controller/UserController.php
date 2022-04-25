@@ -74,6 +74,10 @@ class UserController extends AbstractController
                     if (isset($_SESSION['register_error'])) {
                         unset($_SESSION['register_error']);
                     }
+                    $cart = new Cart();
+                    $cart->setUser($user);
+                    $em->persist($cart);
+                    $em->flush();
                     header('location: /');
                 } else {
                     $_SESSION['register_error'] = 'Something went wrong';
@@ -89,23 +93,34 @@ class UserController extends AbstractController
 
     public function loginCheck()
     {
-
+        $em = $this->getEntityManager();
         $email = $_POST['email'];
         $password = $_POST['password'];
-        if ($email && $password) {
+        if (isset($email, $password) && !empty($email) && !empty($password)) {
             $password = md5($password);
-            /** @var UserRepository $query */
-            $query = $this->getEntityManager()->getRepository(User::class);
-            /** @var User $result */
-            $result = $query->findOneBy(array('password' => $password, 'email' => $email));
+            /** @var UserRepository $userRepository */
+            $userRepository = $em->getRepository(User::class);
+            /** @var User $user */
+            $user = $userRepository->findOneBy(array('password' => $password, 'email' => $email));
 
-            if ($result) {
-                $_SESSION['user_id'] = $result->getId();
-                $_SESSION['user_name'] = $result->getFirstName();
-                $_SESSION['user_last_name'] = $result->getLastName();
+            if ($user) {
+                $_SESSION['user_id'] = $user->getId();
+                $_SESSION['user_name'] = $user->getFirstName();
+                $_SESSION['user_last_name'] = $user->getLastName();
+                $_SESSION['user_status'] = $user->getIsActive();
+                $cartController = new CartController();
+                $cart = $cartController->findCartByUserId($_SESSION['user_id']);
+                if(!isset($cart)){
+                    $cart = new Cart();
+                    $cart->setUser($user);
+                    $em->persist($cart);
+                    $em->flush();
+                }
                 if (isset($_SESSION['login_error'])) {
                     unset($_SESSION['login_error']);
                 }
+                $cartController = new CartController();
+                $cartController->cartSessionToCart();
                 header('location: /');
             } else {
                 $_SESSION['login_error'] = 'Password or email is incorrect';
