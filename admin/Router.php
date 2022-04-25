@@ -185,8 +185,76 @@ class Router
                 "function" => "update",
                 "type" => "check",
             ],
-
-
+            "review" => [
+                "url" => "/review",
+                "class" => "ReviewController",
+                "function" => "show",
+                "type" => "normal",
+                "template" => "review.php"
+            ],
+            "check-approve-single-review" => [
+                "url" => "/check-approve-single-review/{id}",
+                "class" => "ReviewController",
+                "function" => "approveReview",
+                "type" => "check",
+            ],
+            "check-delete-single-review" => [
+                "url" => "/check-delete-single-review/{id}",
+                "class" => "ReviewController",
+                "function" => "delete",
+                "type" => "check",
+            ],
+            "check-approve-selected-reviews" => [
+                "url" => "/check-approve-selected-reviews",
+                "class" => "ReviewController",
+                "function" => "approveSelectedReviews",
+                "type" => "check",
+            ],
+            "check-delete-selected-reviews" => [
+                "url" => "/check-delete-selected-reviews",
+                "class" => "ReviewController",
+                "function" => "deleteSelectedReviews",
+                "type" => "check",
+            ],
+            "user" => [
+                "url" => "/user",
+                "class" => "UserController",
+                "function" => "show",
+                "type" => "normal",
+                "template" => "user.php"
+            ],
+            "check-change-user-status" => [
+                "url" => "/check-change-user-status/{id}",
+                "class" => "UserController",
+                "function" => "changeStatus",
+                "type" => "check",
+            ],
+            "check-delete-user" => [
+                "url" => "/check-delete-user/{id}",
+                "class" => "UserController",
+                "function" => "delete",
+                "type" => "check",
+            ],
+            "update-user" => [
+                "url" => "/user/update/{id}",
+                "class" => "UserController",
+                "function" => "showUpdate",
+                "type" => "normal",
+                "template" => "updateUser.php"
+            ],
+            "check-update-user" => [
+                "url" => "/check-update-user",
+                "class" => "UserController",
+                "function" => "update",
+                "type" => "check",
+            ],
+            "product-search" => [
+                "url" => "/product/search/{searchValue}",
+                "class" => "ProductController",
+                "function" => "showProductSearch",
+                "type" => "normal",
+                "template" => "product.php"
+            ],
         ];
 
         $match = false;
@@ -198,7 +266,8 @@ class Router
             foreach ($routes as $router) {
                 $patterns = [
                     '{url}' => '([0-9a-zA-Z]+)',
-                    '{id}' => '([0-9]+)'
+                    '{id}' => '([0-9]+)',
+                    '{searchValue}' => '([0-9a-zA-Z]+)',
                 ];
 
                 $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
@@ -242,7 +311,7 @@ class Router
 
     }
 
-    public static function parse_url()
+    public static function parse_url():string
     {
         $dirname = dirname($_SERVER['SCRIPT_NAME']);
         $dirname = $dirname != '/' ? $dirname : null;
@@ -253,6 +322,13 @@ class Router
         } else {
             return $request_uri;
         }
+    }
+
+    public static function parse_referer(): string
+    {
+        $referer = $_SERVER['HTTP_REFERER'];
+        $domainName = $_SERVER['HTTP_ORIGIN'];
+        return str_replace($domainName, null, $referer);
     }
 }
 
