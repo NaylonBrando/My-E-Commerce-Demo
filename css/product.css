@@ -1,39 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");
-
-body {
-    background-color: #eee;
-    font-family: "Poppins", sans-serif
+.comments {
+    height: 30ch;
+    overflow-y: scroll;
 }
 
-.card {
-    background-color: #fff;
-    padding: 14px;
-    border: none
+.demo .item{
+    margin-bottom: 60px;
 }
-
-.demo {
-    width: 100%
+.content-slider li{
+    background-color: #ed3020;
+    text-align: center;
+    color: #FFF;
 }
-
-ul {
-    list-style: none outside none;
-    padding-left: 0;
-    margin-bottom: 0
+.content-slider h3 {
+    margin: 0;
+    padding: 70px 0;
 }
-
-li {
-    display: block;
-    float: left;
-    margin-right: 6px;
-    cursor: pointer
+.demo{
+    width: 800px;
 }
-
-img {
-    display: block;
-    height: auto;
-    width: 100%
-}
-
+/*aaaaaaaaaaaaaa*/
 .stars i {
     color: #f6d151
 }
@@ -61,6 +46,14 @@ hr {
 
 .comment-ratings i {
     font-size: 13px
+}
+
+.review-title {
+    font-size: 15px;
+    font-weight:bold;
+}
+.review-content {
+    font-size: 14px;
 }
 
 .username {
@@ -230,6 +223,3 @@ label.radio input:checked+span::before {
     left: 4px
 }
 
-.card-body {
-    padding: 0.3rem 0.3rem 0.2rem
-}

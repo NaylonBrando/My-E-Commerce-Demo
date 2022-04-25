@@ -1,11 +1,14 @@
 <?php
 
 use controller\ProductController;
+use controller\ReviewController;
 use src\entity\Product;
 
 /** @var Product $product */
 
 $productController = new ProductController();
+
+$reviewController = new ReviewController();
 ?>
 
 <div class="container mt-50 mb-50">
@@ -40,7 +43,9 @@ $productController = new ProductController();
                         <h4><?php echo '$' . $product->getPrice() ?></h4>
                     </div>
                     <div class="buttons">
-                        <button class="btn btn-outline-warning btn-long cart" type="submit" name="addProductToCart" value="fromProductPage">Add to Cart</button>
+                        <button class="btn btn-outline-warning btn-long cart" type="submit" name="addProductToCart"
+                                value="fromProductPage">Add to Cart
+                        </button>
                     </div>
                     <hr>
                     <div class="product-description">
@@ -54,5 +59,32 @@ $productController = new ProductController();
             </form>
         </div>
     </div>
+    <div class="row mb-4 mt-4">
+        <div class="col-md-12">
+            <div class="card px-2 py-2">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h6>Reviews</h6>
+                        <!--                        <div class="d-flex flex-row">-->
+                        <!--                            <div class="stars"> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> </div> <span class="ml-1 font-weight-bold">4.6</span>-->
+                        <!--                        </div>-->
+                    </div>
+                    <div class="col-md-2">
+                        <!-- Button to Open the Modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                            Add Review
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div class="comment-section">
+                    <?php $reviewController->reviewRowGenerator($product->getId()) ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/view/productReviewModal.php'); ?>
 
