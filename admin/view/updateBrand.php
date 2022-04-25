@@ -43,6 +43,7 @@ $brandController = new BrandController();
                         echo '<div class="alert alert-warning mt-2" role="alert">' . $_SESSION['brand_update_error'] . '</div>';
                     }
                     ?>
+                </div>
             </form>
         </div>
 </div>

@@ -89,8 +89,9 @@ class BrandController extends AdminAbstractController
         $brandExitsQuery = $em->getRepository(Brand::class)->findOneBy(array('name' => $brandName));
 
         if (!$brandExitsQuery) {
-            $brandExitsQuery->setName($brandName);
-            $em->persist($brandExitsQuery);
+            $brand = $em->find(Brand::class, $brandId);
+            $brand->setName($brandName);
+            $em->persist($brand);
             $em->flush();
             header('location: /admin/brand');
         } else {
@@ -138,8 +139,8 @@ class BrandController extends AdminAbstractController
         <tr>
             <td>$id</td>
             <td>$brandName</td>
-            <td><a class=\"btn btn-warning\" href=\"brand/update/$id\" role=\"button\">Update</a></td>
-            <td><a class=\"btn btn-danger\" href=\"check-delete-brand/$id\" role=\"button\">Delete</a></td>
+            <td><a class=\"btn btn-info btn-sm\" href=\"brand/update/$id\" role=\"button\">Update</a></td>
+            <td><a class=\"btn btn-danger btn-sm\" href=\"check-delete-brand/$id\" role=\"button\" onclick=\"return confirm('Are you sure delete $brandName ?');\">Delete</a></td>
         </tr>
         ";
         return $element;
