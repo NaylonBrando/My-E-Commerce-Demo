@@ -23,6 +23,16 @@ class ProductController extends AdminAbstractController
 
     }
 
+    public function showProductSearch(string $pageModulePath, $parameters)
+    {
+        $function = 'showProductSearch';
+        $searchTerm = $parameters[1];
+        $pageModule = $pageModulePath;
+        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
+        $title = "Product";
+        require_once($templateFilePath);
+    }
+
     public function showAdd(string $pageModulePath)
     {
 
@@ -42,7 +52,7 @@ class ProductController extends AdminAbstractController
         if ($product) {
             $title = "Update Product Slug: " . $product->getSlug();
             $pageModule = $pageModulePath;
-            $templateFilePath = str_replace('updateProduct', 'homepage', $pageModulePath);
+            $templateFilePath = str_replace('updateProduct', 'adminPanelTemplate', $pageModulePath);
         } else {
             $templateFilePath = str_replace('updateProduct', '404', $pageModulePath);
         }
@@ -110,10 +120,10 @@ class ProductController extends AdminAbstractController
             if ($productToCategoryController->delete($id)) {
                 $productImageController = new ProductImageController();
                 $productImageController->deleteAll($id);
+                $reviewController = new ReviewController();
+                $reviewController->deleteReviewsByProductId($id);
                 $em->remove($product);
                 $em->flush();
-                $cartController = new CartController();
-                $cartController->deleteByProductId($id);
                 header('location: /admin/product');
             }
         } else {
@@ -135,21 +145,29 @@ class ProductController extends AdminAbstractController
         return null;
     }
 
-    public function productTableRowGenerator()
+    public function productTableRowGenerator($searchTerm = null)
     {
+        $em = $this->getEntityManager();
+        /* @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        if($searchTerm != null) {
+            $products = $productRepository->findProductsWithDetailsBySearchTerm($searchTerm);
+        }
+        else{
+            $products = $this->getAllWithDetails();
+        }
 
-        $result = $this->getAllWithDetails();
-        if (!$result) {
+        if (!$products) {
             echo "<h3>No products to list !</h3>";
         } else {
             $str = "";
             /** @var ProductDetailDto $row */
-            foreach ($result as $row) {
+            foreach ($products as $row) {
                 $str .= self::productTableRow(
-                    $row->getId(), $row->getStockNumber(), $row->getIsActive(),
-                    $row->getTitle(), $row->getCreatedAt()->format('d/m/Y H:i:s'),
+                    $row->getProduct()->getId(), $row->getProduct()->getStockNumber(), $row->getProduct()->getIsActive(),
+                    $row->getProduct()->getTitle(), $row->getProduct()->getCreatedAt()->format('d/m/Y H:i:s'),
                     $row->getCategoryName(), $row->getBrandName(),
-                    $row->getQuantity(), $row->getPrice(), $row->getSlug());
+                    $row->getProduct()->getQuantity(), $row->getProduct()->getPrice(), $row->getProduct()->getSlug());
             }
             echo $str;
         }
@@ -184,7 +202,7 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$price</td>
             <td class=\"buttonsCol\"><a class=\"btn btn-warning btn-sm\" href=\"/admin/check-set-deactivate-product/$id\" role=\"button\">Set Deactive</a>
             <a class=\"btn btn-info btn-sm\" href=\"product/update/$id\" role=\"button\">Update</a>
-            <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\">Delete</a></td>
+            <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\" onclick=\"return confirm('Are you sure? for delete $title');\">Delete</a></td>
         </tr>
         ";
         } elseif ($isActive == 0) {
@@ -202,7 +220,7 @@ class ProductController extends AdminAbstractController
             <td class=\"miniCol\">$price</td>
             <td class=\"buttonsCol\"><a class=\"btn btn-success btn-sm\" href=\"/admin/check-set-active-product/$id\" role=\"button\">Set Active</a>
             <a class=\"btn btn-info btn-sm\" href=\"product/image/$id\" role=\"button\">Update</a>
-            <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\">Delete</a></td>
+            <a class=\"btn btn-danger btn-sm\" href=\"/admin/check-delete-product/$id\" role=\"button\" onclick=\"return confirm('Are you sure?');\">Delete</a></td>
         </tr>
         ";
         }

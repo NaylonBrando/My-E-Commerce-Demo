@@ -2,94 +2,30 @@
 
 namespace src\dto;
 
-use DateTime;
+use src\entity\Product;
 
 class ProductDetailDto
 {
-    private int $id;
-
-    private string $title;
-
-    private string $slug;
-
-    private string $brandName;
+    private Product $product;
 
     private string $categoryName;
 
-    private string $description;
-
-    private float $price;
-
-    private int $quantity;
-
-    private DateTime $createdAt;
-
-    private bool $isActive;
-
-    private int $stockNumber;
+    private string $brandName;
 
     /**
-     * @return int
+     * @return Product
      */
-    public function getId(): int
+    public function getProduct(): Product
     {
-        return $this->id;
+        return $this->product;
     }
 
     /**
-     * @param int $id
+     * @param Product $product
      */
-    public function setId(int $id): void
+    public function setProduct(Product $product): void
     {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    /**
-     * @param string $slug
-     */
-    public function setSlug(string $slug): void
-    {
-        $this->slug = $slug;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBrandName(): string
-    {
-        return $this->brandName;
-    }
-
-    /**
-     * @param string $brandName
-     */
-    public function setBrandName(string $brandName): void
-    {
-        $this->brandName = $brandName;
+        $this->product = $product;
     }
 
     /**
@@ -111,98 +47,16 @@ class ProductDetailDto
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getBrandName(): string
     {
-        return $this->description;
+        return $this->brandName;
     }
 
     /**
-     * @param string $description
+     * @param string $brandName
      */
-    public function setDescription(string $description): void
+    public function setBrandName(string $brandName): void
     {
-        $this->description = $description;
+        $this->brandName = $brandName;
     }
-
-    /**
-     * @return float
-     */
-    public function getPrice(): float
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param float $price
-     */
-    public function setPrice(float $price): void
-    {
-        $this->price = $price;
-    }
-
-    /**
-     * @return int
-     */
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param int $quantity
-     */
-    public function setQuantity(int $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param DateTime $createdAt
-     */
-    public function setCreatedAt(DateTime $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * @param bool $isActive
-     */
-    public function setIsActive(bool $isActive): void
-    {
-        $this->isActive = $isActive;
-    }
-
-    /**
-     * @return int
-     */
-    public function getStockNumber(): int
-    {
-        return $this->stockNumber;
-    }
-
-    /**
-     * @param int $stockNumber
-     */
-    public function setStockNumber(int $stockNumber): void
-    {
-        $this->stockNumber = $stockNumber;
-    }
-
-
 }
