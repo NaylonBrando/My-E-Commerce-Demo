@@ -64,7 +64,7 @@ $categoryController = new CategoryController();
                     </select>
                 </div>
                 <div class="mb-3 mt-2">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
                 </div>
             </form>
 
