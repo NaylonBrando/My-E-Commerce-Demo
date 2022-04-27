@@ -7,47 +7,59 @@ use controller\ProductController;
 <div class="container mb-50 mt-50">
     <div class="row">
         <div class="col-md-12">
-            <h5><?php if (isset($categoryName)) {
-                    echo $categoryName;
-                } ?></h5>
+            <form class="form-horizontal" id='sorting-options-form' action='' method='GET'>
             <div class="row">
-                <?php
-                if (isset($categoryName)) {
-                    $parseUrl = Router::parse_url();
-                    echo "<div class=\"dropdown text-end\">
-                    <button type=\"button\" class=\"btn btn-primary dropdown-toggle\" data-bs-toggle=\"dropdown\">
-                        Filter
-                    </button>
-                    <div class=\"dropdown-menu\">
-                        <a class=\"dropdown-item\" href=\"$parseUrl?rate=desc\">Link 1</a>
-                        <a class=\"dropdown-item\" href=\"$parseUrl?rate=asc\">Link 2</a>
-                    </div>
-                </div>";
-                }
-                ?>
+                <div class="col-6 col-md-auto"></div>
+                <div class="col-6 col-md">
+                    <h5><?php if (isset($categoryParameters['categoryName'])) {
+                            echo $categoryParameters['categoryName'];
+                        } ?></h5>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <label for="sorting">
+                        <select class="form-control" name="sorting" id="sorting" data-selector="sorting-option">
+                            <option value="">Sort</option>
+                            <option value="priceASC"> Lowest Price First</option>
+                            <option value="priceDESC">Highest Price Fist</option>
+                            <option value="rateDESC">Highest Rate First</option>
+                        </select>
+                    </label>
+                </div>
             </div>
+            </form>
         </div>
-        <?php
-        $productController = new ProductController();
-        if (!isset($pageNumber)) {
-            $pageNumber = 1;
-        }
-        if (isset($categoryParameters)) {
-            $productController->productCardGeneratorWithCategory($categoryParameters['categoryName'], $categoryParameters['pg'], $categoryParameters['rate'], $categoryParameters['price']);
-        } elseif (isset($searchTermParameters)) {
-            $productController->productCardGeneratorWithSearchTerm($searchTermParameters['searchTerm'], $searchTermParameters['pg'], $searchTermParameters['rate'], $searchTermParameters['price']);
-        }
-        ?>
+        <div class="col-md-12">
+            <?php
+            $productController = new ProductController();
+            if (!isset($pageNumber)) {
+                $pageNumber = 1;
+            }
+            if (isset($categoryParameters)) {
+                $productController->productCardGeneratorWithCategory($categoryParameters['categoryName'], $categoryParameters['pg'], $categoryParameters['rate'], $categoryParameters['price']);
+            } elseif (isset($searchTermParameters)) {
+                $productController->productCardGeneratorWithSearchTerm($searchTermParameters['searchTerm'], $searchTermParameters['pg'], $searchTermParameters['rate'], $searchTermParameters['price']);
+            }
+            ?>
+        </div>
     </div>
 </div>
 
 
 <script>
-    let dropDownItem = document.querySelectorAll('.dropdown-item')
-    dropDownItem.forEach(item => {
-        item.addEventListener('click', function () {
-            this.closest('.dropdown').children[0].innerText = this.innerText
-        })
-    })
+    $(document).ready(function () {
+        $('#sorting').on('change', function () {
+            
+            if ($(this).val() === 'priceASC') {
+                $(this).attr('name', 'price');
+            }
+            if ($(this).val() === 'priceDESC') {
+                $(this).attr('name', 'price');
+            }
+            if ($(this).val() === 'rateDESC') {
+                $(this).attr('name', 'rate');
+            }
+            $('#sorting-options-form').trigger('submit');
+        });
+    });
 </script>
 

@@ -13,11 +13,11 @@ class ProductController extends AbstractController
     public function showProductCardPageWithCategoryFilter($pageModulePath, array $parameters)
     {
         $pageModule = $pageModulePath;
-        
+
         if (isset($parameters['categoryName'])) {
             $parameters['categoryName'] = str_replace('-', ' ', $parameters['categoryName']);
         }
-        
+
         if (isset($parameters['pg'])) {
             (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
         } else {
@@ -25,23 +25,20 @@ class ProductController extends AbstractController
         }
 
         if (isset($parameters['rate'])) {
-            if ($parameters['rate'] == 'asc' || $parameters['rate'] == 'desc') {
-                $rate = $parameters['rate'];
-            } else {
-                $rate = 'asc';
-            }
+            $parameters['rate'] = 'desc';
         } else {
             $parameters['rate'] = null;
         }
 
         if (isset($parameters['price'])) {
-            if ($parameters['price'] == 'asc' || $parameters['price'] == 'desc') {
-                $price = $parameters['price'];
+            if ($parameters['price'] == 'priceASC') {
+                $parameters['price'] = 'asc';
+            } elseif ($parameters['price'] == 'priceDESC') {
+                $parameters['price'] = 'desc';
             } else {
-                $price = 'asc';
+                $parameters['price'] = 'asc';
             }
-        }
-        else {
+        } else {
             $parameters['price'] = null;
         }
 
@@ -63,7 +60,7 @@ class ProductController extends AbstractController
     public function showProductCardPageWithSearchTerm($pageModulePath, array $parameters)
     {
         $pageModule = $pageModulePath;
-        
+
         if (isset($parameters['searchTerm'])) {
             $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
         }
@@ -75,28 +72,25 @@ class ProductController extends AbstractController
         }
 
         if (isset($parameters['rate'])) {
-            if ($parameters['rate'] == 'asc' || $parameters['rate'] == 'desc') {
-                $rate = $parameters['rate'];
-            } else {
-                $rate = 'asc';
-            }
+            $parameters['rate'] = 'desc';
         } else {
             $parameters['rate'] = null;
         }
 
         if (isset($parameters['price'])) {
-            if ($parameters['price'] == 'asc' || $parameters['price'] == 'desc') {
-                $price = $parameters['price'];
+            if ($parameters['price'] == 'priceASC') {
+                $parameters['price'] = 'asc';
+            } elseif ($parameters['price'] == 'priceDESC') {
+                $parameters['price'] = 'desc';
             } else {
-                $price = 'asc';
+                $parameters['price'] = 'asc';
             }
-        }
-        else {
+        } else {
             $parameters['price'] = null;
         }
 
         $searchTermParameters = $parameters;
-        
+
 
         $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
         $title = 'Product';
@@ -201,31 +195,48 @@ class ProductController extends AbstractController
 
     }
 
-    public function paginator($page, $countOfProduct): void
+    public function paginator($currentPageNumber, $countOfProduct): void
     {
+        $url = $_SERVER['REQUEST_URI'];
+        if (str_contains($url, '?')) {
+            if (preg_match('/\?pg=\d+/', $url)) {
+                $url = preg_replace('/\?pg=\d+/', '', $url);
+                $url = $url . '?pg=';
+            } elseif (preg_match('/\&pg=\d+/', $url)) {
+                $url = preg_replace('/\&pg=\d+/', '', $url);
+                $url = $url . '&pg=';
+            } else {
+                $url = $url . '&pg=';
+            }
+                
+        } else {
+            $url = $url . '?pg=';
+        }
+
+
         $limit = 4;
         $record = 2;
         $pageCount = ceil($countOfProduct / $limit);
         $str = '<div class="justify-content-end mt-3"> <nav aria-label="Page navigation example">
                  <ul class="pagination justify-content-center">';
-        if ($page > 1) {
-            $newPage = $page - 1;
-            $str .= '<li class="page-item"><a class="page-link" href="?pg=' . $newPage . '"' . '>Geri</a></li>';
+        if ($currentPageNumber > 1) {
+            $newPage = $currentPageNumber - 1;
+            $str .= '<li class="page-item"><a class="page-link" href="' . $url . $newPage . '"' . '>Geri</a></li>';
         } else {
             $str .= '<li class="page-item disabled"><a class="page-link" href="?pg=">Geri</a></li>';
         }
-        for ($i = $page - $record; $i <= $page + $record; $i++) {
-            if ($i == $page) {
-                $str .= '<li class="page-item active"><a class="page-link" href="?pg=' . $i . '"' . '>' . $i . '</a></li>';
+        for ($i = $currentPageNumber - $record; $i <= $currentPageNumber + $record; $i++) {
+            if ($i == $currentPageNumber) {
+                $str .= '<li class="page-item active"><a class="page-link" href="' . $url . $i . '"' . '>' . $i . '</a></li>';
             } else {
                 if ($i > 0 and $i <= $pageCount) {
-                    $str .= '<li class="page-item"><a class="page-link" href="?pg=' . $i . '"' . '>' . $i . '</a></li>';
+                    $str .= '<li class="page-item"><a class="page-link" href="' . $url . $i . '"' . '>' . $i . '</a></li>';
                 }
             }
         }
-        if ($page < $pageCount) {
-            $newPage = $page + 1;
-            $str .= '<li class="page-item"><a class="page-link" href="?pg=' . $newPage . '"' . '>İleri</a></li>';
+        if ($currentPageNumber < $pageCount) {
+            $newPage = $currentPageNumber + 1;
+            $str .= '<li class="page-item"><a class="page-link" href="' . $url . $newPage . '"' . '>İleri</a></li>';
         } else {
             $str .= '<li class="page-item disabled"><a class="page-link" href="#">İleri</a></li>';
         }

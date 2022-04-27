@@ -162,11 +162,11 @@ class Router
                     '{productSlug}' => '([a-z0-9-&]+)',
                     '{categoryName}' => '([a-z0-9-&]+)',
                     '{searchValue}' => '([a-z0-9-&%]+)',
-                    '{parameters}' => '([a-z0-9=&]+)',
+                    '{parameters}' => '([a-zA-Z0-9=&]+)',
                 ];
 
                 $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
-
+    
                 if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
                     unset($parameters[0]);
                     if(isset($router['categoryName'])){
