@@ -3,7 +3,7 @@
 
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/head.php'); ?>
 <body>
-<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navigation_bar.php'); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navigationBar.php'); ?>
 
 
 
@@ -12,7 +12,7 @@ if (isset($pageModule)) {
     require_once($pageModule);
 }
 else{
-    echo 'vololo';
+    echo 'No Page Module';
 }?>
 </body>
 </html>

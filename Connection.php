@@ -1,7 +1,5 @@
 <?php
 
-namespace Connection;
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 
@@ -32,9 +30,9 @@ class Connection
     }
 
     /**
-     * @return mixed
+     * @return EntityManager
      */
-    public function getEntityManager()
+    public function getEntityManager(): EntityManager
     {
         return $this->entityManager;
     }

@@ -17,7 +17,7 @@
 <body class="text-center">
 <main class="form-signin">
     <form action="check-register" method="post">
-        <img class="mb-4" src="../image/ecommerce-customer.png" alt="" width="72" height="57">
+        <img class="mb-4" src="../image/ecommerce-customer.png" alt="" width="64" height="64">
         <h1 class="h3 mb-3 fw-normal">Create Account</h1>
 
         <div class="form-floating">

@@ -1,16 +1,3 @@
-<script>
-    function productCardSearchProduct() {
-        let searchValue = document.getElementById("search").value;
-        if(searchValue === '' && searchValue.length === 0) {
-            document.searchProduct.action = "/";
-        }
-        else {
-            document.searchProduct.action = "/search/" + searchValue;
-        }
-    }
-</script>
-
-    
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand text-success" href="/">My ECommerce Demo</a>
@@ -54,8 +41,20 @@
         </ul>
     </div>
 </nav>
-<?php
+<script>
+    function productCardSearchProduct() {
+        let searchValue = document.getElementById("search").value;
+        if(searchValue === '' && searchValue.length === 0) {
+            document.searchProduct.action = "/";
+        }
+        else {
+            document.searchProduct.action = "/search/" + searchValue;
+        }
+    }
+</script>
 
+
+<?php
 function navbarCustomerDropDown()
 {
 

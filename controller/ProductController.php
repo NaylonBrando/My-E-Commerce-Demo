@@ -18,34 +18,11 @@ class ProductController extends AbstractController
             $parameters['categoryName'] = str_replace('-', ' ', $parameters['categoryName']);
         }
 
-        if (isset($parameters['pg'])) {
-            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
-        } else {
-            $parameters['pg'] = 1;
-        }
+        $categoryParameters = $this->extractedParameters($parameters);
 
-        if (isset($parameters['rate'])) {
-            $parameters['rate'] = 'desc';
-        } else {
-            $parameters['rate'] = null;
-        }
-
-        if (isset($parameters['price'])) {
-            if ($parameters['price'] == 'priceASC') {
-                $parameters['price'] = 'asc';
-            } elseif ($parameters['price'] == 'priceDESC') {
-                $parameters['price'] = 'desc';
-            } else {
-                $parameters['price'] = 'asc';
-            }
-        } else {
-            $parameters['price'] = null;
-        }
-
-        $categoryParameters = $parameters;
 
         $categoryController = new CategoryController();
-        $categoryEntity = $categoryController->getCategoryByName($parameters['categoryName']);
+        $categoryEntity = $categoryController->getCategoryByName($categoryParameters['categoryName']);
 
         if ($categoryEntity == null) {
             $templateFilePath = str_replace('productCard', '404', $pageModulePath);
@@ -57,16 +34,14 @@ class ProductController extends AbstractController
         require_once($templateFilePath);
     }
 
-    public function showProductCardPageWithSearchTerm($pageModulePath, array $parameters)
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    public function extractedParameters(array $parameters): array
     {
-        $pageModule = $pageModulePath;
-
-        if (isset($parameters['searchTerm'])) {
-            $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
-        }
-
         if (isset($parameters['pg'])) {
-            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
+            (int)$parameters['pg'] == 0 ? 1 : $pageNumber = (int)$parameters['pg'];
         } else {
             $parameters['pg'] = 1;
         }
@@ -88,8 +63,19 @@ class ProductController extends AbstractController
         } else {
             $parameters['price'] = null;
         }
+        return $parameters;
 
-        $searchTermParameters = $parameters;
+    }
+
+    public function showProductCardPageWithSearchTerm($pageModulePath, array $parameters)
+    {
+        $pageModule = $pageModulePath;
+
+        if (isset($parameters['searchTerm'])) {
+            $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
+        }
+
+        $searchTermParameters = $this->extractedParameters($parameters);
 
 
         $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
@@ -98,20 +84,65 @@ class ProductController extends AbstractController
         require_once($templateFilePath);
     }
 
-    public function getProductById($id): Product|null
+    public function productCardGeneratorWithSearchTerm($searchTerm, $pageNumber, $rate = null, $price = null)
     {
         $em = $this->getEntityManager();
-        return $em->find(Product::class, $id);
-    }
 
-    public function getLastAddedProductCardGeneratorWithLimit($limit)
-    {
-        $em = $this->getEntityManager();
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
-        $productResult = $productRepository->getLastProductsByLimit($limit);
+
+        $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm, true);
+        $productResult = $productRepository->findProductsBySearchTerm($pageNumber, 8, $searchTerm, $rate, $price);
+
         if (count($productResult) > 0) {
-            $this->extracted($productResult);
+            $this->echoProductsExtracted($productResult);
+            $this->paginator($pageNumber, $countOfProducts, 8);
+        } else {
+            echo '<div class="row text-center">';
+            echo '<h3>No products found</h3>';
+            echo '<a href="/">Back to Home</a>';
+            echo '</div>';
+        }
+
+    }
+
+    public function productCardGeneratorWithCategory($categoryName, $pageNumber, $rate = null, $price = null)
+    {
+        $em = $this->getEntityManager();
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+
+        $categoryController = new CategoryController();
+        $categoryEntity = $categoryController->getCategoryByName($categoryName);
+        /** @var Category[] $categoryArray */
+        $categoryArray = $categoryController->getSubCategories($categoryEntity->getId());
+
+        if ($categoryArray) {
+            $categoryArray[] = $categoryEntity;
+            $categoryNameArray = [];
+            foreach ($categoryArray as $category) {
+                $categoryNameArray[] = $category->getName();
+            }
+
+            /** @var ProductRepository $productRepository */
+            $productRepository = $em->getRepository(Product::class);
+            $countOfProducts = $productRepository->countProductsByCategoryName($categoryNameArray, true);
+
+            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 8, $categoryNameArray, $rate, $price);
+        } else {
+            $countOfProducts = $productRepository->countProductsByCategoryName($categoryName, true);
+            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 8, $categoryName, $rate, $price);
+        }
+
+        if (count($productResult) > 0) {
+            $this->echoProductsExtracted($productResult);
+            $this->paginator($pageNumber, $countOfProducts, 8);
+        } else {
+            echo '<div class="row text-center">';
+            echo '<h3>No products found</h3>';
+            echo '<a href="/">Back to Home</a>';
+            echo '</div>';
         }
 
     }
@@ -120,7 +151,7 @@ class ProductController extends AbstractController
      * @param array $productResult
      * @return void
      */
-    public function extracted(array $productResult): void
+    public function echoProductsExtracted(array $productResult): void
     {
         $str = "<div class=\"row justify-content-center\">";
         foreach ($productResult as $row) {
@@ -173,48 +204,25 @@ class ProductController extends AbstractController
         ";
     }
 
-    public function productCardGeneratorWithSearchTerm($searchTerm, $pageNumber, $rate = null, $price = null)
-    {
-        $em = $this->getEntityManager();
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $em->getRepository(Product::class);
-
-        $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm);
-        $productResult = $productRepository->findProductsBySearchTerm($pageNumber, 4, $searchTerm, $rate, $price);
-
-        if (count($productResult) > 0) {
-            $this->extracted($productResult);
-            $this->paginator($pageNumber, $countOfProducts);
-        } else {
-            echo '<div class="row text-center">';
-            echo '<h3>No products found</h3>';
-            echo '<a href="/">Back to Home</a>';
-            echo '</div>';
-        }
-
-    }
-
-    public function paginator($currentPageNumber, $countOfProduct): void
+    public function paginator($currentPageNumber, $countOfProduct, $limit): void
     {
         $url = $_SERVER['REQUEST_URI'];
         if (str_contains($url, '?')) {
             if (preg_match('/\?pg=\d+/', $url)) {
                 $url = preg_replace('/\?pg=\d+/', '', $url);
                 $url = $url . '?pg=';
-            } elseif (preg_match('/\&pg=\d+/', $url)) {
-                $url = preg_replace('/\&pg=\d+/', '', $url);
+            } elseif (preg_match('/&pg=\d+/', $url)) {
+                $url = preg_replace('/&pg=\d+/', '', $url);
                 $url = $url . '&pg=';
             } else {
                 $url = $url . '&pg=';
             }
-                
+
         } else {
             $url = $url . '?pg=';
         }
 
-
-        $limit = 4;
+        
         $record = 2;
         $pageCount = ceil($countOfProduct / $limit);
         $str = '<div class="justify-content-end mt-3"> <nav aria-label="Page navigation example">
@@ -244,45 +252,24 @@ class ProductController extends AbstractController
         echo $str;
     }
 
-    public function productCardGeneratorWithCategory($categoryName, $pageNumber, $rate = null, $price = null)
+    
+
+    public function getLastAddedProductCardGeneratorWithLimit($limit)
     {
         $em = $this->getEntityManager();
-
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
-
-        $categoryController = new CategoryController();
-        $categoryEntity = $categoryController->getCategoryByName($categoryName);
-        /** @var Category[] $categoryArray */
-        $categoryArray = $categoryController->getSubCategories($categoryEntity->getId());
-
-        if ($categoryArray) {
-            $categoryArray[] = $categoryEntity;
-            $categoryNameArray = [];
-            foreach ($categoryArray as $category) {
-                $categoryNameArray[] = $category->getName();
-            }
-
-            /** @var ProductRepository $productRepository */
-            $productRepository = $em->getRepository(Product::class);
-            $countOfProducts = $productRepository->countProductsByCategoryName($categoryNameArray);
-
-            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryNameArray, $rate, $price);
-        } else {
-            $countOfProducts = $productRepository->countProductsByCategoryName($categoryName);
-            $productResult = $productRepository->findProductsByCategoryName($pageNumber, 4, $categoryName, $rate, $price);
-        }
-
+        $productResult = $productRepository->getLastProductsByLimit($limit);
         if (count($productResult) > 0) {
-            $this->extracted($productResult);
-            $this->paginator($pageNumber, $countOfProducts);
-        } else {
-            echo '<div class="row text-center">';
-            echo '<h3>No products found</h3>';
-            echo '<a href="/">Back to Home</a>';
-            echo '</div>';
+            $this->echoProductsExtracted($productResult);
         }
 
+    }
+
+    public function getProductById($id): Product|null
+    {
+        $em = $this->getEntityManager();
+        return $em->find(Product::class, $id);
     }
 
     public function showProductPage($pageModulePath, $parameters)

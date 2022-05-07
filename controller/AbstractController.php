@@ -2,7 +2,7 @@
 
 namespace controller;
 
-use Connection\Connection;
+use Connection;
 use Doctrine\ORM\EntityManager;
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');

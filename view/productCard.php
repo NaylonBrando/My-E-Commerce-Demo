@@ -31,9 +31,6 @@ use controller\ProductController;
         <div class="col-md-12">
             <?php
             $productController = new ProductController();
-            if (!isset($pageNumber)) {
-                $pageNumber = 1;
-            }
             if (isset($categoryParameters)) {
                 $productController->productCardGeneratorWithCategory($categoryParameters['categoryName'], $categoryParameters['pg'], $categoryParameters['rate'], $categoryParameters['price']);
             } elseif (isset($searchTermParameters)) {

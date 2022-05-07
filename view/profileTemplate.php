@@ -11,7 +11,7 @@ $user = $userController->getById($_SESSION['user_id']);
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/profileHead.php'); ?>
 
 <body>
-<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navigation_bar.php'); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navigationBar.php'); ?>
 
 <div class="container-xl px-4 mt-4">
     <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/profileNavbar.php'); ?>

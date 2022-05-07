@@ -3,6 +3,6 @@
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
 require_once 'Connection.php';
-$entityManager = new \Connection\Connection();
+$entityManager = new Connection();
 
 return ConsoleRunner::createHelperSet($entityManager->entityManager);
