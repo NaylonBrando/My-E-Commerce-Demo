@@ -16,12 +16,18 @@ class AdminController extends AdminAbstractController
         require_once($templateFile);
     }
 
+
     public function logout()
     {
-        session_start();
-        session_destroy();
-        header('location:/');
+        if (isset($_SESSION['admin_id'])) {
+            unset($_SESSION['admin_id']);
+            unset($_SESSION['admin_name']);
+            unset($_SESSION['admin_last_name']);
+            unset($_SESSION['admin_type']);
+        }
+        header('location:/admin/login');
     }
+    
 
     public function loginCheck()
     {
@@ -43,7 +49,7 @@ class AdminController extends AdminAbstractController
                 if (isset($_SESSION['admin_login_error'])) {
                     unset($_SESSION['admin_login_error']);
                 }
-                header('location: /admin');
+                header('location: /admin/product');
             } else {
                 $_SESSION['admin_login_error'] = 'Passwords or email incorrect';
                 header('location: /admin/login');
