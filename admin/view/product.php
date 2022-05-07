@@ -6,7 +6,7 @@ $productController = new ProductController();
 ?>
 
 <script>
-    function searchProduct() {
+    function searchWithTermRouter() {
         let searchValue = document.getElementById("search").value;
         document.searchProduct.action = "/admin/product/search/" + searchValue;
     }
@@ -16,12 +16,14 @@ $productController = new ProductController();
     <h2>Product</h2>
     <div class="row">
         <div class="col-md-7">
-            <a class="btn btn-primary" href="product/add" role="button">Add Product</a>
+            <a class="btn btn-primary" href="/admin/product/add" role="button">Add Product</a>
         </div>
         <div class="col-md-5">
-            <form name="searchProduct" class="form-inline text-end" method="post" onsubmit="searchProduct()">
+            <form name="searchProduct" class="form-inline justify-content-end" method="post" onsubmit="searchWithTermRouter()">
                 <div class="form-group mx-sm-3 mb-2">
-                    <input type="text" class="form-control" name="search" id="search" placeholder="Search" required>
+                    <label for="search">
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Search" required>
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary mb-2">Search</button>
             </form>
@@ -46,10 +48,14 @@ $productController = new ProductController();
             </thead>
             <tbody>
             <?php
-            if (isset($function, $searchTerm) && $function == "showProductSearch") {
-                $productController->productTableRowGenerator($searchTerm);
+            if (isset($searchTermParameters)) {
+                $productController->productTableRowGeneratorWithSearchTerm($searchTermParameters['searchTerm'], $searchTermParameters['pg']);
             } else {
-                $productController->productTableRowGenerator();
+                if (isset($parameters['pg'])) {
+                    $productController->productTableRowGenerator($parameters['pg']);
+                } else {
+                    $productController->productTableRowGenerator(1);
+                }
             } ?>
             </tbody>
         </table>

@@ -206,7 +206,22 @@ class ProductRepository extends EntityRepository
         return $this->extracted($qb, $productWithImagesDtoArray);
     }
 
-    public function countProductsByCategoryName($categoryName): int
+    public function countProducts(bool $isActive = null): int
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(p.id)')
+            ->from(Product::class, 'p');
+        if ($isActive !== null) {
+            if ($isActive) {
+                $qb->where('p.isActive = 1');
+            } else {
+                $qb->where('p.isActive = 0');
+            }
+        }
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countProductsByCategoryName($categoryName, bool $isActive=null): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COUNT(p)')
@@ -223,13 +238,20 @@ class ProductRepository extends EntityRepository
                 Join::WITH,
                 'ptc.categoryId = c.id',
             )
-            ->where('c.name IN (:categoryName)')
-            ->setParameter('categoryName', $categoryName);
+            ->where('c.name IN (:categoryName)');
+            if ($isActive !== null) {
+                if ($isActive) {
+                    $qb->andWhere('p.isActive = 1');
+                } else {
+                    $qb->andWhere('p.isActive = 0');
+                }
+            }
+            $qb->setParameter('categoryName', $categoryName);
 
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countProductsBySearchTerm($searchTerm)
+    public function countProductsBySearchTerm(string $searchTerm, bool $isActive=null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -255,8 +277,15 @@ class ProductRepository extends EntityRepository
             )
             ->where('p.title LIKE :searchTerm')
             ->orWhere('c.name LIKE :searchTerm')
-            ->orWhere('b.name LIKE :searchTerm')
-            ->setParameter('searchTerm', '%' . $searchTerm . '%');
+            ->orWhere('b.name LIKE :searchTerm');
+            if ($isActive !== null) {
+                if ($isActive) {
+                    $qb->andWhere('p.isActive = 1');
+                } else {
+                    $qb->andWhere('p.isActive = 0');
+                }
+            }
+            $qb->setParameter('searchTerm', '%' . $searchTerm . '%');
 
         return $qb->getQuery()->getSingleScalarResult();
     }
@@ -283,7 +312,7 @@ class ProductRepository extends EntityRepository
     /**
      * @return ProductDetailDto[]
      */
-    public function findAllProductsWithDetails(): array
+    public function findProductsWithDetails($pageNumber, $limit): array
     {
 
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -308,7 +337,9 @@ class ProductRepository extends EntityRepository
                 Join::WITH,
                 'ptc.categoryId = c.id',
             )
-            ->orderBy('p.id', 'ASC');
+            ->orderBy('p.id', 'ASC')
+            ->setFirstResult(($pageNumber - 1) * $limit)
+            ->setMaxResults($limit);
 
         return $this->ProductDetailExtracted($qb);
     }
@@ -334,7 +365,7 @@ class ProductRepository extends EntityRepository
     /**
      * @return ProductDetailDto[]
      */
-    public function findProductsWithDetailsBySearchTerm($searchTerm): array
+    public function findProductsWithDetailsBySearchTerm($searchTerm, $pageNumber, $limit): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -362,7 +393,9 @@ class ProductRepository extends EntityRepository
             ->orWhere('c.name LIKE :searchTerm')
             ->orWhere('b.name LIKE :searchTerm')
             ->setParameter('searchTerm', '%' . $searchTerm . '%')
-            ->orderBy('p.id', 'ASC');
+            ->orderBy('p.id', 'ASC')
+            ->setFirstResult(($pageNumber - 1) * $limit)
+            ->setMaxResults($limit);
 
         return $this->ProductDetailExtracted($qb);
     }

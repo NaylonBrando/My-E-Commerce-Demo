@@ -116,6 +116,15 @@ class Router
                 "type" => "normal",
                 "template" => "product.php"
             ],
+            "product-with-pagination" => [
+                "url" => "/product\\?{parameters}",
+                "hasParameters" => true,
+                "parameterNames" => ["pg"],
+                "class" => "ProductController",
+                "function" => "show",
+                "type" => "normal",
+                "template" => "product.php"
+            ],
             "add-product" => [
                 "url" => "/product/add",
                 "class" => "ProductController",
@@ -223,6 +232,33 @@ class Router
                 "type" => "normal",
                 "template" => "user.php"
             ],
+            "user-with-pagination" => [
+                "url" => "/user\\?{parameters}",
+                "hasParameters" => true,
+                "parameterNames" => ["pg"],
+                "class" => "UserController",
+                "function" => "show",
+                "type" => "normal",
+                "template" => "user.php"
+            ],
+            "user-search" => [
+                "url" => "/user/search/{searchValue}",
+                "searchTerm" => "searchTerm",
+                "class" => "UserController",
+                "function" => "showUserSearch",
+                "type" => "normal",
+                "template" => "user.php"
+            ],
+            "user-search-with-parameters" => [
+                "url" => "/user/search/{searchValue}\\?{parameters}",
+                "searchTerm" => "searchTerm",
+                "hasParameters" => true,
+                "parameterNames" => ["pg"],
+                "class" => "UserController",
+                "function" => "showUserSearch",
+                "type" => "normal",
+                "template" => "user.php"
+            ],
             "check-change-user-status" => [
                 "url" => "/check-change-user-status/{id}",
                 "class" => "UserController",
@@ -250,6 +286,17 @@ class Router
             ],
             "product-search" => [
                 "url" => "/product/search/{searchValue}",
+                "searchTerm" => "searchTerm",
+                "class" => "ProductController",
+                "function" => "showProductSearch",
+                "type" => "normal",
+                "template" => "product.php"
+            ],
+            "product-search-with-parameters" => [
+                "url" => "/product/search/{searchValue}\\?{parameters}",
+                "searchTerm" => "searchTerm",
+                "hasParameters" => true,
+                "parameterNames" => ["pg"],
                 "class" => "ProductController",
                 "function" => "showProductSearch",
                 "type" => "normal",
@@ -267,13 +314,35 @@ class Router
                 $patterns = [
                     '{url}' => '([0-9a-zA-Z]+)',
                     '{id}' => '([0-9]+)',
-                    '{searchValue}' => '([0-9a-zA-Z]+)',
+                    '{searchValue}' => '([a-z0-9-&%]+)',
+                    '{parameters}' => '([a-zA-Z0-9=&]+)',
                 ];
 
                 $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
 
                 if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
                     unset($parameters[0]);
+                    if(isset($router['searchTerm'])){
+                        $parameters[$router['searchTerm']] = $parameters[1];
+                        unset($parameters[1]);
+                    }
+                    if(isset($router['hasParameters'])){
+                        if(isset($parameters[2])){
+                            $params = explode('&', $parameters[2]);
+                            unset($parameters[2]);
+                        }
+                        else{
+                            $params = explode('&', $parameters[1]);
+                        }
+                        foreach ($params as $param){
+                            $param = explode('=', $param);
+                            if(in_array($param[0], $router['parameterNames'])){
+                                $parameters[$param[0]] = $param[1];
+                            }
+                            unset($parameters[1]);
+                        }
+                        
+                    }
                     $controllerClassName = $router['class'];
                     $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
                     $functionName = $router['function'];

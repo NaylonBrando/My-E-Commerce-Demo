@@ -13,8 +13,14 @@ class ProductController extends AdminAbstractController
 {
 
 
-    public function show(string $pageModulePath)
+    public function show(string $pageModulePath, $parameters)
     {
+
+        if (isset($parameters['pg'])) {
+            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
+        } else {
+            $parameters['pg'] = 1;
+        }
 
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
@@ -25,8 +31,16 @@ class ProductController extends AdminAbstractController
 
     public function showProductSearch(string $pageModulePath, $parameters)
     {
-        $function = 'showProductSearch';
-        $searchTerm = $parameters[1];
+        if (isset($parameters['searchTerm'])) {
+            $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
+        }
+        if (isset($parameters['pg'])) {
+            (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
+        } else {
+            $parameters['pg'] = 1;
+        }
+        $searchTermParameters = $parameters;
+
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
         $title = "Product";
@@ -134,52 +148,39 @@ class ProductController extends AdminAbstractController
 
     }
 
-    public function getAll(): ?array
-    {
-        $em = $this->getEntityManager();
-        /** @var Product[] $result */
-        $result = $em->getRepository(Product::class)->findAll();
-        if ($result) {
-            return $result;
-        }
-        return null;
-    }
-
-    public function productTableRowGenerator($searchTerm = null)
+    public function productTableRowGenerator($pageNumber)
     {
         $em = $this->getEntityManager();
         /* @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
-        if($searchTerm != null) {
-            $products = $productRepository->findProductsWithDetailsBySearchTerm($searchTerm);
-        }
-        else{
-            $products = $this->getAllWithDetails();
+        $products = $productRepository->findProductsWithDetails($pageNumber, 8);
+        $countOfProducts = $productRepository->countProducts();
+
+        if (count($products) > 0) {
+            $this->echoProductsExtracted($products);
+            $this->paginator($pageNumber, $countOfProducts, 8);
+        } else {
+            echo "<h1>No products found</h1>";
         }
 
-        if (!$products) {
-            echo "<h3>No products to list !</h3>";
-        } else {
-            $str = "";
-            /** @var ProductDetailDto $row */
-            foreach ($products as $row) {
-                $str .= self::productTableRow(
-                    $row->getProduct()->getId(), $row->getProduct()->getStockNumber(), $row->getProduct()->getIsActive(),
-                    $row->getProduct()->getTitle(), $row->getProduct()->getCreatedAt()->format('d/m/Y H:i:s'),
-                    $row->getCategoryName(), $row->getBrandName(),
-                    $row->getProduct()->getQuantity(), $row->getProduct()->getPrice(), $row->getProduct()->getSlug());
-            }
-            echo $str;
-        }
     }
 
-    public function getAllWithDetails(): array
+    /**
+     * @param array $products
+     * @return void
+     */
+    public function echoProductsExtracted(array $products): void
     {
-        $em = $this->getEntityManager();
-        /** @var ProductRepository $er */
-        $er = $em->getRepository(Product::class);
-        return $er->findAllProductsWithDetails();
-
+        $str = "";
+        /** @var ProductDetailDto $row */
+        foreach ($products as $row) {
+            $str .= self::productTableRow(
+                $row->getProduct()->getId(), $row->getProduct()->getStockNumber(), $row->getProduct()->getIsActive(),
+                $row->getProduct()->getTitle(), $row->getProduct()->getCreatedAt()->format('d/m/Y H:i:s'),
+                $row->getCategoryName(), $row->getBrandName(),
+                $row->getProduct()->getQuantity(), $row->getProduct()->getPrice(), $row->getProduct()->getSlug());
+        }
+        echo $str;
     }
 
     public function productTableRow($id, $stockNumber, $isActive, $title, $createdAt,
@@ -226,6 +227,72 @@ class ProductController extends AdminAbstractController
         }
 
         return $element;
+    }
+
+    public function paginator($currentPageNumber, $countOfProduct, $limit): void
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        if (str_contains($url, '?')) {
+            if (preg_match('/\?pg=\d+/', $url)) {
+                $url = preg_replace('/\?pg=\d+/', '', $url);
+                $url = $url . '?pg=';
+            } elseif (preg_match('/&pg=\d+/', $url)) {
+                $url = preg_replace('/&pg=\d+/', '', $url);
+                $url = $url . '&pg=';
+            } else {
+                $url = $url . '&pg=';
+            }
+
+        } else {
+            $url = $url . '?pg=';
+        }
+
+        $record = 2;
+        $pageCount = ceil($countOfProduct / $limit);
+        $str = '<div class="mt-3"> <nav aria-label="Page navigation example">
+                 <ul class="pagination justify-content-end">';
+        if ($currentPageNumber > 1) {
+            $newPage = $currentPageNumber - 1;
+            $str .= '<li class="page-item"><a class="page-link" href="' . $url . $newPage . '"' . '>Geri</a></li>';
+        } else {
+            $str .= '<li class="page-item disabled"><a class="page-link" href="?pg=">Geri</a></li>';
+        }
+        for ($i = $currentPageNumber - $record; $i <= $currentPageNumber + $record; $i++) {
+            if ($i == $currentPageNumber) {
+                $str .= '<li class="page-item active"><a class="page-link" href="' . $url . $i . '"' . '>' . $i . '</a></li>';
+            } else {
+                if ($i > 0 and $i <= $pageCount) {
+                    $str .= '<li class="page-item"><a class="page-link" href="' . $url . $i . '"' . '>' . $i . '</a></li>';
+                }
+            }
+        }
+        if ($currentPageNumber < $pageCount) {
+            $newPage = $currentPageNumber + 1;
+            $str .= '<li class="page-item"><a class="page-link" href="' . $url . $newPage . '"' . '>İleri</a></li>';
+        } else {
+            $str .= '<li class="page-item disabled"><a class="page-link" href="#">İleri</a></li>';
+        }
+        $str .= '</ul></nav></div>';
+        echo $str;
+    }
+
+    public function productTableRowGeneratorWithSearchTerm($searchTerm, $pageNumber = 1)
+    {
+        $em = $this->getEntityManager();
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        $products = $productRepository->findProductsWithDetailsBySearchTerm($searchTerm, $pageNumber, 8);
+        $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm);
+
+
+        if (count($products) > 0) {
+            $this->echoProductsExtracted($products);
+            $this->paginator($pageNumber, $countOfProducts, 8);
+        } else {
+            echo "<h1>No products found</h1>";
+        }
+
     }
 
     public function setIsActiveTrue($id)
