@@ -38,7 +38,8 @@ $categoryController = new CategoryController();
 
                 <label for="description" class="col-sm-3 control-label"><h6>Description</h6></label>
                 <div class="col-sm-9">
-                    <textarea name="description" style="resize: none; height:100px" class="form-control" maxlength="2048"
+                    <textarea name="description" style="resize: none; height:100px" class="form-control"
+                              maxlength="2048"
                               required id="description"></textarea>
                 </div>
 
@@ -55,7 +56,8 @@ $categoryController = new CategoryController();
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price" id="for-price" required>
+                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price"
+                           id="for-price" required>
                 </div>
 
                 <label for="name" class="col-sm-3 control-label"><h6>Images</h6></label> <br>

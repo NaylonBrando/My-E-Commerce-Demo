@@ -27,7 +27,7 @@ class AdminController extends AdminAbstractController
         }
         header('location:/admin/login');
     }
-    
+
 
     public function loginCheck()
     {
@@ -39,7 +39,7 @@ class AdminController extends AdminAbstractController
             /** @var AdminRepository $query */
             $query = $this->getEntityManager()->getRepository(Admin::class);
             /** @var Admin $result */
-            $result = $query->findOneBy(array('password' => $password, 'email' => $email));
+            $result = $query->findOneBy(['password' => $password, 'email' => $email]);
 
             if ($result) {
                 $_SESSION['admin_id'] = $result->getId();

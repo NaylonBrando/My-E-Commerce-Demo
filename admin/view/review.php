@@ -6,9 +6,13 @@ $reviewController = new ReviewController();
 ?>
 <div class="pt-3">
     <h2>Review</h2>
-    <form  method="post">
-        <button class="btn btn-success btn-sm" type="submit" name="approve" formaction="/admin/check-approve-selected-reviews">Approve selected reviews</button>
-        <button class="btn btn-warning btn-sm" type="submit" name="delete" formaction="/admin/check-delete-selected-reviews">Delete selected reviews</button>
+    <form method="post">
+        <button class="btn btn-success btn-sm" type="submit" name="approve"
+                formaction="/admin/check-approve-selected-reviews">Approve selected reviews
+        </button>
+        <button class="btn btn-warning btn-sm" type="submit" name="delete"
+                formaction="/admin/check-delete-selected-reviews">Delete selected reviews
+        </button>
         <div class="table-responsive mt-2">
             <table class="table table-striped table-sm text-center">
                 <thead class="thead-light">

@@ -68,7 +68,6 @@ class ProductRepository extends EntityRepository
         if ($product === null) {
             return null;
         }
-        $id = $product->getId();
         $images = $this->getEntityManager()->getRepository(ProductImage::class)->findBy(['productId' => $product->getId()]);
         $productWithImagesDto = new ProductWithImageDto();
         $productWithImagesDto->setProduct($product);
@@ -221,7 +220,7 @@ class ProductRepository extends EntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countProductsByCategoryName($categoryName, bool $isActive=null): int
+    public function countProductsByCategoryName($categoryName, bool $isActive = null): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COUNT(p)')
@@ -239,19 +238,19 @@ class ProductRepository extends EntityRepository
                 'ptc.categoryId = c.id',
             )
             ->where('c.name IN (:categoryName)');
-            if ($isActive !== null) {
-                if ($isActive) {
-                    $qb->andWhere('p.isActive = 1');
-                } else {
-                    $qb->andWhere('p.isActive = 0');
-                }
+        if ($isActive !== null) {
+            if ($isActive) {
+                $qb->andWhere('p.isActive = 1');
+            } else {
+                $qb->andWhere('p.isActive = 0');
             }
-            $qb->setParameter('categoryName', $categoryName);
+        }
+        $qb->setParameter('categoryName', $categoryName);
 
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countProductsBySearchTerm(string $searchTerm, bool $isActive=null)
+    public function countProductsBySearchTerm(string $searchTerm, bool $isActive = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -278,14 +277,14 @@ class ProductRepository extends EntityRepository
             ->where('p.title LIKE :searchTerm')
             ->orWhere('c.name LIKE :searchTerm')
             ->orWhere('b.name LIKE :searchTerm');
-            if ($isActive !== null) {
-                if ($isActive) {
-                    $qb->andWhere('p.isActive = 1');
-                } else {
-                    $qb->andWhere('p.isActive = 0');
-                }
+        if ($isActive !== null) {
+            if ($isActive) {
+                $qb->andWhere('p.isActive = 1');
+            } else {
+                $qb->andWhere('p.isActive = 0');
             }
-            $qb->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+        $qb->setParameter('searchTerm', '%' . $searchTerm . '%');
 
         return $qb->getQuery()->getSingleScalarResult();
     }
@@ -302,7 +301,7 @@ class ProductRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
             ->from(Product::class, 'p')
-            ->innerjoin(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
+            ->innerJoin(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
             ->where('c.userId = :userId', 'p.isActive = 1')
             ->setParameter('userId', $cartUserId);
         return $this->extracted($qb, $productWithImagesDtoArray);
@@ -341,14 +340,14 @@ class ProductRepository extends EntityRepository
             ->setFirstResult(($pageNumber - 1) * $limit)
             ->setMaxResults($limit);
 
-        return $this->ProductDetailExtracted($qb);
+        return $this->productDetailExtracted($qb);
     }
 
     /**
      * @param QueryBuilder $qb
      * @return array
      */
-    public function ProductDetailExtracted(QueryBuilder $qb): array
+    public function productDetailExtracted(QueryBuilder $qb): array
     {
         $result = $qb->getQuery()->getResult();
         $productDetailDtoArray = [];
@@ -397,7 +396,7 @@ class ProductRepository extends EntityRepository
             ->setFirstResult(($pageNumber - 1) * $limit)
             ->setMaxResults($limit);
 
-        return $this->ProductDetailExtracted($qb);
+        return $this->productDetailExtracted($qb);
     }
 
 

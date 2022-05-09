@@ -33,11 +33,10 @@ class CategoryController extends AdminAbstractController
         if ($category) {
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('updateCategory', 'adminPanelTemplate', $pageModulePath);
-            require_once($templateFilePath);
         } else {
             $templateFilePath = str_replace('updateCategory', '404', $pageModulePath);
-            require_once($templateFilePath);
         }
+        require_once($templateFilePath);
     }
 
     public function add()
@@ -47,7 +46,7 @@ class CategoryController extends AdminAbstractController
 
         /** @var CategoryRepository $categoryExitsQuery */
         $categoryExitsQuery = $this->getEntityManager()->getRepository(Category::class)->
-        findOneBy(array('name' => $categoryName));
+        findOneBy(['name' => $categoryName]);
         if (!$categoryExitsQuery) {
             $category = new Category();
             $category->setName($categoryName);
@@ -75,7 +74,7 @@ class CategoryController extends AdminAbstractController
         $em->remove($category);
 
         /** @var Category $childCatArray */
-        $childCatArray = $em->getRepository(Category::class)->findBy(array('parent_id' => $id));
+        $childCatArray = $em->getRepository(Category::class)->findBy(['parent_id' => $id]);
         /** @var Category $childCat */
         foreach ($childCatArray as $childCat) {
             $this->delete($childCat->getId());
@@ -106,7 +105,7 @@ class CategoryController extends AdminAbstractController
     {
         global $categoryArray;
         $em = $this->getEntityManager();
-        $category = $em->getRepository(Category::class)->findBy(array('parent_id' => $parentId));
+        $category = $em->getRepository(Category::class)->findBy(['parent_id' => $parentId]);
         foreach ($category as $cat) {
             $categoryArray[] = $cat;
             $this->getSubCategories($cat->getId());
@@ -114,7 +113,7 @@ class CategoryController extends AdminAbstractController
         return $categoryArray;
     }
 
-    function categoryComponentRowGeneratorForUpdate($categoryId, $parentId)
+    public function categoryComponentRowGeneratorForUpdate($categoryId, $parentId)
     {
         /** @var CategoryRepository $query */
         $query = $this->getEntityManager()->getRepository(Category::class);
@@ -122,7 +121,7 @@ class CategoryController extends AdminAbstractController
         $result = $query->findAll();
         $resultChild = $this->getSubCategories($categoryId);
 
-        if ($resultChild!=null) {
+        if ($resultChild != null) {
             foreach ($resultChild as $child) {
                 foreach ($result as $key => $value) {
                     if ($child->getId() == $value->getId()) {
@@ -150,12 +149,12 @@ class CategoryController extends AdminAbstractController
     }
 
 
-    function categoryComponentParent($id, $categoryName): string
+    public function categoryComponentParent($id, $categoryName): string
     {
         return "<option selected name='category_id' value=\"$id\">$categoryName</option>";
     }
 
-    function categoryComponent($id, $categoryName, $categoryIdOfProduct = null): string
+    public function categoryComponent($id, $categoryName, $categoryIdOfProduct = null): string
     {
         if ($categoryIdOfProduct != null) {
             return "<option selected value=\"$id\">$categoryName</option>";
@@ -193,7 +192,7 @@ class CategoryController extends AdminAbstractController
         $em = $this->getEntityManager();
 
         /** @var Category $childCatArray */
-        $childCatArray = $em->getRepository(Category::class)->findBy(array('parent_id' => $parentId));
+        $childCatArray = $em->getRepository(Category::class)->findBy(['parent_id' => $parentId]);
         if (!$childCatArray && $parentId == 0) {
             return 'There is no existing a category ';
         } else {

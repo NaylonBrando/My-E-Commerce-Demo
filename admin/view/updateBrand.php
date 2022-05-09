@@ -27,11 +27,11 @@ $brandController = new BrandController();
                 <label for="brandName" class="control-label">Brand Name</label>
                 <div class="row">
                     <div class="col-md-9 col-sm-9" id="brandName">
-                        <input value="<?php
+                        <label for="categoryName"></label><input value="<?php
                         /** @var Brand $brand */
                         echo $brand->getName()
                         ?>" type="text" class="form-control" name="brandName"
-                               id="categoryName" maxlength="80" required autofocus>
+                                                                 id="categoryName" maxlength="80" required autofocus>
                     </div>
                     <div class="col-md-3 col-sm-3">
                         <button type="submit" class="btn btn-primary" name="brand/update">Update</button>

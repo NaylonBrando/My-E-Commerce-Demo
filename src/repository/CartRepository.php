@@ -8,8 +8,8 @@ use src\entity\CartItem;
 
 class CartRepository extends EntityRepository
 {
-    
-    
+
+
     public function findCartByUserId(int $userId): ?Cart
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -36,12 +36,12 @@ class CartRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    
+
     /**
      * @param int $userId
      * @return CartItem[]
      */
-    public function findCartItemsByCartId($cartId): array
+    public function findCartItemsByCartId(int $cartId): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('ctm')

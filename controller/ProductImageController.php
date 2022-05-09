@@ -13,10 +13,10 @@ class ProductImageController extends AbstractController
     {
         $em = $this->getEntityManager();
         $product = $em->getRepository(ProductImage::class)->findBy(['productId' => $productId]);
-        if(!$product) {
+        if (!$product) {
             return null;
         }
         return $product;
-    } 
+    }
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\helper;
+
 class SlugGenerator
 {
 
@@ -54,7 +56,7 @@ class SlugGenerator
             'ю' => 'yu', 'я' => 'ya', 'ş' => 's'
         ];
 
-        // make a human readable string
+        // make a human-readable string
         $text = strtr($text, $replace);
 
         // replace non letter or digits by -

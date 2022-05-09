@@ -46,7 +46,7 @@ class Admin
 
     public function __construct()
     {
-        $this->adminType = "admin";
+        $this->adminType = 'admin';
     }
 
     public function getId(): int

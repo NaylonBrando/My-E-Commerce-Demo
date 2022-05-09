@@ -3,7 +3,7 @@
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 
-require_once "vendor/autoload.php";
+require_once 'vendor/autoload.php';
 
 class Connection
 {
@@ -16,15 +16,15 @@ class Connection
         $proxyDir = null;
         $cache = null;
         $useSimpleAnnotationReader = false;
-        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/src"), $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
+        $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/src'], $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
 
-        $conn = array(
+        $conn = [
             'driver' => 'pdo_mysql',
             'user' => 'root',
             'password' => '',
             'dbname' => 'ecommerce',
             'host' => '127.0.0.1'
-        );
+        ];
 
         $this->entityManager = EntityManager::create($conn, $config);
     }

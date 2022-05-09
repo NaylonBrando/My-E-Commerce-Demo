@@ -18,7 +18,7 @@ class Review
         $this->status = false;
         $this->createdAt = new DateTimeImmutable();
     }
-    
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -59,12 +59,12 @@ class Review
      * @ORM\Column(type="boolean", name="status")
      */
     private bool $status;
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function getUserId(): int
     {
         return $this->userId;
@@ -74,37 +74,37 @@ class Review
     {
         $this->userId = $userId;
     }
-    
+
     public function getProductId(): int
     {
         return $this->productId;
     }
-    
+
     public function setProductId(int $productId): void
     {
         $this->productId = $productId;
     }
-    
+
     public function getTitle(): string
     {
         return $this->title;
     }
-    
+
     public function setTitle(string $title): void
     {
         $this->title = $title;
     }
-    
+
     public function getReview(): string
     {
         return $this->review;
     }
-    
+
     public function setReview(string $review): void
     {
         $this->review = $review;
     }
-    
+
     public function getRating(): int
     {
         return $this->rating;
@@ -119,17 +119,17 @@ class Review
     {
         return $this->createdAt;
     }
-    
+
     public function setCreatedAt(DateTimeImmutable|DateTimeInterface $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
-    
+
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
     }
-    
+
     public function setUpdatedAt(DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;

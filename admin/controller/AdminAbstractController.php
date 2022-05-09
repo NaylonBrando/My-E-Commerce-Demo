@@ -5,7 +5,7 @@ namespace admin\controller;
 use Connection;
 use Doctrine\ORM\EntityManager;
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/admin/bootstrap.php");
+require_once($_SERVER['DOCUMENT_ROOT'] . '/admin/bootstrap.php');
 
 class AdminAbstractController
 {

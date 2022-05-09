@@ -19,7 +19,8 @@ $productController = new ProductController();
             <a class="btn btn-primary" href="/admin/product/add" role="button">Add Product</a>
         </div>
         <div class="col-md-5">
-            <form name="searchProduct" class="form-inline justify-content-end" method="post" onsubmit="searchWithTermRouter()">
+            <form name="searchProduct" class="form-inline justify-content-end" method="post"
+                  onsubmit="searchWithTermRouter()">
                 <div class="form-group mx-sm-3 mb-2">
                     <label for="search">
                         <input type="text" class="form-control" id="search" name="search" placeholder="Search" required>

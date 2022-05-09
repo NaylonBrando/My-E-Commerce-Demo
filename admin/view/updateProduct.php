@@ -44,15 +44,17 @@ $categoryController = new CategoryController();
 
                 <label for="for-category" class="col-sm-3 control-label"><h6>Category</h6></label>
                 <div class="col-sm-3">
-                    <select class="form-control" name="categoryId" required>
-                        <?php /** @var ProductToCategory $product_to_category */
-                        $categoryController->categoryComponentRowGenerator($product_to_category->getCategoryId()) ?>
-                    </select>
+                    <label>
+                        <select class="form-control" name="categoryId" required>
+                            <?php /** @var ProductToCategory $product_to_category */
+                            $categoryController->categoryComponentRowGenerator($product_to_category->getCategoryId()) ?>
+                        </select>
+                    </label>
                 </div>
 
                 <label for="for-category" class="col-sm-3 control-label"><h6>Brand</h6></label>
                 <div class="col-sm-3">
-                    <select class="form-control" name="brandId" id="brandId" required>
+                    <label for="brandId"></label><select class="form-control" name="brandId" id="brandId" required>
                         <?php /** @var Product $product */
                         $brandController->brandOptionRowGenerator($product->getBrandId()) ?>
                     </select>
@@ -60,31 +62,31 @@ $categoryController = new CategoryController();
 
                 <label for="about" class="col-sm-3 control-label"><h6>Description</h6></label>
                 <div class="col-sm-9">
-                    <textarea name="description" id="description" style="resize: none; height:100px"
-                              class="form-control" maxlength="2048"
-                              required><?php /** @var Product $product */
+                    <label for="description"></label><textarea name="description" id="description" style="resize: none; height:100px"
+                                                               class="form-control" maxlength="2048"
+                                                               required><?php /** @var Product $product */
                         echo $product->getDescription() ?></textarea>
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Quantity</h6></label>
                 <div class="col-sm-3">
-                    <input type="number" class="form-control" name="quantity" id="quantity" required
-                           value="<?php /** @var Product $product */
+                    <label for="quantity"></label><input type="number" class="form-control" name="quantity" id="quantity" required
+                                                         value="<?php /** @var Product $product */
                            echo $product->getQuantity() ?>">
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Stock Number</h6></label>
                 <div class="col-sm-3">
-                    <input type="number" class="form-control" name="stockNumber" id="stockNumber" required
-                           value="<?php /** @var Product $product */
+                    <label for="stockNumber"></label><input type="number" class="form-control" name="stockNumber" id="stockNumber" required
+                                                            value="<?php /** @var Product $product */
                            echo $product->getStockNumber() ?>">
                 </div>
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price"
-                           id="price" required
-                           value="<?php /** @var Product $product */
+                    <label for="price"></label><input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price"
+                                                      id="price" required
+                                                      value="<?php /** @var Product $product */
                            echo $product->getPrice() ?>">
                 </div>
 

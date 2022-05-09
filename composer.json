@@ -1,4 +1,4 @@
-{
+<{
     "require": {
              "doctrine/orm": "^2.6.2",
              "symfony/yaml": "2.*",
@@ -10,5 +10,8 @@
        "psr-4": {
                    "App\\": "src"
                }
+    },
+    "require-dev": {
+        "psalm/phar": "^4.23"
     }
 }

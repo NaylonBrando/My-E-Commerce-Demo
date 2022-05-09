@@ -35,10 +35,12 @@ $categoryController = new CategoryController();
 
                 <div class="mb-3">
                     <label for="parent-category-name">Parent Category</label>
-                    <select name="addCategoryParentId" class="form-control">
-                        <option selected value="0">None</option>
-                        <?php $categoryController->categoryComponentRowGenerator() ?>
-                    </select>
+                    <label>
+                        <select name="addCategoryParentId" class="form-control">
+                            <option selected value="0">None</option>
+                            <?php $categoryController->categoryComponentRowGenerator() ?>
+                        </select>
+                    </label>
                 </div>
 
                 <div class="mb-3 mt-2">
@@ -64,7 +66,9 @@ $categoryController = new CategoryController();
                     </select>
                 </div>
                 <div class="mb-3 mt-2">
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                        Delete
+                    </button>
                 </div>
             </form>
 

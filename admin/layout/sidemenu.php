@@ -27,7 +27,7 @@
                 </a>
             </li>
             <li class="nav-item has-submenu">
-                <a class="nav-link" href="#"> Review  </a>
+                <a class="nav-link" href="#"> Review </a>
                 <ul class="submenu collapse">
                     <li><a class="nav-link" href="/admin/review">Pending Reviews</a></li>
                     <li><a class="nav-link" href="#">Approved Reviews</a></li>

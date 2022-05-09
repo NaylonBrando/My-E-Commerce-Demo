@@ -14,7 +14,7 @@ class ReviewRepository extends EntityRepository
     /**
      * @return ReviewWithUserDto[]
      */
-    public function findByProductId(int $productId) : array
+    public function findByProductId(int $productId): array
     {
         $reviewWithUserDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -31,7 +31,7 @@ class ReviewRepository extends EntityRepository
             ->orderBy('r.status', 'DESC')
             ->setParameter('productId', $productId);
         $result = $qb->getQuery()->getResult();
-        
+
         foreach ($result as $row) {
             $reviewWithUserDto = new ReviewWithUserDto();
             $review = $row[0];
@@ -40,18 +40,18 @@ class ReviewRepository extends EntityRepository
             $reviewWithUserDto->setUserLastName($row['lastName']);
             $reviewWithUserDtoArray[] = $reviewWithUserDto;
         }
-        
+
         return $reviewWithUserDtoArray;
     }
 
     /**
      * @return ReviewWithUserDto[]
      */
-    public function findByStatus(int $status) : array
+    public function findByStatus(int $status): array
     {
         $reviewWithUserDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('r', 'u.firstName', 'u.lastName', 'u.email','p.title', 'p.id', 'p.slug')
+        $qb->select('r', 'u.firstName', 'u.lastName', 'u.email', 'p.title', 'p.id', 'p.slug')
             ->from(Review::class, 'r')
             ->innerJoin(
                 User::class,
@@ -80,14 +80,14 @@ class ReviewRepository extends EntityRepository
             $reviewWithUserDto->setProductTitle($row['title']);
             $reviewWithUserDto->setProductId($row['id']);
             $reviewWithUserDto->setProductSlug($row['slug']);
-            
+
             $reviewWithUserDtoArray[] = $reviewWithUserDto;
         }
 
         return $reviewWithUserDtoArray;
     }
-    
-    public function deleteReviewsByProductId(int $productId) : void
+
+    public function deleteReviewsByProductId(int $productId): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(Review::class, 'r')

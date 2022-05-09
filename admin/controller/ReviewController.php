@@ -11,7 +11,7 @@ class ReviewController extends AdminAbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('review', 'adminPanelTemplate', $pageModulePath);
-        $title = "Review";
+        $title = 'Review';
         require_once($templateFilePath);
     }
 
@@ -26,7 +26,7 @@ class ReviewController extends AdminAbstractController
             $em->flush();
             header('Location: /admin/review');
         } else {
-            $page404 = "../admin/view/404.php";
+            $page404 = '../admin/view/404.php';
             require_once($page404);
         }
     }
@@ -61,11 +61,11 @@ class ReviewController extends AdminAbstractController
             $em->flush();
             header('Location: /admin/review');
         } else {
-            $page404 = "../admin/view/404.php";
+            $page404 = '../admin/view/404.php';
             require_once($page404);
         }
     }
-    
+
     public function deleteReviewsByProductId($productId)
     {
         $em = $this->getEntityManager();
@@ -74,9 +74,9 @@ class ReviewController extends AdminAbstractController
         $reviews = $reviewRepository->findOneBy(['productId' => $productId]);
         if ($reviews) {
             $reviewRepository->deleteReviewsByProductId($productId);
-        } 
+        }
     }
-    
+
     public function deleteSelectedReviews()
     {
         if (isset($_POST['delete'])) {
@@ -101,7 +101,7 @@ class ReviewController extends AdminAbstractController
         /* @var $reviewRepository ReviewRepository */
         $reviewRepository = $em->getRepository(Review::class);
         $reviews = $reviewRepository->findByStatus(0);
-        $str = "";
+        $str = '';
         foreach ($reviews as $review) {
             $str .= $this->reviewRow($review->getReview()->getId(), $review->getUserName(), $review->getUserLastName(),
                 $review->getUserEmail(), $review->getReview()->getCreatedAt()->format('d/m/Y H:i:s'), $review->getReview()->getTitle(),

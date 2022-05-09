@@ -28,10 +28,12 @@ $categoryController = new CategoryController();
                 <div class="row">
                     <div class="col-sm-5">
                         <label for="parentId" class="control-label">Parent Category</label>
-                        <select name="parentId" class="form-control">
-                            <option selected value="0">None</option>
-                            <?php $categoryController->categoryComponentRowGeneratorForUpdate($category->getId(), $category->getParentId()) ?>
-                        </select>
+                        <label>
+                            <select name="parentId" class="form-control">
+                                <option selected value="0">None</option>
+                                <?php $categoryController->categoryComponentRowGeneratorForUpdate($category->getId(), $category->getParentId()) ?>
+                            </select>
+                        </label>
                     </div>
                     <div class="col-sm-5">
                         <label for="categoryName" class="control-label">Category Name</label>

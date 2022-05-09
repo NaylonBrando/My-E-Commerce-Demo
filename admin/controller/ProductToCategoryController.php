@@ -27,7 +27,7 @@ class ProductToCategoryController extends AdminAbstractController
     public function delete(int $productId): bool
     {
         $em = $this->getEntityManager();
-        $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(array('productId' => $productId));
+        $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(['productId' => $productId]);
         if ($productToCategory) {
             $em->remove($productToCategory);
             $em->flush();
@@ -37,11 +37,11 @@ class ProductToCategoryController extends AdminAbstractController
         }
     }
 
-    public function updateProductCategory(int $productId, int $categoryId)
+    public function updateProductCategory(int $productId, int $categoryId): bool
     {
         $em = $this->getEntityManager();
         /** @var ProductToCategory $productToCategory */
-        $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(array('productId' => $productId));
+        $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(['productId' => $productId]);
         if ($productToCategory) {
             $productToCategory->setCategoryId($categoryId);
             $em->persist($productToCategory);

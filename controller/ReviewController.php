@@ -18,23 +18,32 @@ class ReviewController extends AbstractController
     {
         if (isset($_POST['userId'], $_POST['productId'], $_POST['rating'], $_POST['review'], $_POST['title'])) {
             $em = $this->getEntityManager();
+<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
             $url = Router::parse_referer();
+<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
             
+=======
+            $url = Router::parseReferer();
+
+>>>>>>> Refactor ve clean up code
+=======
+
+>>>>>>> Code clean up
             $review = new Review();
             $review->setUserId($_POST['userId']);
             $review->setProductId($_POST['productId']);
             $review->setRating($_POST['rating']);
             $review->setTitle($_POST['title']);
             $review->setReview($_POST['review']);
-            
+
             $em->persist($review);
             $em->flush();
             header('Location: ' . $url);
-            
-            
+
+
         } else {
             header('Location:/');
-            
+
         }
     }
 
@@ -60,15 +69,15 @@ class ReviewController extends AbstractController
 
     public function reviewRow($title, $content, $firstName, $lastName, $date, $rating): string
     {
-        $star ="";
+        $star = "";
         for ($i = 1; $i <= $rating; $i++) {
             $star .= "<i class=\"fas fa-star\"></i>";
         }
         return "<div class=\"d-flex flex-row align-items-center\">
                             <div class=\"d-flex flex-column ml-1\">
-                                <div class=\"comment-ratings\">".
-                                    $star.
-                                    "<span class=\"username\">$firstName  $lastName</span>   
+                                <div class=\"comment-ratings\">" .
+            $star .
+            "<span class=\"username\">$firstName  $lastName</span>   
                                     <div class=\"date\"> <span class=\"text-muted\">$date</span> 
                                     </div>
                                 </div>

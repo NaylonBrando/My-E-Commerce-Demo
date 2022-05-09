@@ -1,5 +1,7 @@
 <?php
 
+namespace admin\helper;
+
 class FileHelper
 {
 
@@ -21,7 +23,7 @@ class FileHelper
             if (count($_FILES[$formInputName]['name']) > $maxFile) {
                 $lessValue = $maxFile;
                 $errors[] = 'You can add only ' . $lessValue . ' more image';
-                return array('errors' => $errors);
+                return ['errors' => $errors];
             }
             if (isset($_FILES[$formInputName]['error'])) {
                 foreach ($_FILES[$formInputName]['error'] as $uploadedFileKey => $uploadedFileError) {
@@ -32,7 +34,7 @@ class FileHelper
                             $uploadedFileType = pathinfo($_FILES[$formInputName]['name'][$uploadedFileKey], PATHINFO_EXTENSION);
                             $uploadedFileTempName = $_FILES[$formInputName]['tmp_name'][$uploadedFileKey];
 
-                            $uploadedFileName = md5(basename($_FILES[$formInputName]['name'][$uploadedFileKey])) . "." . $uploadedFileType;
+                            $uploadedFileName = md5(basename($_FILES[$formInputName]['name'][$uploadedFileKey])) . '.' . $uploadedFileType;
                             $uploadedFilePath = rtrim(UPLOAD_DIR, '/') . '/' . $uploadedFileName;
 
                             if (in_array($uploadedFileType, $allowedMimeTypes)) {
@@ -52,11 +54,11 @@ class FileHelper
             }
         }
         if (isset($filenamesToSave) && !isset($errors)) {
-            return array('fileNames' => $filenamesToSave);
-        } else if (!isset($filenamesToSave) && isset($errors)) {
-            return array('errors' => $errors);
+            return ['fileNames' => $filenamesToSave];
+        } elseif (!isset($filenamesToSave) && isset($errors)) {
+            return ['errors' => $errors];
         } else {
-            return array('fileNames' => $filenamesToSave, 'errors' => $errors);
+            return ['fileNames' => $filenamesToSave, 'errors' => $errors];
         }
     }
 

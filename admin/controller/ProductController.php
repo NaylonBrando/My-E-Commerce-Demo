@@ -2,7 +2,7 @@
 
 namespace admin\controller;
 
-use SlugGenerator;
+use admin\helper\SlugGenerator;
 use src\dto\ProductDetailDto;
 use src\entity\Product;
 use src\entity\ProductToCategory;
@@ -24,7 +24,7 @@ class ProductController extends AdminAbstractController
 
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
-        $title = "Product";
+        $title = 'Product';
         require_once($templateFilePath);
 
     }
@@ -43,7 +43,7 @@ class ProductController extends AdminAbstractController
 
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
-        $title = "Product";
+        $title = 'Product';
         require_once($templateFilePath);
     }
 
@@ -52,7 +52,7 @@ class ProductController extends AdminAbstractController
 
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('addProduct', 'adminPanelTemplate', $pageModulePath);
-        $title = "Add Product";
+        $title = 'Add Product';
         require_once($templateFilePath);
 
     }
@@ -61,10 +61,10 @@ class ProductController extends AdminAbstractController
     {
         $em = $this->getEntityManager();
         $product = $em->find(Product::class, $id[1]);
-        $product_to_category = $em->getRepository(ProductToCategory::class)->findOneBy(array('productId' => $id[1]));
+        $product_to_category = $em->getRepository(ProductToCategory::class)->findOneBy(['productId' => $id[1]]);
 
         if ($product) {
-            $title = "Update Product Slug: " . $product->getSlug();
+            $title = 'Update Product Slug: ' . $product->getSlug();
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('updateProduct', 'adminPanelTemplate', $pageModulePath);
         } else {
@@ -101,7 +101,7 @@ class ProductController extends AdminAbstractController
 
     public function update()
     {
-        if ($_POST['submitUpdateProduct'] == "") {
+        if ($_POST['submitUpdateProduct'] == '') {
             $em = $this->getEntityManager();
             $product = $em->find(Product::class, $_POST['productId']);
             $product->setTitle($_POST['title']);
@@ -141,7 +141,7 @@ class ProductController extends AdminAbstractController
                 header('location: /admin/product');
             }
         } else {
-            $page404 = "../admin/view/404.php";
+            $page404 = '../admin/view/404.php';
             require_once($page404);
         }
 
@@ -160,7 +160,7 @@ class ProductController extends AdminAbstractController
             $this->echoProductsExtracted($products);
             $this->paginator($pageNumber, $countOfProducts, 8);
         } else {
-            echo "<h1>No products found</h1>";
+            echo '<h1>No products found</h1>';
         }
 
     }
@@ -171,7 +171,7 @@ class ProductController extends AdminAbstractController
      */
     public function echoProductsExtracted(array $products): void
     {
-        $str = "";
+        $str = '';
         /** @var ProductDetailDto $row */
         foreach ($products as $row) {
             $str .= self::productTableRow(
@@ -189,7 +189,7 @@ class ProductController extends AdminAbstractController
         $status = '';
 
         if ($isActive == 1) {
-            $isActive = "Activated";
+            $isActive = 'Activated';
             $element = "
         <tr>
             <td class=\"miniCol\">$id</td>
@@ -207,7 +207,7 @@ class ProductController extends AdminAbstractController
         </tr>
         ";
         } elseif ($isActive == 0) {
-            $isActive = "Deactivated";
+            $isActive = 'Deactivated';
             $element = "
         <tr>
             <td class=\"miniCol\">$id</td>
@@ -290,7 +290,7 @@ class ProductController extends AdminAbstractController
             $this->echoProductsExtracted($products);
             $this->paginator($pageNumber, $countOfProducts, 8);
         } else {
-            echo "<h1>No products found</h1>";
+            echo '<h1>No products found</h1>';
         }
 
     }
@@ -306,7 +306,7 @@ class ProductController extends AdminAbstractController
             $em->persist($product);
             $em->flush();
         }
-        header("Location:/admin/product");
+        header('Location:/admin/product');
     }
 
     public function setIsActiveFalse($id)
@@ -320,7 +320,7 @@ class ProductController extends AdminAbstractController
             $em->persist($product);
             $em->flush();
         }
-        header("Location:/admin/product");
+        header('Location:/admin/product');
     }
 
 }

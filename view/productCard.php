@@ -8,24 +8,24 @@ use controller\ProductController;
     <div class="row">
         <div class="col-md-12">
             <form class="form-horizontal" id='sorting-options-form' action='' method='GET'>
-            <div class="row">
-                <div class="col-6 col-md-auto"></div>
-                <div class="col-6 col-md">
-                    <h5><?php if (isset($categoryParameters['categoryName'])) {
-                            echo $categoryParameters['categoryName'];
-                        } ?></h5>
+                <div class="row">
+                    <div class="col-6 col-md-auto"></div>
+                    <div class="col-6 col-md">
+                        <h5><?php if (isset($categoryParameters['categoryName'])) {
+                                echo $categoryParameters['categoryName'];
+                            } ?></h5>
+                    </div>
+                    <div class="col-6 col-md-auto">
+                        <label for="sorting">
+                            <select class="form-control" name="sorting" id="sorting" data-selector="sorting-option">
+                                <option value="">Sort</option>
+                                <option value="priceASC"> Lowest Price First</option>
+                                <option value="priceDESC">Highest Price Fist</option>
+                                <option value="rateDESC">Highest Rate First</option>
+                            </select>
+                        </label>
+                    </div>
                 </div>
-                <div class="col-6 col-md-auto">
-                    <label for="sorting">
-                        <select class="form-control" name="sorting" id="sorting" data-selector="sorting-option">
-                            <option value="">Sort</option>
-                            <option value="priceASC"> Lowest Price First</option>
-                            <option value="priceDESC">Highest Price Fist</option>
-                            <option value="rateDESC">Highest Rate First</option>
-                        </select>
-                    </label>
-                </div>
-            </div>
             </form>
         </div>
         <div class="col-md-12">
@@ -45,7 +45,7 @@ use controller\ProductController;
 <script>
     $(document).ready(function () {
         $('#sorting').on('change', function () {
-            
+
             if ($(this).val() === 'priceASC') {
                 $(this).attr('name', 'price');
             }

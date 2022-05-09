@@ -11,7 +11,7 @@ class BrandController extends AdminAbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('brand', 'adminPanelTemplate', $pageModulePath);
-        $title = "Brand";
+        $title = 'Brand';
         require_once($templateFilePath);
     }
 
@@ -19,7 +19,7 @@ class BrandController extends AdminAbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('addBrand', 'adminPanelTemplate', $pageModulePath);
-        $title = "Add Brand";
+        $title = 'Add Brand';
         require_once($templateFilePath);
         if (isset($_SESSION['brand_add_error'])) {
             unset($_SESSION['brand_add_error']);
@@ -28,7 +28,7 @@ class BrandController extends AdminAbstractController
 
     public function showUpdate($pageModulePath, $id)
     {
-        $title = "Update Brand";
+        $title = 'Update Brand';
         $em = $this->getEntityManager();
         $brand = $em->find(Brand::class, $id[1]);
 
@@ -54,7 +54,7 @@ class BrandController extends AdminAbstractController
         $em = $this->getEntityManager();
         /** @var Brand $brandExitsQuery */
         $brandExitsQuery = $em->getRepository(Brand::class)->
-        findOneBy(array('name' => $brandName));
+        findOneBy(['name' => $brandName]);
 
         if (!$brandExitsQuery) {
             $em->persist($brand);
@@ -86,7 +86,7 @@ class BrandController extends AdminAbstractController
 
         $em = $this->getEntityManager();
         /** @var Brand $brandExitsQuery */
-        $brandExitsQuery = $em->getRepository(Brand::class)->findOneBy(array('name' => $brandName));
+        $brandExitsQuery = $em->getRepository(Brand::class)->findOneBy(['name' => $brandName]);
 
         if (!$brandExitsQuery) {
             $brand = $em->find(Brand::class, $brandId);
@@ -110,7 +110,7 @@ class BrandController extends AdminAbstractController
             $em->flush();
             header('location: /admin/brand');
         } else {
-            $page404 = "../admin/view/404.php";
+            $page404 = '../admin/view/404.php';
             require_once($page404);
         }
 
@@ -135,7 +135,7 @@ class BrandController extends AdminAbstractController
 
     public function brandTableRow($id, $brandName): string
     {
-        $element = "
+        return "
         <tr>
             <td>$id</td>
             <td>$brandName</td>
@@ -143,7 +143,6 @@ class BrandController extends AdminAbstractController
             <td><a class=\"btn btn-danger btn-sm\" href=\"check-delete-brand/$id\" role=\"button\" onclick=\"return confirm('Are you sure delete $brandName ?');\">Delete</a></td>
         </tr>
         ";
-        return $element;
     }
 
     public function brandOptionRowGenerator(int $brandIdOfProduct = null)
@@ -165,7 +164,7 @@ class BrandController extends AdminAbstractController
         }
     }
 
-    function brandOptionRow($id, $brandName, $brandIdOfProduct = null): string
+    public function brandOptionRow($id, $brandName, $brandIdOfProduct = null): string
     {
         if ($brandIdOfProduct != null && $id == $brandIdOfProduct) {
             return "<option selected value=\"$id\">$brandName</option>";

@@ -26,7 +26,7 @@ class ProductController extends AbstractController
 
         if ($categoryEntity == null) {
             $templateFilePath = str_replace('productCard', '404', $pageModulePath);
-            $title = "404 - Page not found";
+            $title = '404 - Page not found';
         } else {
             $templateFilePath = str_replace('productCard', 'homepageTemplate', $pageModulePath);
             $title = $categoryEntity->getName();
@@ -159,7 +159,7 @@ class ProductController extends AbstractController
 
             $product = $row->getProduct();
             $images = $row->getImages();
-            $imagePath = "";
+            $imagePath = '';
 
             if ($images != null) {
                 foreach ($images as $image) {
@@ -177,7 +177,7 @@ class ProductController extends AbstractController
             }
             $str .= self::productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug());
         }
-        $str .= "</div>";
+        $str .= '</div>';
         echo $str;
     }
 
@@ -222,7 +222,7 @@ class ProductController extends AbstractController
             $url = $url . '?pg=';
         }
 
-        
+
         $record = 2;
         $pageCount = ceil($countOfProduct / $limit);
         $str = '<div class="justify-content-end mt-3"> <nav aria-label="Page navigation example">
@@ -252,7 +252,6 @@ class ProductController extends AbstractController
         echo $str;
     }
 
-    
 
     public function getLastAddedProductCardGeneratorWithLimit($limit)
     {
@@ -276,7 +275,7 @@ class ProductController extends AbstractController
     {
         $em = $this->getEntityManager();
         /** @var Product $product */
-        $product = $em->getRepository(Product::class)->findOneBy(array('slug' => $parameters[1], 'isActive' => 1));
+        $product = $em->getRepository(Product::class)->findOneBy(['slug' => $parameters[1], 'isActive' => 1]);
 
         if ($product) {
             $title = $product->getTitle();
@@ -293,8 +292,8 @@ class ProductController extends AbstractController
         $active = true;
         $em = $this->getEntityManager();
         /** @var ProductImage[] $productImages */
-        $productImages = $em->getRepository(ProductImage::class)->findBy(array('productId' => $productId));
-        $str = "";
+        $productImages = $em->getRepository(ProductImage::class)->findBy(['productId' => $productId]);
+        $str = '';
         if ($productImages) {
             foreach ($productImages as $productImage) {
                 $str .= self::imageSliderListItem('../upload/' . $productImage->getPath(), $active);

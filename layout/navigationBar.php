@@ -29,9 +29,11 @@
             <li class="nav-item">
                 <form name="searchProduct" id="searchProduct" method="post" onsubmit="productCardSearchProduct()">
                     <label for="search">
-                        <input type="text" class="form-control" name="search" id="search" placeholder="Search" >
+                        <input type="text" class="form-control" name="search" id="search" placeholder="Search">
                     </label>
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="submit" id="submit">Search</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="submit" id="submit">
+                        Search
+                    </button>
                 </form>
             </li>
             <li class="nav-item">
@@ -44,10 +46,9 @@
 <script>
     function productCardSearchProduct() {
         let searchValue = document.getElementById("search").value;
-        if(searchValue === '' && searchValue.length === 0) {
+        if (searchValue === '' && searchValue.length === 0) {
             document.searchProduct.action = "/";
-        }
-        else {
+        } else {
             document.searchProduct.action = "/search/" + searchValue;
         }
     }
@@ -59,7 +60,7 @@ function navbarCustomerDropDown()
 {
 
     if (isset($_SESSION['user_id'], $_SESSION['user_name'], $_SESSION['user_last_name'])) {
-        $userNameAndLastName = $_SESSION['user_name'] . " " . $_SESSION['user_last_name'];
+        $userNameAndLastName = $_SESSION['user_name'] . ' ' . $_SESSION['user_last_name'];
         $element = "
         <li class=\"nav-item dropdown\">
                     <a class=\"nav-link navbar-customer-name\" href=\"#\" title=\"$userNameAndLastName\" id=\"navbarDropdown\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">

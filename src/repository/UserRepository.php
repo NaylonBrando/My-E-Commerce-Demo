@@ -19,7 +19,7 @@ class UserRepository extends EntityRepository
             ->from(User::class, 'u')
             ->setFirstResult(($pageNumber - 1) * $limit)
             ->setMaxResults($limit);
-        return  $qb->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     public function countUsers(bool $isActive = null): int
@@ -40,15 +40,16 @@ class UserRepository extends EntityRepository
     /**
      * @return User[]
      */
-    public function findUsersBySearchTerm(string $searchTerm, int $pageNumber, int $limit): array{
+    public function findUsersBySearchTerm(string $searchTerm, int $pageNumber, int $limit): array
+    {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('u')
             ->from(User::class, 'u')
             ->where('u.firstName LIKE :searchTerm')
             ->orWhere('u.lastName LIKE :searchTerm')
-            ->setParameter('searchTerm', '%'.$searchTerm.'%')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
             ->setFirstResult(($pageNumber - 1) * $limit)
             ->setMaxResults($limit);
-        return  $qb->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 }

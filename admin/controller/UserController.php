@@ -11,7 +11,7 @@ class UserController extends AdminAbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('user', 'adminPanelTemplate', $pageModulePath);
-        $title = "User";
+        $title = 'User';
         require_once($templateFilePath);
     }
 
@@ -29,13 +29,13 @@ class UserController extends AdminAbstractController
 
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('user', 'adminPanelTemplate', $pageModulePath);
-        $title = "User";
+        $title = 'User';
         require_once($templateFilePath);
     }
 
     public function showUpdate($pageModulePath, $id)
     {
-        $title = "Update User";
+        $title = 'Update User';
         $em = $this->getEntityManager();
         $user = $em->find(User::class, $id[1]);
 
@@ -63,7 +63,7 @@ class UserController extends AdminAbstractController
 
             $emailCheck = $userRepository->findOneBy(['email' => $_POST['email']]);
             if ($emailCheck && $emailCheck->getId() != $_POST['userId']) {
-                $_SESSION['user_update_error'] = "Email already exists";
+                $_SESSION['user_update_error'] = 'Email already exists';
                 header('Location: /admin/user/update/' . $_POST['userId']);
                 exit;
             }
@@ -71,7 +71,7 @@ class UserController extends AdminAbstractController
             header('Location: /admin/user/update/' . $_POST['userId']);
 
         } else {
-            $_SESSION['user_update_error'] = "User not found";
+            $_SESSION['user_update_error'] = 'User not found';
             header('Location: /admin/user');
         }
     }
@@ -128,7 +128,7 @@ class UserController extends AdminAbstractController
             echo '<a href="/">Back to Home</a>';
             echo '</div>';
         }
-        
+
     }
 
     public function userRow($id, $firstName, $lastName, $email, $createdAt, $status): string
@@ -138,7 +138,7 @@ class UserController extends AdminAbstractController
         } else {
             $status = "<a href='/admin/check-change-user-status/$id' class='btn btn-warning btn-sm'>Passived</a>";
         }
-        $userRow = "<tr>
+        return "<tr>
                         <td>$id</td>
                         <td>$firstName</td>
                         <td>$lastName</td>
@@ -149,7 +149,6 @@ class UserController extends AdminAbstractController
                        <a href='/admin/user/update/$id' class='btn btn-info btn-sm'>Update</a>
                         <a href='/admin/check-delete-user/$id' class='btn btn-danger btn-sm' onclick=\"return confirm('Are you sure?');\">Delete</a></td>
                     </tr>";
-        return $userRow;
     }
 
     public function userTableRowGeneratorWithSearchTerm($searchTerm, $pageNumber)
@@ -160,12 +159,12 @@ class UserController extends AdminAbstractController
         /** @var UserRepository $userRepository */
         $userRepository = $em->getRepository(User::class);
         $users = $userRepository->findUsersBySearchTerm($searchTerm, $pageNumber, 8);
-        
+
         if (count($users) > 0) {
             foreach ($users as $user) {
                 $userRow .= $this->userRow($user->getId(), $user->getFirstName(), $user->getLastName(), $user->getEmail(), $user->getCreatedAt()->format('d/m/Y H:i:s'), $user->getIsActive());
             }
-            echo $userRow;            
+            echo $userRow;
             $this->paginator($pageNumber, count($users), 8);
         } else {
             echo "<h1>No users found</h1>";

@@ -9,11 +9,10 @@ class HomepageController extends AbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('homepage', 'homepageTemplate', $pageModulePath);
-        $title = "My-Ecommerce-Demo";
+        $title = 'My-Ecommerce-Demo';
         require_once($templateFilePath);
 
     }
-
 
 
 }

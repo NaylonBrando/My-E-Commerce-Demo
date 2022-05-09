@@ -40,7 +40,7 @@ class UserController extends AbstractController
 
     public function logout()
     {
-        if(isset($_SESSION['user_id'])) {
+        if (isset($_SESSION['user_id'])) {
             unset($_SESSION['user_id']);
             unset($_SESSION['user_name']);
             unset($_SESSION['user_last_name']);
@@ -60,14 +60,14 @@ class UserController extends AbstractController
         if (strcmp($password, $confirmPassword) == 0) {
             $em = $this->getEntityManager();
             $user = new User();
-            $user->setFirstname($firstname);
-            $user->setLastname($lastname);
+            $user->setFirstName($firstname);
+            $user->setLastName($lastname);
             $user->setPassword(md5($password));
             $user->setEmail($email);
 
             /** @var UserRepository $emailCheckQuery */
             $emailCheckQuery = $em->getRepository(User::class)
-                ->findOneBy(array('email' => $user->getEmail()));
+                ->findOneBy(['email' => $user->getEmail()]);
 
             if ($emailCheckQuery) {
                 $_SESSION['register_error'] = 'This email already exists';
@@ -106,7 +106,7 @@ class UserController extends AbstractController
             /** @var UserRepository $userRepository */
             $userRepository = $em->getRepository(User::class);
             /** @var User $user */
-            $user = $userRepository->findOneBy(array('password' => $password, 'email' => $email));
+            $user = $userRepository->findOneBy(['password' => $password, 'email' => $email]);
 
             if ($user) {
                 $_SESSION['user_id'] = $user->getId();
@@ -115,7 +115,7 @@ class UserController extends AbstractController
                 $_SESSION['user_status'] = $user->getIsActive();
                 $cartController = new CartController();
                 $cart = $cartController->findCartByUserId($_SESSION['user_id']);
-                if(!isset($cart)){
+                if (!isset($cart)) {
                     $cart = new Cart();
                     $cart->setUser($user);
                     $em->persist($cart);
@@ -131,8 +131,7 @@ class UserController extends AbstractController
                 $_SESSION['login_error'] = 'Password or email is incorrect';
                 header('location: /login');
             }
-        }
-        else{
+        } else {
             $_SESSION['login_error'] = 'Password or email is incorrect';
             header('location: /login');
         }
@@ -148,7 +147,7 @@ class UserController extends AbstractController
         } else {
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('profile', 'profileTemplate', $pageModulePath);
-            $title = "Profile";
+            $title = 'Profile';
             require_once($templateFilePath);
         }
         if (isset($_SESSION['user_update_profile_error'])) {
@@ -166,7 +165,7 @@ class UserController extends AbstractController
 
         $user = $em->find(User::class, $id);
 
-        $user->setPassword("");
+        $user->setPassword('');
 
         return $user;
 
@@ -179,7 +178,7 @@ class UserController extends AbstractController
         $lastName = $_POST['lastName'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        
+
         $em = $this->getEntityManager();
         $user = $em->find(User::class, $id);
 

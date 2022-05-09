@@ -6,13 +6,11 @@
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navigationBar.php'); ?>
 
 
-
 <?php
 if (isset($pageModule)) {
     require_once($pageModule);
-}
-else{
+} else {
     echo 'No Page Module';
-}?>
+} ?>
 </body>
 </html>

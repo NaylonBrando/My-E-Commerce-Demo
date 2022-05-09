@@ -3,21 +3,25 @@
     overflow-y: scroll;
 }
 
-.demo .item{
+.demo .item {
     margin-bottom: 60px;
 }
-.content-slider li{
+
+.content-slider li {
     background-color: #ed3020;
     text-align: center;
     color: #FFF;
 }
+
 .content-slider h3 {
     margin: 0;
     padding: 70px 0;
 }
-.demo{
+
+.demo {
     width: 800px;
 }
+
 /*aaaaaaaaaaaaaa*/
 .stars i {
     color: #f6d151
@@ -50,8 +54,9 @@ hr {
 
 .review-title {
     font-size: 15px;
-    font-weight:bold;
+    font-weight: bold;
 }
+
 .review-content {
     font-size: 14px;
 }
@@ -209,12 +214,12 @@ label.radio .orange {
     border-color: orange
 }
 
-label.radio input:checked+span {
+label.radio input:checked + span {
     color: #fff;
     position: relative
 }
 
-label.radio input:checked+span::before {
+label.radio input:checked + span::before {
     opacity: 1;
     content: '\2713';
     position: absolute;

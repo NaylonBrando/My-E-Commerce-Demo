@@ -24,22 +24,22 @@ class CartController extends AbstractController
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
-        $title = "Cart";
+        $title = 'Cart';
         require_once($templateFilePath);
     }
 
-    public function findCartByUserId(): ?Cart
+    public function findCartByUserId(int $userId): ?Cart
     {
         $em = $this->getEntityManager();
         /* @var $cartRepository CartRepository */
         $cartRepository = $em->getRepository(Cart::class);
-        return $cartRepository->findCartByUserId($_SESSION['user_id']);
+        return $cartRepository->findCartByUserId($userId);
     }
 
     public function add()
     {
         $em = $this->getEntityManager();
-        $url = Router::parse_referer();
+        $url = Router::parseReferer();
 
         if (!isset($_SESSION['user_id'])) {
             if (isset($_SESSION['cart'])) {
@@ -57,16 +57,16 @@ class CartController extends AbstractController
                     $product = $em->find(Product::class, $_POST['productId']);
                     if ($product) {
                         $count = count($_SESSION['cart']);
-                        $_SESSION['cart'][$count] = array('productId' => $product->getId(), 'quantity' => 1);
+                        $_SESSION['cart'][$count] = ['productId' => $product->getId(), 'quantity' => 1];
                         echo "<script>alert('Product is added in the cart..!')</script>";
 
                     }
                 }
             } else {
-                $_SESSION['cart'] = array();
+                $_SESSION['cart'] = [];
                 $product = $em->find(Product::class, $_POST['productId']);
                 if ($product) {
-                    $_SESSION['cart'][0] = array('productId' => $product->getId(), 'quantity' => 1);
+                    $_SESSION['cart'][0] = ['productId' => $product->getId(), 'quantity' => 1];
                 }
 
             }
@@ -92,7 +92,6 @@ class CartController extends AbstractController
 
             } else {
                 $cartItem = $cartRepository->findCartItemByCartIdandProductId($cart->getId(), $_POST['productId']);
-                $cartItems = $cart->getCartItem();
                 if (!isset($cartItem)) {
                     $product = $em->getRepository(Product::class)->find($_POST['productId']);
                     $cartItem = new CartItem();
@@ -113,7 +112,7 @@ class CartController extends AbstractController
 
     public function delete()
     {
-        if (isset($_POST['action']) && $_POST['action'] == "delete") {
+        if (isset($_POST['action']) && $_POST['action'] == 'delete') {
             if (isset($_SESSION['user_id'])) {
                 $em = $this->getEntityManager();
                 /* @var $cartRepository CartRepository */
@@ -139,13 +138,13 @@ class CartController extends AbstractController
                 }
             }
         }
-        header("Location:/cart");
+        header('Location:/cart');
     }
 
     public function update()
     {
 
-        if (isset($_POST['action']) && $_POST['action'] == "update") {
+        if (isset($_POST['action']) && $_POST['action'] == 'update') {
             if (isset($_SESSION['user_id'])) {
                 $em = $this->getEntityManager();
                 /* @var $cartRepository CartRepository */
@@ -168,7 +167,7 @@ class CartController extends AbstractController
                             $cartItem->setQuantity($_POST['quantity']);
                             $em->persist($cartItem);
                             $em->flush();
-                            header("Location:/cart");
+                            header('Location:/cart');
                         }
                         break;
                     }
@@ -186,7 +185,7 @@ class CartController extends AbstractController
                             echo "<script>window.location = '/cart'</script>";
                         } else {
                             $_SESSION['cart'][$key]['quantity'] = $_POST['quantity'];
-                            header("Location:/cart");
+                            header('Location:/cart');
                         }
                         break;
                     }
@@ -194,7 +193,7 @@ class CartController extends AbstractController
 
             }
         }
-        header("Location:/cart");
+        header('Location:/cart');
     }
 
     public function cartSessionToCart()
@@ -234,26 +233,36 @@ class CartController extends AbstractController
     public function cartItemRowGenerator()
     {
 
-        $str = "";
+        $str = '';
         $em = $this->getEntityManager();
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
         $productImageController = new ProductImageController();
 
         if (!isset($_SESSION['user_id']) && isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
-            
+
             for ($i = 0; $i < count($_SESSION['cart']) + 1; $i++) {
                 $match = false;
-                if(isset($_SESSION['cart'][$i])){
+                if (isset($_SESSION['cart'][$i])) {
                     $cartItem = $_SESSION['cart'][$i];
                     $productWithImage = $productRepository->findProductById($cartItem['productId']);
+<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
+<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
                     if($productWithImage ==null){
                         if(count($_SESSION['cart']) == 1){
+=======
+                    if ($productWithImage == null) {
+                        if (count($_SESSION['cart']) == 1) {
+>>>>>>> Code clean up
                             $str = "<h6>Cart is Empty!</h6>";
+=======
+                    if ($productWithImage == null) {
+                        if (count($_SESSION['cart']) == 1) {
+                            $str = '<h6>Cart is Empty!</h6>';
+>>>>>>> Refactor ve clean up code
                         }
                         unset($_SESSION['cart'][$i]);
-                    }
-                    else{
+                    } else {
                         $product = $productWithImage->getProduct();
                         $images = $productWithImage->getImages();
                         $totalPrice = $cartItem['quantity'] * $product->getPrice();
@@ -324,14 +333,14 @@ class CartController extends AbstractController
                     $em->flush();
                 }
             } else {
-                $str = "<h6>Cart is Empty!</h6>";
+                $str = '<h6>Cart is Empty!</h6>';
             }
 
 
         } else {
-            $str = "<h6>Cart is Empty!</h6>";
+            $str = '<h6>Cart is Empty!</h6>';
         }
-    
+
         echo $str;
     }
 

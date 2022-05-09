@@ -12,28 +12,29 @@
                     <input type="hidden" name="userId" value="<?php echo $_SESSION['user_id'] ?>">
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Title</label>
-                        <input type="text" class="form-control" name="title" id="exampleFormControlTextarea1" placeholder="Title" required>
-                    <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Write your review</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" required
-                                  name="review" maxlength="254"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlSelect1">Rating</label>
-                        <select class="form-control" id="exampleFormControlSelect1" name="rating" required>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Send</button>
+                        <input type="text" class="form-control" name="title" id="exampleFormControlTextarea1"
+                               placeholder="Title" required>
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">Write your review</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" required
+                                      name="review" maxlength="254"></textarea>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Rating</label>
+                            <select class="form-control" id="exampleFormControlSelect1" name="rating" required>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Send</button>
+                            </div>
+                        </div>
                 </form>
             </div>
         </div>

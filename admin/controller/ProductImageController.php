@@ -2,7 +2,7 @@
 
 namespace admin\controller;
 
-use FileHelper;
+use admin\helper\FileHelper;
 use src\entity\Product;
 use src\entity\ProductImage;
 use src\repository\ProductImageRepository;
@@ -80,16 +80,14 @@ class ProductImageController extends AdminAbstractController
 
             $em->remove($productImage);
             $em->flush();
-            if (FileHelper::delete('../upload/', $productImage->getPath())) {
-                header('location: /admin/product/image/' . $productImage->getProductId());
-            } else {
+            if (!FileHelper::delete('../upload/', $productImage->getPath())) {
                 $_SESSION['imageDeleteError'] = 'Error occurred while deleting file';
-                header('location: /admin/product/image/' . $productImage->getProductId());
             }
+            header('location: /admin/product/image/' . $productImage->getProductId());
 
 
         } else {
-            $page404 = "../admin/view/404.php";
+            $page404 = '../admin/view/404.php';
             require_once($page404);
         }
 
@@ -98,7 +96,7 @@ class ProductImageController extends AdminAbstractController
     public function deleteAll(int $productId): bool
     {
         $em = $this->getEntityManager();
-        $productImages = $em->getRepository(ProductImage::class)->findBy(array('productId' => $productId));
+        $productImages = $em->getRepository(ProductImage::class)->findBy(['productId' => $productId]);
         if ($productImages) {
             foreach ($productImages as $productImage) {
                 if (FileHelper::delete('../upload/', $productImage->getPath())) {
@@ -149,7 +147,7 @@ class ProductImageController extends AdminAbstractController
         }
     }
 
-    public function imageCard($imagePath, $imageId, $isThumbnail)
+    public function imageCard($imagePath, $imageId, $isThumbnail): string
     {
         if ($isThumbnail == false) {
 
