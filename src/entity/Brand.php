@@ -2,7 +2,6 @@
 
 namespace src\entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,14 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Brand
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="string")
      */
@@ -39,5 +36,4 @@ class Brand
     {
         $this->name = $name;
     }
-
 }

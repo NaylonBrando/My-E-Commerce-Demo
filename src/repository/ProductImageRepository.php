@@ -16,6 +16,4 @@ class ProductImageRepository extends EntityRepository
             ->setParameter(':productId', $productId);
         return $query->getQuery()->getResult();
     }
-
-
 }

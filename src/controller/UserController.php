@@ -1,6 +1,6 @@
 <?php
 
-namespace controller;
+namespace src\controller;
 
 use src\entity\Cart;
 use src\entity\User;
@@ -8,7 +8,6 @@ use src\repository\UserRepository;
 
 class UserController extends AbstractController
 {
-
     public function register($templateFile)
     {
         if (isset($_SESSION['user_id'])) {
@@ -125,7 +124,7 @@ class UserController extends AbstractController
                     unset($_SESSION['login_error']);
                 }
                 $cartController = new CartController();
-                $cartController->cartSessionToCart();
+                $cartController->cartSessionToCartTable();
                 header('location: /');
             } else {
                 $_SESSION['login_error'] = 'Password or email is incorrect';
@@ -137,7 +136,6 @@ class UserController extends AbstractController
         }
 
     }
-
 
     public function profile($pageModulePath)
     {
@@ -198,7 +196,6 @@ class UserController extends AbstractController
         }
     }
 
-
     public function updatePassword()
     {
         $id = $_POST['userId'];
@@ -226,5 +223,4 @@ class UserController extends AbstractController
         }
 
     }
-
 }

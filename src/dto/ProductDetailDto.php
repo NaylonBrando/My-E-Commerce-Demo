@@ -7,9 +7,7 @@ use src\entity\Product;
 class ProductDetailDto
 {
     private Product $product;
-
     private string $categoryName;
-
     private string $brandName;
 
     /**

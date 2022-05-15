@@ -1,6 +1,6 @@
 <?php
 
-namespace controller;
+namespace src\controller;
 
 use Router;
 use src\entity\Cart;
@@ -12,28 +12,124 @@ use src\repository\ProductRepository;
 
 class CartController extends AbstractController
 {
-
-    private float $totalPrice = 0;
-
-    public function getTotalPrice(): float
-    {
-        return $this->totalPrice;
-    }
-
     public function show($pageModulePath)
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
         $title = 'Cart';
+        $totalCartItems = $this->getCartItems();
+        $totalPrice = $totalCartItems['totalPrice'];
+        unset($totalCartItems['totalPrice']);
         require_once($templateFilePath);
     }
 
-    public function findCartByUserId(int $userId): ?Cart
+    public function getCartItems(): array|null
+    {
+
+        $totalCartItems = [];
+        $str = '';
+        $em = $this->getEntityManager();
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        $productImageController = new ProductImageController();
+
+        if (!isset($_SESSION['user_id']) && isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
+
+            for ($i = 0; $i < count($_SESSION['cart']) + 1; $i++) {
+                $match = false;
+                if (isset($_SESSION['cart'][$i])) {
+                    $cartItem = $_SESSION['cart'][$i];
+                    $productWithImage = $productRepository->findProductById($cartItem['productId']);
+                    if ($productWithImage == null) {
+                        if (count($_SESSION['cart']) == 1) {
+                            $str = '<h6>Cart is Empty!</h6>';
+                        }
+                        unset($_SESSION['cart'][$i]);
+                    } else {
+                        $product = $productWithImage->getProduct();
+                        $images = $productWithImage->getImages();
+                        $totalPrice = $cartItem['quantity'] * $product->getPrice();
+
+                        if ($images != null) {
+                            foreach ($images as $image) {
+                                if ($image->getIsThumbnail()) {
+                                    $imagePath = '../upload/' . $image->getPath();
+                                    $match = true;
+                                    break;
+                                }
+                            }
+                            if (!$match) {
+                                $imagePath = '../upload/' . $images[0]->getPath();
+                            }
+                        } else {
+                            $imagePath = '../image/productImageComingSoon.jpg';
+                        }
+
+                        $totalCartItems[] = ['product' => $product, 'quantity' => $cartItem['quantity'], 'imagePath' => $imagePath];
+                    }
+                }
+            }
+
+        } elseif (isset($_SESSION['user_id'])) {
+            /* @var $cartRepository CartRepository */
+            $cartRepository = $em->getRepository(Cart::class);
+            $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
+
+            /** @var CartItem[] $cartItems */
+            $cartItems = $cart->getCartItem()->getValues();
+            if ($cartItems) {
+                foreach ($cartItems as $cartItem) {
+                    $match = false;
+
+                    $product = $cartItem->getProduct();
+                    $images = $productImageController->findImagesByProductId($product->getId());
+
+                    if ($images != null) {
+                        foreach ($images as $image) {
+                            if ($image->getIsThumbnail()) {
+                                $imagePath = '../upload/' . $image->getPath();
+                                $match = true;
+                                break;
+                            }
+                        }
+                        if (!$match) {
+                            $imagePath = '../upload/' . $images[0]->getPath();
+                        }
+                    } else {
+                        $imagePath = '../image/productImageComingSoon.jpg';
+                    }
+
+                    $totalCartItems[] = ['product' => $product, 'quantity' => $cartItem->getQuantity(), 'imagePath' => $imagePath];
+
+                    for ($i = 0; $i < count($cartItems); $i++) {
+                        $cartItem = $cartItems[$i];
+                        if ($cartItem->getProduct()->getId() == $product->getId()) {
+                            $totalPrice = $cartItem->getQuantity() * $product->getPrice();
+                        }
+                    }
+                    $cart->setGrandTotal($totalPrice);
+                    $em->persist($cart);
+                    $em->flush();
+                }
+            } else {
+                $totalCartItems[] = null;
+            }
+
+        } else {
+            $totalCartItems[] = null;
+        }
+        if ($totalCartItems != null) {
+            $totalCartItems['totalPrice'] = $totalPrice;
+        }
+        return $totalCartItems;
+    }
+
+    public function findCartByUserId(): ?Cart
     {
         $em = $this->getEntityManager();
         /* @var $cartRepository CartRepository */
         $cartRepository = $em->getRepository(Cart::class);
-        return $cartRepository->findCartByUserId($userId);
+        return $cartRepository->findCartByUserId($_SESSION['user_id']);
     }
 
     public function add()
@@ -156,7 +252,7 @@ class CartController extends AbstractController
                 foreach ($cartItems as $cartItem) {
                     if ($cartItem->getProduct()->getId() == $_POST['productId']) {
                         $productController = new ProductController();
-                        $product = $productController->getProductById($_POST['productId']);
+                        $product = $productController->getById($_POST['productId']);
 
                         if ($_POST['quantity'] > $product->getQuantity()) {
                             $quantity = $_POST['quantity'];
@@ -176,7 +272,7 @@ class CartController extends AbstractController
                 foreach ($_SESSION['cart'] as $key => $cartItem) {
                     if ($cartItem['productId'] == $_POST['productId']) {
                         $productController = new ProductController();
-                        $product = $productController->getProductById($_POST['productId']);
+                        $product = $productController->getById($_POST['productId']);
 
                         if ($_POST['quantity'] > $product->getQuantity()) {
                             $quantity = $_POST['quantity'];
@@ -196,10 +292,9 @@ class CartController extends AbstractController
         header('Location:/cart');
     }
 
-    public function cartSessionToCart()
+    public function cartSessionToCartTable()
     {
         if (isset($_SESSION['cart'])) {
-            //cart session ile cart ı karsilastir, eger cart sessionda var ve cartda yoksa cart sessiondan carta ekle
             $em = $this->getEntityManager();
             /* @var $cartRepository CartRepository */
             $cartRepository = $em->getRepository(Cart::class);
@@ -229,154 +324,4 @@ class CartController extends AbstractController
             unset($_SESSION['cart']);
         }
     }
-
-    public function cartItemRowGenerator()
-    {
-
-        $str = '';
-        $em = $this->getEntityManager();
-        /** @var ProductRepository $productRepository */
-        $productRepository = $em->getRepository(Product::class);
-        $productImageController = new ProductImageController();
-
-        if (!isset($_SESSION['user_id']) && isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
-
-            for ($i = 0; $i < count($_SESSION['cart']) + 1; $i++) {
-                $match = false;
-                if (isset($_SESSION['cart'][$i])) {
-                    $cartItem = $_SESSION['cart'][$i];
-                    $productWithImage = $productRepository->findProductById($cartItem['productId']);
-<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
-<<<<<<< 47ca190ee13d92e6dd4a742ff4c0eabfaa4d1d4f
-                    if($productWithImage ==null){
-                        if(count($_SESSION['cart']) == 1){
-=======
-                    if ($productWithImage == null) {
-                        if (count($_SESSION['cart']) == 1) {
->>>>>>> Code clean up
-                            $str = "<h6>Cart is Empty!</h6>";
-=======
-                    if ($productWithImage == null) {
-                        if (count($_SESSION['cart']) == 1) {
-                            $str = '<h6>Cart is Empty!</h6>';
->>>>>>> Refactor ve clean up code
-                        }
-                        unset($_SESSION['cart'][$i]);
-                    } else {
-                        $product = $productWithImage->getProduct();
-                        $images = $productWithImage->getImages();
-                        $totalPrice = $cartItem['quantity'] * $product->getPrice();
-                        $this->setTotal($totalPrice);
-
-                        if ($images != null) {
-                            foreach ($images as $image) {
-                                if ($image->getIsThumbnail()) {
-                                    $imagePath = '../upload/' . $image->getPath();
-                                    $match = true;
-                                    break;
-                                }
-                            }
-                            if (!$match) {
-                                $imagePath = '../upload/' . $images[0]->getPath();
-                            }
-                        } else {
-                            $imagePath = '../image/productImageComingSoon.jpg';
-                        }
-
-                        $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(),
-                            $product->getPrice(), $product->getQuantity(), $cartItem['quantity']);
-                    }
-                }
-            }
-
-        } elseif (isset($_SESSION['user_id'])) {
-            /* @var $cartRepository CartRepository */
-            $cartRepository = $em->getRepository(Cart::class);
-            $cart = $cartRepository->findCartByUserId($_SESSION['user_id']);
-
-            /** @var CartItem[] $cartItems */
-            $cartItems = $cart->getCartItem()->getValues();
-            if ($cartItems) {
-                foreach ($cartItems as $cartItem) {
-                    $match = false;
-
-                    $product = $cartItem->getProduct();
-                    $images = $productImageController->findImagesByProductId($product->getId());
-
-                    if ($images != null) {
-                        foreach ($images as $image) {
-                            if ($image->getIsThumbnail()) {
-                                $imagePath = '../upload/' . $image->getPath();
-                                $match = true;
-                                break;
-                            }
-                        }
-                        if (!$match) {
-                            $imagePath = '../upload/' . $images[0]->getPath();
-                        }
-                    } else {
-                        $imagePath = '../image/productImageComingSoon.jpg';
-                    }
-
-                    $str .= self::cartItemRow($product->getId(), $imagePath, $product->getTitle(),
-                        $product->getPrice(), $product->getQuantity(), $cartItem->getQuantity());
-
-                    for ($i = 0; $i < count($cartItems); $i++) {
-                        $cartItem = $cartItems[$i];
-                        if ($cartItem->getProduct()->getId() == $product->getId()) {
-                            $totalPrice = $cartItem->getQuantity() * $product->getPrice();
-                        }
-                    }
-                    $this->setTotal($totalPrice);
-                    $cart->setGrandTotal($totalPrice);
-                    $em->persist($cart);
-                    $em->flush();
-                }
-            } else {
-                $str = '<h6>Cart is Empty!</h6>';
-            }
-
-
-        } else {
-            $str = '<h6>Cart is Empty!</h6>';
-        }
-
-        echo $str;
-    }
-
-    private function setTotal(float $total): void
-    {
-        $this->totalPrice = $total + $this->totalPrice;
-    }
-
-    public function cartItemRow($productId, $productImg, $title, $price, $productQuantity, $cartQuantity): string
-    {
-        return "
-               <div class=\"border rounded\">
-                                    <div class=\"row bg-white\">
-                                        <div class=\"col-md-3 pl-0\">
-                                            <img src=$productImg alt=\"Image1\" class=\"img-fluid cartImg\">
-                                        </div>
-                                        <div class=\"col-md-6\">
-                                        <h5 class=\"pt-2\">$title</h5>
-                                        <h5 class=\"pt-2\">$$price</h5>
-                                        <form action=\"/check-delete-product-from-cart\" method=\"post\">
-                                            <input type=\"hidden\" name=\"productId\" value=\"$productId\">
-                                            <input type=\"hidden\" name=\"action\" value=\"delete\"/>
-                                            <button type=\"submit\" class=\"btn btn-danger\">Remove Item</button>
-                                        </form>
-                                        </div>
-                                        <div class=\"col-md-3 py-5\">
-                                             <form action=\"/check-change-quantity-from-cart\" method=\"post\">
-                                             <input type=\"hidden\" name=\"productId\" value=\"$productId\">
-                                             <input type=\"hidden\" name=\"action\" value=\"update\">
-                                             <input type=\"number\" value=\"$cartQuantity\" pattern=\"[1-9]+\" min=\"1\" max=\"$productQuantity\" name=\"quantity\" class=\"form-control\" onChange=\"this.form.submit()\">
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                ";
-    }
-
-
 }

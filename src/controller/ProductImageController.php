@@ -1,6 +1,6 @@
 <?php
 
-namespace controller;
+namespace src\controller;
 
 use src\entity\ProductImage;
 
@@ -18,5 +18,4 @@ class ProductImageController extends AbstractController
         }
         return $product;
     }
-
 }

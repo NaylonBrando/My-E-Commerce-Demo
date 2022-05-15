@@ -7,19 +7,12 @@ use src\entity\Review;
 class ReviewWithUserDto
 {
     private Review $review;
-
     private string $userName;
-
     private string $userLastName;
-
     private string $userEmail;
-
     private int $productId;
-
     private string $productTitle;
-
     private string $productSlug;
-
 
     public function getReview(): Review
     {
@@ -76,22 +69,18 @@ class ReviewWithUserDto
         return $this->productTitle;
     }
 
-
     public function setProductTitle(string $productTitle): void
     {
         $this->productTitle = $productTitle;
     }
-
 
     public function getProductSlug(): string
     {
         return $this->productSlug;
     }
 
-
     public function setProductSlug(string $productSlug): void
     {
         $this->productSlug = $productSlug;
     }
-
 }

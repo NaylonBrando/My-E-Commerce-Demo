@@ -17,13 +17,11 @@ use src\entity\Review;
 
 class ProductRepository extends EntityRepository
 {
-
     /**
      * @return ProductWithImageDto[]
      */
     public function getLastProductsByLimit(int $limit): array
     {
-        $productWithImagesDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
             ->from(Product::class, 'p')
@@ -32,16 +30,16 @@ class ProductRepository extends EntityRepository
             ->setMaxResults($limit)
             ->getQuery();
 
-        return $this->extracted($qb, $productWithImagesDtoArray);
+        return $this->extracted($qb);
     }
 
     /**
      * @param QueryBuilder $qb
-     * @param array $productWithImagesDtoArray
      * @return array
      */
-    public function extracted(QueryBuilder $qb, array $productWithImagesDtoArray): array
+    public function extracted(QueryBuilder $qb): array
     {
+        $productWithImagesDtoArray = [];
         $products = $qb->getQuery()->getResult();
 
         foreach ($products as $product) {
@@ -83,7 +81,6 @@ class ProductRepository extends EntityRepository
      */
     public function findProductsBySearchTerm($page, $limit, string $searchTerm, $rate, $price): array
     {
-        $productWithImagesDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
             ->from(Product::class, 'p')
@@ -134,8 +131,7 @@ class ProductRepository extends EntityRepository
             }
         }
 
-
-        return $this->extracted($qb, $productWithImagesDtoArray);
+        return $this->extracted($qb);
     }
 
     /**
@@ -143,22 +139,19 @@ class ProductRepository extends EntityRepository
      */
     public function findProductsByIdArray(array $ids): array
     {
-        $productWithImagesDtoArray = [];
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
             ->from(Product::class, 'p')
             ->where('p.id IN (:id)', 'p.isActive = 1')
             ->setParameter('id', $ids);
-        return $this->extracted($qb, $productWithImagesDtoArray);
+        return $this->extracted($qb);
     }
 
     /**
      * @return ProductWithImageDto[]
      */
-    public function findProductsByCategoryName($page, $limit, $categoryName, $rate = null, $price = null): array
+    public function findProductsByCategoryName($categoryName, $page, $limit, $rate = null, $price = null): array
     {
-        $productWithImagesDtoArray = [];
-
         /** @var Product[] $products */
 
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -202,7 +195,7 @@ class ProductRepository extends EntityRepository
             }
         }
 
-        return $this->extracted($qb, $productWithImagesDtoArray);
+        return $this->extracted($qb);
     }
 
     public function countProducts(bool $isActive = null): int
@@ -294,8 +287,6 @@ class ProductRepository extends EntityRepository
      */
     public function findProductsByCartUserId(int $cartUserId): array
     {
-        $productWithImagesDtoArray = [];
-
         /** @var Product[] $products */
 
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -304,14 +295,16 @@ class ProductRepository extends EntityRepository
             ->innerJoin(Cart::class, 'c', Join::WITH, 'c.productId = p.id')
             ->where('c.userId = :userId', 'p.isActive = 1')
             ->setParameter('userId', $cartUserId);
-        return $this->extracted($qb, $productWithImagesDtoArray);
+        return $this->extracted($qb);
 
     }
 
     /**
-     * @return ProductDetailDto[]
+     * @param int $pageNumber
+     * @param int $limit
+     * @return ProductDetailDto[]|null
      */
-    public function findProductsWithDetails($pageNumber, $limit): array
+    public function findProductsWithDetails(int $pageNumber, int $limit): ?array
     {
 
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -345,9 +338,9 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param QueryBuilder $qb
-     * @return array
+     * @return array|null
      */
-    public function productDetailExtracted(QueryBuilder $qb): array
+    public function productDetailExtracted(QueryBuilder $qb): ?array
     {
         $result = $qb->getQuery()->getResult();
         $productDetailDtoArray = [];
@@ -358,13 +351,16 @@ class ProductRepository extends EntityRepository
             $productDetailDto->setBrandName($row['brandName']);
             $productDetailDtoArray[] = $productDetailDto;
         }
+        if (empty($productDetailDtoArray)) {
+            return null;
+        }
         return $productDetailDtoArray;
     }
 
     /**
-     * @return ProductDetailDto[]
+     * @return ProductDetailDto[]|null
      */
-    public function findProductsWithDetailsBySearchTerm($searchTerm, $pageNumber, $limit): array
+    public function findProductsWithDetailsBySearchTerm(string $searchTerm, int $pageNumber, int $limit): ?array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
@@ -398,6 +394,4 @@ class ProductRepository extends EntityRepository
 
         return $this->productDetailExtracted($qb);
     }
-
-
 }

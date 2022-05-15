@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductImage
 {
-
     public function __construct()
     {
         $this->isThumbnail = false;
@@ -23,22 +22,18 @@ class ProductImage
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="integer", name="product_id")
      */
     private int $productId;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $path;
-
     /**
      * @ORM\Column(type="boolean")
      */
     private bool $isThumbnail;
-
 
     public function getId(): int
     {
@@ -74,6 +69,4 @@ class ProductImage
     {
         $this->isThumbnail = $isThumbnail;
     }
-
-
 }

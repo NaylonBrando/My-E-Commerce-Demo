@@ -9,7 +9,6 @@
             <div class="modal-body">
                 <form action="/check-add-review-to-product" method="post">
                     <input type="hidden" name="productId" value="<?php echo $product->getId(); ?>">
-                    <input type="hidden" name="userId" value="<?php echo $_SESSION['user_id'] ?>">
                     <div class="form-group">
                         <label for="exampleFormControlTextarea1">Title</label>
                         <input type="text" class="form-control" name="title" id="exampleFormControlTextarea1"

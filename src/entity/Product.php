@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="src\repository\ProductRepository")
@@ -14,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Product
 {
-
     public function __construct()
     {
         $this->isActive = true;
@@ -27,53 +25,43 @@ class Product
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $title;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $slug;
-
     /**
      * @ORM\Column(type="integer", name="brand_id")
      */
     private int $brandId;
-
     /**
      * @ORM\Column(type="string", length=2048)
      */
     private string $description;
-
     /**
      * @ORM\Column(type="float")
      */
     private float $price;
-
     /**
      * @ORM\Column(type="integer")
      */
     private int $quantity;
-
     /**
      * @ORM\Column(type="datetime", name="created_at")
      * @var DateTimeInterface
      */
     private DateTimeInterface $createdAt;
-
     /**
      * @ORM\Column(type="boolean")
      */
     private bool $isActive;
-
     /**
      * @ORM\Column(type="integer")
      */
     private int $stockNumber;
-
 
     public function getId(): int
     {
@@ -169,5 +157,4 @@ class Product
     {
         $this->stockNumber = $stockNumber;
     }
-
 }

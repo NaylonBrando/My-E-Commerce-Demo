@@ -23,23 +23,19 @@ class Cart
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart")
      */
     private $cartItem;
-
     /**
      * @ORM\OneToOne(targetEntity="src\entity\User", inversedBy="cart")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
-
     /**
      * @ORM\Column(type="float")
      */
     private float $grandTotal;
-
 
     public function getId(): int
     {

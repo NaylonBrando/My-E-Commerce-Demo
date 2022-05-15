@@ -17,12 +17,10 @@ class Category
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="integer")
      */
     private int $parent_id;
-
     /**
      * @ORM\Column(type="string")
      */
@@ -51,11 +49,8 @@ class Category
         return $this->name;
     }
 
-
     public function setName(string $name): void
     {
         $this->name = $name;
     }
-
-
 }

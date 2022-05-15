@@ -1,8 +1,7 @@
 <?php
 
-
 //son kullanici router
-use controller\UserController;
+use src\controller\UserController;
 
 class Router
 {
@@ -152,7 +151,6 @@ class Router
             $_SESSION['user_status'] = $user->getIsActive();
         }
 
-
         if (!isset($_SESSION['user_id']) || $_SESSION['user_status'] == true) {
             foreach ($routes as $router) {
 
@@ -188,33 +186,33 @@ class Router
                         unset($parameters[2]);
                     }
                     $controllerClassName = $router['class'];
-                    $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
+                    $controllerFile = __DIR__ . '/src/controller/' . $controllerClassName . '.php';
                     $functionName = $router['function'];
                     $routeType = $router['type'];
 
                     if ($routeType == 'normal') {
                         $templateFile = $router['template'];
-                        $templateFilePath = __DIR__ . '/view/' . $templateFile;
+                        $templateFilePath = __DIR__ . '\src\view\\' . $templateFile;
                         if (!file_exists($templateFilePath)) {
-                            $pageNotFoundPath = __DIR__ . '/view/404.php';
+                            $pageNotFoundPath = __DIR__ . '\src\view\\404.php';
                             require_once($pageNotFoundPath);
                         }
                         require_once($controllerFile);
                         $match = true;
-                        $controllerClassName = '\controller\\' . $controllerClassName;
+                        $controllerClassName = '\src\controller\\' . $controllerClassName;
                         call_user_func_array([new $controllerClassName(), $functionName], [$templateFilePath, $parameters]);
                         break;
 
                     } elseif ($routeType == 'check') {
                         $match = true;
-                        $controllerClassName = '\controller\\' . $controllerClassName;
+                        $controllerClassName = '\src\controller\\' . $controllerClassName;
                         call_user_func_array([new $controllerClassName(), $functionName], $parameters);
                         break;
                     }
                 }
             }
             if ($match == false) {
-                $pageNotFoundPath = __DIR__ . '/view/404.php';
+                $pageNotFoundPath = __DIR__ . '\src\view\\404.php';
                 require_once($pageNotFoundPath);
             }
         } else {
@@ -244,7 +242,5 @@ class Router
         $domainName = $_SERVER['HTTP_ORIGIN'];
         return str_replace($domainName, null, $referer);
     }
-
-
 }
 

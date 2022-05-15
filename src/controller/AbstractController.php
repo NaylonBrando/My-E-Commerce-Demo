@@ -1,6 +1,6 @@
 <?php
 
-namespace controller;
+namespace src\controller;
 
 use Connection;
 use Doctrine\ORM\EntityManager;
@@ -9,7 +9,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php');
 
 class AbstractController
 {
-
     public EntityManager $entityManager;
 
     /**
@@ -28,6 +27,4 @@ class AbstractController
     {
         return $this->entityManager;
     }
-
-
 }

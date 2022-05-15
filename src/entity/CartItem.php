@@ -17,19 +17,16 @@ class CartItem
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\ManyToOne  (targetEntity="Product")
      * @ORM\JoinColumn(nullable=false, name="product_id", onDelete="CASCADE")
      */
     private $product;
-
     /**
      * @ORM\ManyToOne(targetEntity="Cart", inversedBy="cartItems")
      * @ORM\JoinColumn(nullable=false, name="cart_id", referencedColumnName="id")
      */
     private $cart;
-
     /**
      * @ORM\Column(type="integer")
      */

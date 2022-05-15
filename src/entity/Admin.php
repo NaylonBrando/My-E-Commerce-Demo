@@ -11,34 +11,28 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Admin
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="string", name="first_name")
      */
     private string $firstName;
-
     /**
      * @ORM\Column(type="string", name="last_name")
      */
     private string $lastName;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $email;
-
     /**
      * @ORM\Column(type="string")
      */
     private string $password;
-
     /**
      * @ORM\Column(type="string")
      */
@@ -53,7 +47,6 @@ class Admin
     {
         return $this->id;
     }
-
 
     public function getFirstName(): string
     {
@@ -104,5 +97,4 @@ class Admin
     {
         $this->adminType = $adminType;
     }
-
 }

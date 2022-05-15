@@ -1,0 +1,17 @@
+.sidebar .nav-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    width: 200px;
+    overflow: hidden; /* taşanları gizle */
+    white-space: nowrap; /* alt satıra hiç inme */
+    text-overflow: ellipsis; /* eğer uzunsa üç nokta koy */
+    color: var(--bs-dark);
+}
+.sidebar .nav-link:hover {
+    background: var(--bs-light);
+    color: var(--bs-primary);
+}
+.sidebar h6 {
+    font-weight: 700;
+    color: var(--bs-dark);
+}

@@ -14,7 +14,7 @@
                         <div class="row g-3">
                             <?php
 
-                            use controller\NavigationBarController;
+                            use src\controller\NavigationBarController;
 
                             $navigationBarController = new NavigationBarController();
                             $navigationBarController->selectCategoryRowGenerator();

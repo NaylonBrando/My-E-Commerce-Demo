@@ -7,7 +7,6 @@ require_once 'vendor/autoload.php';
 
 class Connection
 {
-
     public EntityManager $entityManager;
 
     public function __construct()
@@ -36,6 +35,4 @@ class Connection
     {
         return $this->entityManager;
     }
-
-
 }

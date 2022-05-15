@@ -1,6 +1,6 @@
 <?php
 
-use controller\UserController;
+use src\controller\UserController;
 
 $userController = new UserController();
 $user = $userController->getById($_SESSION['user_id']);

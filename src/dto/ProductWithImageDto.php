@@ -13,7 +13,6 @@ class ProductWithImageDto
     }
 
     private Product $product;
-
     /**
      * @var ProductImage[]
      */

@@ -1,16 +1,16 @@
 <?php
 
-namespace controller;
+namespace src\controller;
 
 use src\entity\Category;
 
 class NavigationBarController extends AbstractController
 {
-    public function selectCategoryRowGenerator()
+    public function selectCategoryRowGenerator($parentId= 0)
     {
-        $str = "";
+        $str = '';
         $categoryController = new CategoryController();
-        $mainCategoryArray = $categoryController->getCategoriesByParentId(0);
+        $mainCategoryArray = $categoryController->getCategoriesByParentId($parentId);
         foreach ($mainCategoryArray as $mainCategory) {
             $subCategories = $categoryController->getCategoriesByParentId($mainCategory->getId());
             $str .= $this->selectCategoryRow($mainCategory->getName(), $subCategories);
@@ -34,12 +34,10 @@ class NavigationBarController extends AbstractController
             $lowercaseSubName = strtolower($subName);
             $str .= "<li><a href=\"/category/$lowercaseSubName\">$subName</a></li>";
         }
-        $str .= "</ul>
+        $str .= '</ul>
                 </div>
-            </div>";
+            </div>';
 
         return $str;
     }
-
-
 }

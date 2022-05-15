@@ -5,10 +5,8 @@ namespace src\repository;
 use Doctrine\ORM\EntityRepository;
 use src\entity\User;
 
-
 class UserRepository extends EntityRepository
 {
-
     /**
      * @return User[]
      */
@@ -47,6 +45,7 @@ class UserRepository extends EntityRepository
             ->from(User::class, 'u')
             ->where('u.firstName LIKE :searchTerm')
             ->orWhere('u.lastName LIKE :searchTerm')
+            ->orWhere('u.email LIKE :searchTerm')
             ->setParameter('searchTerm', '%' . $searchTerm . '%')
             ->setFirstResult(($pageNumber - 1) * $limit)
             ->setMaxResults($limit);

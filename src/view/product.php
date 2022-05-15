@@ -1,7 +1,8 @@
 <?php
 
-use controller\ProductController;
-use controller\ReviewController;
+use src\controller\ProductController;
+use src\controller\ReviewController;
+use src\dto\ReviewWithUserDto;
 use src\entity\Product;
 
 /** @var Product $product */
@@ -9,6 +10,43 @@ use src\entity\Product;
 $productController = new ProductController();
 
 $reviewController = new ReviewController();
+
+function reviewRow($title, $content, $firstName, $lastName, $date, $rating): string
+{
+    $star = '';
+    for ($i = 1; $i <= $rating; $i++) {
+        $star .= "<i class=\"fas fa-star\"></i>";
+    }
+    return "<div class=\"d-flex flex-row align-items-center\">
+                            <div class=\"d-flex flex-column ml-1\">
+                                <div class=\"comment-ratings\">" .
+        $star .
+        "<span class=\"username\">$firstName  $lastName</span>   
+                                    <div class=\"date\"> <span class=\"text-muted\">$date</span> 
+                                    </div>
+                                </div>
+                                <div class=\"review-title\">$title</div>
+                                <p class=\"review-content\">$content</p>
+                            </div>
+                        </div>
+                    <hr>";
+}
+
+/**
+ * @param ReviewWithUserDto[] $reviewsWithUserDto
+ */
+function reviewListItemGenerator(array $reviewsWithUserDto)
+{
+    $str = "<div class=\"comments\">";
+    foreach ($reviewsWithUserDto as $reviewWithUser) {
+        $review = $reviewWithUser->getReview();
+        $date = $review->getCreatedAt()->format('d/m/Y');
+        $str .= reviewRow($review->getTitle(), $review->getReview(), $reviewWithUser->getUserName(), $reviewWithUser->getUserLastName(), $date, $review->getRating());
+    }
+    $str .= "</div>";
+    echo $str;
+}
+
 ?>
 
 <div class="container mt-50 mb-50">
@@ -71,7 +109,7 @@ $reviewController = new ReviewController();
                     </div>
                     <div class="col-md-2">
                         <!-- Button to Open the Modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="modal-review-button"
                                 data-bs-target="#exampleModal">
                             Add Review
                         </button>
@@ -79,12 +117,31 @@ $reviewController = new ReviewController();
                 </div>
                 <hr>
                 <div class="comment-section">
-                    <?php $reviewController->reviewRowGenerator($product->getId()) ?>
+                    <?php
+                    if (isset($reviewsWithUserDto)) {
+                        reviewListItemGenerator($reviewsWithUserDto);
+                    }
+                    else{
+                        echo 'No reviews yet';
+                    }
+                    ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/view/productReviewModal.php'); ?>
+<?php if (isset($_SESSION['user_id'])) {
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/src/view/productReviewModal.php');
+} ?>
 
+<script>
+    $(document).ready(function () {
+        $('#modal-review-button').click(function () {
+            if ($("#exampleModal").length === 0) {
+                alert('You must be logged in to add a review');
+                window.location.href = "/login";
+            }
+        });
+    });
+</script>

@@ -14,5 +14,5 @@ require_once('Connection.php');
 loader('src/entity');
 loader('src/repository');
 loader('src/dto');
-loader('controller');
+loader('src/controller');
 require_once('Router.php');

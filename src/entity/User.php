@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -61,7 +60,6 @@ class User
         return $this->id;
     }
 
-
     public function getFirstName(): string
     {
         return $this->firstName;
@@ -82,7 +80,6 @@ class User
         $this->lastName = $lastName;
     }
 
-
     public function getEmail(): string
     {
         return $this->email;
@@ -92,7 +89,6 @@ class User
     {
         $this->email = $email;
     }
-
 
     public function getPassword(): string
     {
@@ -123,6 +119,4 @@ class User
     {
         $this->isActive = $isActive;
     }
-
-
 }

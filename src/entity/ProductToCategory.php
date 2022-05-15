@@ -4,7 +4,6 @@ namespace src\entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="src\repository\ProductToCategoryRepository")
@@ -18,12 +17,10 @@ class ProductToCategory
      * @ORM\GeneratedValue
      */
     private int $id;
-
     /**
      * @ORM\Column(type="integer", name="category_id")
      */
     private int $categoryId;
-
     /**
      * @ORM\Column(type="integer", name="product_id")
      */
@@ -53,6 +50,4 @@ class ProductToCategory
     {
         $this->productId = $productId;
     }
-
-
 }
