@@ -48,7 +48,7 @@ function cartItemRowGenerator($cartItems)
 }
 
 ?>
-<div class="container-fluid">
+<div class="container-fluid mb-50 mt-50">
     <div class="row px-5">
         <div class="col-md-7">
             <div class="shopping-cart">
@@ -69,7 +69,7 @@ function cartItemRowGenerator($cartItems)
                 <div class="row price-details">
                     <?php
                     if ((isset($totalPrice))) {
-                        echo "<h6>Total Price : $$totalPrice </h6> ";
+                        echo "<h6>Total Price : $totalPrice </h6> ";
                     } else {
                         echo '<h6>Cart is Empty</h6>';
                     }

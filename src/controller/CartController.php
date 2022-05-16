@@ -18,8 +18,12 @@ class CartController extends AbstractController
         $templateFilePath = str_replace('cart', 'homepageTemplate', $pageModulePath);
         $title = 'Cart';
         $totalCartItems = $this->getCartItems();
-        $totalPrice = $totalCartItems['totalPrice'];
-        unset($totalCartItems['totalPrice']);
+        if ($totalCartItems == null) {
+            $totalPrice = null;
+        } else {
+            $totalPrice = $totalCartItems['totalPrice'];
+            unset($totalCartItems['totalPrice']);
+        }
         require_once($templateFilePath);
     }
 
@@ -116,7 +120,7 @@ class CartController extends AbstractController
             }
 
         } else {
-            $totalCartItems[] = null;
+            $totalCartItems = null;
         }
         if ($totalCartItems != null) {
             $totalCartItems['totalPrice'] = $totalPrice;
