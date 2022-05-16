@@ -13,4 +13,7 @@ if (isset($pageModule)) {
     echo 'No Page Module';
 } ?>
 </body>
+
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/src/layout/footer.php'); ?>
+
 </html>
