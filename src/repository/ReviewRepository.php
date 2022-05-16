@@ -96,15 +96,14 @@ class ReviewRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
     
-    //get total number of reviews and average rating for a product
     public function getAvgReviewRateByProductId(int $productId): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COUNT(r.id) as totalReviews, AVG(r.rating) as averageRating')
+        $qb->select('COUNT(r.id) as rateCount, AVG(r.rating) as avgRate, r.productId')
             ->from(Review::class, 'r')
             ->where('r.productId = :productId')
             ->andWhere('r.status = 1')
             ->setParameter('productId', $productId);
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleResult();
     }
 }

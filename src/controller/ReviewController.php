@@ -52,7 +52,7 @@ class ReviewController extends AbstractController
         /** @var ReviewRepository $reviewRepository */
         $reviewRepository = $em->getRepository(Review::class);
         $avgReviewRate = $reviewRepository->getAvgReviewRateByProductId($productId);
-        if ($avgReviewRate) {
+        if ($avgReviewRate['rateCount'] > 0 & $avgReviewRate['avgRate'] != null) {
             return $avgReviewRate;
         }
         return null;

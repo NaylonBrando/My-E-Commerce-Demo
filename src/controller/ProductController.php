@@ -51,7 +51,7 @@ class ProductController extends AbstractController
             foreach ($productsWithImageDto as $productWithImageDto) {
                 $productAvgRate = $reviewController->getAvgReviewRateByProductId($productWithImageDto->getProduct()->getId());
                 if ($productAvgRate != null) {
-                    $avgRatingArray[] = ['productId' => $productAvgRate];
+                    $avgRatingArray[] = $productAvgRate;
                 }
             }
         }
@@ -120,6 +120,7 @@ class ProductController extends AbstractController
     {
         $pageModule = $pageModulePath;
         $productRepository = $this->entityManager->getRepository(Product::class);
+        $reviewController = new ReviewController();
 
         if (isset($parameters['searchTerm'])) {
             $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
@@ -133,6 +134,12 @@ class ProductController extends AbstractController
         $countOfProducts = $productRepository->countProductsBySearchTerm($parameters['searchTerm'], true);
         if($productsWithImageDto != null){
             $paginationVariablesArray = ['pageNumber' => $searchTermParameters['pg'], 'countOfProducts' => $countOfProducts, 'limit' => 8];
+        }
+        foreach ($productsWithImageDto as $productWithImageDto) {
+            $productAvgRate = $reviewController->getAvgReviewRateByProductId($productWithImageDto->getProduct()->getId());
+            if ($productAvgRate != null) {
+                $avgRatingArray[] = $productAvgRate;
+            }
         }
         require_once($templateFilePath);
     }

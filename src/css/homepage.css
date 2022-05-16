@@ -47,11 +47,11 @@ body {
 }
 
 .star {
-    color: red
+    color: orange;
 }
 
 .bg-cart {
-    background-color: orange;
+    background-color: rgb(75, 181, 67);
     color: #fff
 }
 

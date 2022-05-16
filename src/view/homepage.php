@@ -4,7 +4,7 @@ use src\controller\ProductController;
 
 $productController = new ProductController();
 
-function productCardGenerator(array $productResult): void
+function productCardGenerator(array $productResult, $avgRateArray = null): void
 {
     $str = "<div class=\"row justify-content-center\">";
     foreach ($productResult as $row) {
@@ -28,13 +28,25 @@ function productCardGenerator(array $productResult): void
         } else {
             $imagePath = '../image/productImageComingSoon.jpg';
         }
-        $str .= productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug());
+        $match = false;
+        if ($avgRateArray != null) {
+            foreach ($avgRateArray as $avgRate) {
+                if ($avgRate['productId'] == $product->getId()) {
+                    //remove the decimal part
+                    $str .= productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug(), round($avgRate['avgRate'],2), $avgRate['rateCount']);
+                    $match = true;
+                }
+            }
+        }
+        if (!$match) {
+            $str .= productCard($product->getId(), $product->getTitle(), $product->getPrice(), $imagePath, $product->getSlug(), 0, 0);
+        }
     }
     $str .= '</div>';
     echo $str;
 }
 
-function productCard($id, $title, $price, $img, $slug): string
+function productCard($id, $title, $price, $img, $slug, $score = null, $totalReviews = null): string
 {
     return "
         <div class=\"col-md-3 col-xs-3 mt-2\">
@@ -48,6 +60,11 @@ function productCard($id, $title, $price, $img, $slug): string
                         <h6 class=\"font-weight-semibold mb-2\"> <a href=\"/product/$slug\" class=\"text-default mb-2\" title=\"$title\" data-abc=\"true\">$title</a> </h6>
                     </div>
                     <h3 class=\"mb-0 font-weight-semibold\">$$price</h3>
+                    <div>                
+                           <i class=\"fa fa-star star\"></i>
+                           <i>$score</i>
+                    </div>
+                    <div class=\"text-muted mb-3\">$totalReviews reviews</div>
                      <input type=\"hidden\" name=\"productId\" value=\"$id\">
                     <button type=\"submit\" name=\"addProductToCart\" class=\"btn bg-cart mt-3\" value=\"fromProductCard\"><i class=\"fa fa-cart-plus mr-2\"></i> Add to cart</button>
                 </div>
@@ -59,9 +76,9 @@ function productCard($id, $title, $price, $img, $slug): string
 
 ?>
 
-<div class="container-fluid mt-50">
+<div class="mt-50">
     <!-- Carousel -->
-    <div id="carouselHero" class="carousel slide" data-bs-ride="carousel">
+    <div id="carouselHero" class="container carousel slide" data-bs-ride="carousel">
 
         <!-- Indicators/dots -->
         <div class="carousel-indicators">
