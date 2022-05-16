@@ -2,6 +2,7 @@
 
 namespace admin\controller;
 
+use src\dto\ReviewWithUserDto;
 use src\entity\Review;
 use src\repository\ReviewRepository;
 
@@ -12,7 +13,30 @@ class ReviewController extends AdminAbstractController
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('review', 'adminPanelTemplate', $pageModulePath);
         $title = 'Review';
+
+        $reviews = $this->getReviewsByStatus(true);
         require_once($templateFilePath);
+    }
+
+    /**
+     * @param bool $status
+     * @return ReviewWithUserDto[]|null
+     */
+    public function getReviewsByStatus(bool $status): ?array
+    {
+        $em = $this->getEntityManager();
+        /* @var $reviewRepository ReviewRepository */
+        $reviewRepository = $em->getRepository(Review::class);
+        if ($status) {
+            $reviews = $reviewRepository->findByStatus(0);
+        } else {
+            $reviews = $reviewRepository->findByStatus(1);
+        }
+        if ($reviews) {
+            return $reviews;
+        } else {
+            return null;
+        }
     }
 
     public function approveReview($reviewId)
@@ -49,7 +73,6 @@ class ReviewController extends AdminAbstractController
 
         }
     }
-
 
     public function delete($reviewId)
     {
@@ -94,24 +117,7 @@ class ReviewController extends AdminAbstractController
         }
     }
 
-
-    public function reviewRowGenerator()
-    {
-        $em = $this->getEntityManager();
-        /* @var $reviewRepository ReviewRepository */
-        $reviewRepository = $em->getRepository(Review::class);
-        $reviews = $reviewRepository->findByStatus(0);
-        $str = '';
-        foreach ($reviews as $review) {
-            $str .= $this->reviewRow($review->getReview()->getId(), $review->getUserName(), $review->getUserLastName(),
-                $review->getUserEmail(), $review->getReview()->getCreatedAt()->format('d/m/Y H:i:s'), $review->getReview()->getTitle(),
-                $review->getReview()->getReview(), $review->getReview()->getRating(), $review->getProductTitle(), $review->getProductSlug());
-        }
-        echo $str;
-    }
-
-    public
-    function reviewRow($id, $name, $lastName, $email, $date, $title, $review, $rating, $productTitle, $productSlug): string
+    public function reviewRow($id, $name, $lastName, $email, $date, $title, $review, $rating, $productTitle, $productSlug): string
     {
         return "
         <tr>

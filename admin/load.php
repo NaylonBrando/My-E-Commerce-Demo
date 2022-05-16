@@ -14,8 +14,8 @@ require_once('../Connection.php');
 loader('../src/entity');
 loader('../src/repository');
 loader('../src/dto');
-loader('controller');
-loader(__DIR__ . '/helper');
+loader('src/controller');
+loader(__DIR__ . '/src/helper');
 require_once(__DIR__ . '/Router.php');
 
 

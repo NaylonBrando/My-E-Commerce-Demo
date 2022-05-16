@@ -4,7 +4,6 @@ namespace admin\helper;
 
 class FileHelper
 {
-
     public static function upload(string $formInputName, string $dirPath, int $maxFileSize, int $maxFile): array
     {
         define('UPLOAD_DIR', $dirPath);
@@ -72,5 +71,4 @@ class FileHelper
         }
 
     }
-
 }

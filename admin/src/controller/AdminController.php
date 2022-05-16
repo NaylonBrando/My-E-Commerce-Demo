@@ -7,7 +7,6 @@ use src\repository\AdminRepository;
 
 class AdminController extends AdminAbstractController
 {
-
     public function login(string $templateFile)
     {
         if (isset($_SESSION['admin_id'])) {
@@ -15,7 +14,6 @@ class AdminController extends AdminAbstractController
         }
         require_once($templateFile);
     }
-
 
     public function logout()
     {
@@ -27,7 +25,6 @@ class AdminController extends AdminAbstractController
         }
         header('location:/admin/login');
     }
-
 
     public function loginCheck()
     {
@@ -57,6 +54,4 @@ class AdminController extends AdminAbstractController
         }
 
     }
-
-
 }

@@ -5,17 +5,16 @@ namespace admin\controller;
 use src\entity\Category;
 use src\repository\CategoryRepository;
 
-$str = "";
+$str = '';
 $categoryArray = [];
 
 class CategoryController extends AdminAbstractController
 {
-
     public function show($pageModulePath)
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('category', 'adminPanelTemplate', $pageModulePath);
-        $title = "Category";
+        $title = 'Category';
         require_once($templateFilePath);
         if (isset($_SESSION['category_add_error'])) {
             unset($_SESSION['category_add_error']);
@@ -24,11 +23,10 @@ class CategoryController extends AdminAbstractController
 
     public function showUpdate($pageModulePath, $id)
     {
-        $title = "Update Category";
+        $title = 'Update Category';
         $em = $this->getEntityManager();
         /** @var Category $category */
         $category = $em->find(Category::class, $id[1]);
-
 
         if ($category) {
             $pageModule = $pageModulePath;
@@ -132,7 +130,7 @@ class CategoryController extends AdminAbstractController
         }
 
         if ($result) {
-            $str = "";
+            $str = '';
             /** @var Category $row */
             foreach ($result as $row) {
                 if ($categoryId != $row->getId()) {
@@ -147,7 +145,6 @@ class CategoryController extends AdminAbstractController
         }
 
     }
-
 
     public function categoryComponentParent($id, $categoryName): string
     {
@@ -170,9 +167,8 @@ class CategoryController extends AdminAbstractController
         /** @var Category $result */
         $result = $query->findAll();
 
-
         if ($result) {
-            $str = "";
+            $str = '';
             /** @var Category $row */
             foreach ($result as $row) {
                 if ($categoryIdOfProduct != null && $row->getId() == $categoryIdOfProduct) {
@@ -198,17 +194,15 @@ class CategoryController extends AdminAbstractController
         } else {
             /** @var Category $childCat */
             foreach ($childCatArray as $childCat) {
-                $str .= "<li>" . $childCat->getName() . "<ul> ";
+                $str .= '<li>' . $childCat->getName() . '<ul> ';
                 $str .= $this->categoryTree($childCat->getId());
-                $str .= "</ul> </li>";
+                $str .= '</ul> </li>';
             }
         }
         if ($parentId == 0) {
             return $str;
         } else {
-            return "";
+            return '';
         }
     }
-
-
 }

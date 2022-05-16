@@ -62,7 +62,8 @@ $categoryController = new CategoryController();
 
                 <label for="about" class="col-sm-3 control-label"><h6>Description</h6></label>
                 <div class="col-sm-9">
-                    <label for="description"></label><textarea name="description" id="description" style="resize: none; height:100px"
+                    <label for="description"></label><textarea name="description" id="description"
+                                                               style="resize: none; height:100px"
                                                                class="form-control" maxlength="2048"
                                                                required><?php /** @var Product $product */
                         echo $product->getDescription() ?></textarea>
@@ -70,24 +71,27 @@ $categoryController = new CategoryController();
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Quantity</h6></label>
                 <div class="col-sm-3">
-                    <label for="quantity"></label><input type="number" class="form-control" name="quantity" id="quantity" required
+                    <label for="quantity"></label><input type="number" class="form-control" name="quantity"
+                                                         id="quantity" required
                                                          value="<?php /** @var Product $product */
-                           echo $product->getQuantity() ?>">
+                                                         echo $product->getQuantity() ?>">
                 </div>
 
                 <label for="for-quantity" class="col-sm-3 control-label"><h6>Stock Number</h6></label>
                 <div class="col-sm-3">
-                    <label for="stockNumber"></label><input type="number" class="form-control" name="stockNumber" id="stockNumber" required
+                    <label for="stockNumber"></label><input type="number" class="form-control" name="stockNumber"
+                                                            id="stockNumber" required
                                                             value="<?php /** @var Product $product */
-                           echo $product->getStockNumber() ?>">
+                                                            echo $product->getStockNumber() ?>">
                 </div>
 
                 <label for="for-price" class="col-sm-3 control-label"><h6>Price</h6></label>
                 <div class="col-sm-3">
-                    <label for="price"></label><input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?" class="form-control" name="price"
+                    <label for="price"></label><input type="text" pattern="([1-9][0-9]*|0)(\.[0-9]{2})?"
+                                                      class="form-control" name="price"
                                                       id="price" required
                                                       value="<?php /** @var Product $product */
-                           echo $product->getPrice() ?>">
+                                                      echo $product->getPrice() ?>">
                 </div>
 
                 <hr>

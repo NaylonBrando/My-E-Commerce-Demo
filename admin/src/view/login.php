@@ -9,12 +9,12 @@
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 
-    <link href="../../css/signin.css" rel="stylesheet">
+    <link href="../../../src/css/signin.css" rel="stylesheet">
 </head>
 <body class="text-center">
 <main class="form-signin">
     <form action="check-login" method="post">
-        <img class="mb-4" src="../../image/ecommerce-admin.png" alt="" width="72" height="57">
+        <img class="mb-4" src="../../../image/ecommerce-admin.png" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Admin Giris</h1>
 
         <div class="form-floating">

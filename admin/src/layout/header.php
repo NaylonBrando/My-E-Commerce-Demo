@@ -7,7 +7,7 @@
     </button>
     <div class="navbar-nav">
         <div class="nav-item text-nowrap">
-            <a class="nav-link px-3" href="../../view/logout.php">Çıkış Yap</a>
+            <a class="nav-link px-3" href="../../src/view/logout.php">Çıkış Yap</a>
         </div>
     </div>
 </header>

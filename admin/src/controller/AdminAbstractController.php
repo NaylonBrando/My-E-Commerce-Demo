@@ -9,7 +9,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/admin/bootstrap.php');
 
 class AdminAbstractController
 {
-
     public EntityManager $entityManager;
 
     /**
@@ -28,6 +27,4 @@ class AdminAbstractController
     {
         return $this->entityManager;
     }
-
-
 }

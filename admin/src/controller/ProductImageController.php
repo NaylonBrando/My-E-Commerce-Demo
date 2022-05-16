@@ -9,7 +9,6 @@ use src\repository\ProductImageRepository;
 
 class ProductImageController extends AdminAbstractController
 {
-
     public function show(string $pageModulePath, $id)
     {
         $em = $this->getEntityManager();
@@ -65,7 +64,6 @@ class ProductImageController extends AdminAbstractController
             header('location: /admin/product/image/' . $productId);
         }
 
-
     }
 
     public function delete(int $id)
@@ -84,7 +82,6 @@ class ProductImageController extends AdminAbstractController
                 $_SESSION['imageDeleteError'] = 'Error occurred while deleting file';
             }
             header('location: /admin/product/image/' . $productImage->getProductId());
-
 
         } else {
             $page404 = '../admin/view/404.php';
@@ -131,7 +128,6 @@ class ProductImageController extends AdminAbstractController
             header('location: /admin/product/image/' . $productImage->getProductId());
 
         }
-
 
     }
 
@@ -180,5 +176,4 @@ class ProductImageController extends AdminAbstractController
 
         return $element;
     }
-
 }

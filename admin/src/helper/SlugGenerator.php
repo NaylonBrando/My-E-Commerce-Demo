@@ -4,7 +4,6 @@ namespace admin\helper;
 
 class SlugGenerator
 {
-
     public static function slugify($text): string
     {
 
@@ -74,5 +73,4 @@ class SlugGenerator
 
         return $text . '-' . $five_digit_random_number;
     }
-
 }

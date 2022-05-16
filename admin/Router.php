@@ -2,19 +2,16 @@
 
 namespace admin;
 
-
 //admin router
 class Router
 {
-
-
     public static function parseReferer(): string
     {
         $referer = $_SERVER['HTTP_REFERER'];
         $domainName = $_SERVER['HTTP_ORIGIN'];
         return str_replace($domainName, null, $referer);
     }
-    
+
     public function run()
     {
         $routes = [
@@ -313,9 +310,9 @@ class Router
 
         $match = false;
 
-        $request_uri = static::parseUrl();
+        $requestUrl = static::parseUrl();
 
-        if ((!isset($_SESSION['admin_id']) && ((strcmp($request_uri, '/login') == 0) || strcmp($request_uri, '/check-login') == 0))
+        if ((!isset($_SESSION['admin_id']) && ((strcmp($requestUrl, '/login') == 0) || strcmp($requestUrl, '/check-login') == 0))
             || isset($_SESSION['admin_id'])) {
             foreach ($routes as $router) {
                 $patterns = [
@@ -327,7 +324,7 @@ class Router
 
                 $url = str_replace(array_keys($patterns), array_values($patterns), $router['url']);
 
-                if (preg_match('@^' . $url . '$@', $request_uri, $parameters)) {
+                if (preg_match('@^' . $url . '$@', $requestUrl, $parameters)) {
                     unset($parameters[0]);
                     if (isset($router['searchTerm'])) {
                         $parameters[$router['searchTerm']] = $parameters[1];
@@ -350,15 +347,15 @@ class Router
 
                     }
                     $controllerClassName = $router['class'];
-                    $controllerFile = __DIR__ . '/controller/' . $controllerClassName . '.php';
+                    $controllerFile = __DIR__ . '\src\controller\\' . $controllerClassName . '.php';
                     $functionName = $router['function'];
                     $routeType = $router['type'];
 
                     if ($routeType == 'normal') {
                         $templateFile = $router['template'];
-                        $templateFilePath = __DIR__ . '/view/' . $templateFile;
+                        $templateFilePath = __DIR__ . '\src\view\\' . $templateFile;
                         if (!file_exists($templateFilePath)) {
-                            $pageNotFoundPath = __DIR__ . '/view/404.php';
+                            $pageNotFoundPath = __DIR__ . '\src\view\\404.php';
                             require_once($pageNotFoundPath);
                         }
                         require_once($controllerFile);
@@ -391,11 +388,11 @@ class Router
         $dirname = dirname($_SERVER['SCRIPT_NAME']);
         $dirname = $dirname != '/' ? $dirname : null;
         $basename = basename($_SERVER['SCRIPT_NAME']);
-        $request_uri = str_replace([$dirname, $basename], null, $_SERVER['REQUEST_URI']);
-        if ($request_uri == '') {
+        $requestUrl = str_replace([$dirname, $basename], null, $_SERVER['REQUEST_URI']);
+        if ($requestUrl == '') {
             return '/';
         } else {
-            return $request_uri;
+            return $requestUrl;
         }
     }
 }

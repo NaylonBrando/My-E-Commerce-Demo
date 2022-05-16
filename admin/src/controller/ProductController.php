@@ -8,29 +8,58 @@ use src\entity\Product;
 use src\entity\ProductToCategory;
 use src\repository\ProductRepository;
 
-
 class ProductController extends AdminAbstractController
 {
-
-
     public function show(string $pageModulePath, $parameters)
     {
+        $pageModule = $pageModulePath;
+        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
+        $title = 'Product';
 
         if (isset($parameters['pg'])) {
             (int)$parameters['pg'] == 0 ? $pageNumber = 1 : $pageNumber = (int)$parameters['pg'];
         } else {
             $parameters['pg'] = 1;
         }
+        $limit = 10;
+        $productsWithDetail = $this->getProductsByLimit($parameters['pg'], $limit);
+        $em = $this->getEntityManager();
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        $totalProducts = $productRepository->countProducts();
 
-        $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
-        $title = 'Product';
         require_once($templateFilePath);
+
+    }
+
+    /**
+     * @param $pageNumber
+     * @param $limit
+     * @return Product[]|null
+     */
+    public function getProductsByLimit($pageNumber, $limit): ?array
+    {
+        $em = $this->getEntityManager();
+
+        /* @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+
+        $products = $productRepository->findProductsWithDetails($pageNumber, $limit);
+
+        if ($products) {
+            return $products;
+        } else {
+            return null;
+        }
 
     }
 
     public function showProductSearch(string $pageModulePath, $parameters)
     {
+        $pageModule = $pageModulePath;
+        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
+        $title = 'Product';
+
         if (isset($parameters['searchTerm'])) {
             $parameters['searchTerm'] = str_replace('%20', ' ', $parameters['searchTerm']);
         }
@@ -41,9 +70,14 @@ class ProductController extends AdminAbstractController
         }
         $searchTermParameters = $parameters;
 
-        $pageModule = $pageModulePath;
-        $templateFilePath = str_replace('product', 'adminPanelTemplate', $pageModulePath);
-        $title = 'Product';
+        $limit = 10;
+
+        $em = $this->getEntityManager();
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        $productsWithDetail = $this->getBySearchTermAndLimit($parameters['searchTerm'], $parameters['pg'], $limit);
+        $totalProducts = $productRepository->countProductsBySearchTerm($parameters['searchTerm']);
+
         require_once($templateFilePath);
     }
 
@@ -61,7 +95,7 @@ class ProductController extends AdminAbstractController
     {
         $em = $this->getEntityManager();
         $product = $em->find(Product::class, $id[1]);
-        $product_to_category = $em->getRepository(ProductToCategory::class)->findOneBy(['productId' => $id[1]]);
+        $productToCategory = $em->getRepository(ProductToCategory::class)->findOneBy(['productId' => $id[1]]);
 
         if ($product) {
             $title = 'Update Product Slug: ' . $product->getSlug();
@@ -124,7 +158,6 @@ class ProductController extends AdminAbstractController
 
     }
 
-
     public function delete($id)
     {
         $em = $this->getEntityManager();
@@ -145,22 +178,26 @@ class ProductController extends AdminAbstractController
             require_once($page404);
         }
 
-
     }
 
-    public function productTableRowGenerator($pageNumber)
+    /**
+     * @param $searchTerm
+     * @param $pageNumber
+     * @param $limit
+     * @return ProductDetailDto|null
+     */
+    public function getBySearchTermAndLimit($searchTerm, $pageNumber, $limit): ?array
     {
         $em = $this->getEntityManager();
-        /* @var ProductRepository $productRepository */
-        $productRepository = $em->getRepository(Product::class);
-        $products = $productRepository->findProductsWithDetails($pageNumber, 8);
-        $countOfProducts = $productRepository->countProducts();
 
-        if (count($products) > 0) {
-            $this->echoProductsExtracted($products);
-            $this->paginator($pageNumber, $countOfProducts, 8);
+        /** @var ProductRepository $productRepository */
+        $productRepository = $em->getRepository(Product::class);
+        $products = $productRepository->findProductsWithDetailsBySearchTerm($searchTerm, $pageNumber, $limit);
+
+        if ($products) {
+            return $products;
         } else {
-            echo '<h1>No products found</h1>';
+            return null;
         }
 
     }
@@ -276,25 +313,6 @@ class ProductController extends AdminAbstractController
         echo $str;
     }
 
-    public function productTableRowGeneratorWithSearchTerm($searchTerm, $pageNumber = 1)
-    {
-        $em = $this->getEntityManager();
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $em->getRepository(Product::class);
-        $products = $productRepository->findProductsWithDetailsBySearchTerm($searchTerm, $pageNumber, 8);
-        $countOfProducts = $productRepository->countProductsBySearchTerm($searchTerm);
-
-
-        if (count($products) > 0) {
-            $this->echoProductsExtracted($products);
-            $this->paginator($pageNumber, $countOfProducts, 8);
-        } else {
-            echo '<h1>No products found</h1>';
-        }
-
-    }
-
     public function setIsActiveTrue($id)
     {
 
@@ -322,5 +340,4 @@ class ProductController extends AdminAbstractController
         }
         header('Location:/admin/product');
     }
-
 }

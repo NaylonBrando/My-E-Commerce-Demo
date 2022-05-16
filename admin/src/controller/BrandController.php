@@ -6,12 +6,12 @@ use src\entity\Brand;
 
 class BrandController extends AdminAbstractController
 {
-
     public function show($pageModulePath)
     {
         $pageModule = $pageModulePath;
         $templateFilePath = str_replace('brand', 'adminPanelTemplate', $pageModulePath);
         $title = 'Brand';
+        $brands = $this->getAll();
         require_once($templateFilePath);
     }
 
@@ -66,6 +66,9 @@ class BrandController extends AdminAbstractController
         }
     }
 
+    /**
+     * @return Brand[]|null
+     */
     public function getAll(): ?array
     {
         $em = $this->getEntityManager();
@@ -114,7 +117,6 @@ class BrandController extends AdminAbstractController
             require_once($page404);
         }
 
-
     }
 
     public function brandTableRowGenerator()
@@ -122,9 +124,9 @@ class BrandController extends AdminAbstractController
 
         $result = $this->getAll();
         if (!$result) {
-            echo "<h3>No brands to list !</h3>";
+            echo '<h3>No brands to list !</h3>';
         } else {
-            $str = "";
+            $str = '';
             foreach ($result as $row) {
                 $str .= self::brandTableRow($row->getId(), $row->getName());
 
@@ -149,9 +151,9 @@ class BrandController extends AdminAbstractController
     {
         $result = self::getAll();
         if (!$result) {
-            echo "<h3>No brands to list !</h3>";
+            echo '<h3>No brands to list !</h3>';
         } else {
-            $str = "";
+            $str = '';
             foreach ($result as $row) {
                 if ($brandIdOfProduct != null && $row->getId() == $brandIdOfProduct) {
                     $str .= self::brandOptionRow($row->getId(), $row->getName(), $brandIdOfProduct);
@@ -172,5 +174,4 @@ class BrandController extends AdminAbstractController
             return "<option value=\"$id\">$brandName</option>";
         }
     }
-
 }

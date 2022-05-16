@@ -34,8 +34,9 @@ $categoryController = new CategoryController();
                 </div>
 
                 <div class="mb-3">
-                    <label for="parent-category-name">Parent Category</label>
-                    <label>
+                    <label ></label>
+                    <label for="parent-category-name">
+                        Parent Category
                         <select name="addCategoryParentId" class="form-control">
                             <option selected value="0">None</option>
                             <?php $categoryController->categoryComponentRowGenerator() ?>
