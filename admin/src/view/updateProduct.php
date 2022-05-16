@@ -3,7 +3,6 @@
 use admin\controller\BrandController;
 use admin\controller\CategoryController;
 use src\entity\Product;
-use src\entity\ProductToCategory;
 
 $brandController = new BrandController();
 $categoryController = new CategoryController();
@@ -46,8 +45,8 @@ $categoryController = new CategoryController();
                 <div class="col-sm-3">
                     <label>
                         <select class="form-control" name="categoryId" required>
-                            <?php /** @var ProductToCategory $product_to_category */
-                            $categoryController->categoryComponentRowGenerator($product_to_category->getCategoryId()) ?>
+                            <?php if (isset($categoryId))
+                                $categoryController->categoryComponentRowGenerator($categoryId) ?>
                         </select>
                     </label>
                 </div>
