@@ -1,7 +1,7 @@
 <?php
 
-use admin\controller\BrandController;
-use admin\controller\CategoryController;
+use admin\src\controller\BrandController;
+use admin\src\controller\CategoryController;
 use src\entity\Product;
 
 $brandController = new BrandController();

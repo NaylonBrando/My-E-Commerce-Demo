@@ -18,7 +18,7 @@ class Category
      */
     private int $id;
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="parent_id")
      */
     private int $parent_id;
     /**

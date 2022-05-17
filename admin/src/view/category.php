@@ -1,6 +1,6 @@
 <?php
 
-use admin\controller\CategoryController;
+use admin\src\controller\CategoryController;
 
 $categoryController = new CategoryController();
 ?>

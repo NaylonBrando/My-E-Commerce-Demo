@@ -1,6 +1,6 @@
 <?php
 
-use admin\controller\UserController;
+use admin\src\controller\UserController;
 use src\entity\User;
 
 $userController = new UserController();

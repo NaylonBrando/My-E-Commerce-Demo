@@ -1,6 +1,6 @@
 <?php
 
-namespace admin\controller;
+namespace admin\src\controller;
 
 use src\entity\User;
 use src\repository\UserRepository;

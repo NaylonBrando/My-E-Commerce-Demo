@@ -128,12 +128,12 @@ class CartController extends AbstractController
         return $totalCartItems;
     }
 
-    public function findCartByUserId(): ?Cart
+    public function findCartByUserId(int $id): ?Cart
     {
         $em = $this->getEntityManager();
         /* @var $cartRepository CartRepository */
         $cartRepository = $em->getRepository(Cart::class);
-        return $cartRepository->findCartByUserId($_SESSION['user_id']);
+        return $cartRepository->findCartByUserId($id);
     }
 
     public function add()

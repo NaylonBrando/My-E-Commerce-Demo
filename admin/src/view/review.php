@@ -1,6 +1,6 @@
 <?php
 
-use admin\controller\ReviewController;
+use admin\src\controller\ReviewController;
 use src\dto\ReviewWithUserDto;
 
 $reviewController = new ReviewController();

@@ -359,7 +359,7 @@ class Router
                             require_once($pageNotFoundPath);
                         }
                         require_once($controllerFile);
-                        $controllerClassName = 'admin\controller\\' . $controllerClassName;
+                        $controllerClassName = 'admin\src\controller\\' . $controllerClassName;
                         call_user_func_array([new $controllerClassName(), $functionName], [$templateFilePath, $parameters]);
                         $match = true;
                         break;

@@ -1,6 +1,6 @@
 <?php
 
-use admin\controller\ProductController;
+use admin\src\controller\ProductController;
 use src\dto\ProductDetailDto;
 
 $productController = new ProductController();

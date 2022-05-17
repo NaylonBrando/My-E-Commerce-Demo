@@ -190,9 +190,9 @@ class ProductController extends AbstractController
         $em = $this->getEntityManager();
         $reviewController = new ReviewController();
         $product = $em->getRepository(Product::class)->findOneBy(['slug' => $parameters[1], 'isActive' => 1]);
-        $reviewsWithUserDto = $reviewController->getByProductId($product->getId());
 
         if ($product) {
+            $reviewsWithUserDto = $reviewController->getByProductId($product->getId());
             $title = $product->getTitle();
             $pageModule = $pageModulePath;
             $templateFilePath = str_replace('product', 'homepageTemplate', $pageModulePath);
