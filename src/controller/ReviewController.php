@@ -15,7 +15,7 @@ class ReviewController extends AbstractController
             $em = $this->getEntityManager();
             $url = Router::parseReferer();
             $review = new Review();
-            $review->setUserId($_POST['userId']);
+            $review->setUserId($_SESSION['user_id']);
             $review->setProductId($_POST['productId']);
             $review->setRating($_POST['rating']);
             $review->setTitle($_POST['title']);

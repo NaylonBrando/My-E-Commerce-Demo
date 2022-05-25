@@ -31,7 +31,9 @@ class CartController extends AbstractController
     {
 
         $totalCartItems = [];
-        $str = '';
+        $totalPrice = 0;
+        $imagePath ="";
+        
         $em = $this->getEntityManager();
         /** @var ProductRepository $productRepository */
         $productRepository = $em->getRepository(Product::class);
@@ -52,7 +54,6 @@ class CartController extends AbstractController
                     } else {
                         $product = $productWithImage->getProduct();
                         $images = $productWithImage->getImages();
-                        $totalPrice = $cartItem['quantity'] * $product->getPrice();
 
                         if ($images != null) {
                             foreach ($images as $image) {
@@ -70,6 +71,7 @@ class CartController extends AbstractController
                         }
 
                         $totalCartItems[] = ['product' => $product, 'quantity' => $cartItem['quantity'], 'imagePath' => $imagePath];
+                        $totalPrice += $cartItem['quantity'] * $product->getPrice();
                     }
                 }
             }
@@ -108,7 +110,7 @@ class CartController extends AbstractController
                     for ($i = 0; $i < count($cartItems); $i++) {
                         $cartItem = $cartItems[$i];
                         if ($cartItem->getProduct()->getId() == $product->getId()) {
-                            $totalPrice = $cartItem->getQuantity() * $product->getPrice();
+                            $totalPrice += $cartItem->getQuantity() * $product->getPrice();
                         }
                     }
                     $cart->setGrandTotal($totalPrice);
@@ -116,7 +118,7 @@ class CartController extends AbstractController
                     $em->flush();
                 }
             } else {
-                $totalCartItems[] = null;
+                $totalCartItems = null;
             }
 
         } else {

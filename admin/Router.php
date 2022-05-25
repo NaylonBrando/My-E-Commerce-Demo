@@ -365,7 +365,7 @@ class Router
                         break;
 
                     } elseif ($routeType == 'check') {
-                        $controllerClassName = 'admin\controller\\' . $controllerClassName;
+                        $controllerClassName = 'admin\src\controller\\' . $controllerClassName;
                         call_user_func_array([new $controllerClassName(), $functionName], $parameters);
                         $match = true;
                         break;

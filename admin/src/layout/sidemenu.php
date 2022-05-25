@@ -2,11 +2,6 @@
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/admin/product">
                     Product
                 </a>
